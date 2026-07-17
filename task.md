@@ -1,0 +1,23 @@
+# Tasks: Final Production Refinement
+
+- [x] Enrich Specifications API & Backend Dict:
+    - [x] Create /api/sach-chat backend route in app.py
+    - [x] Modify templates/navbar.html for slide-from-left mobile menu
+- [/] Add mobile and tablet CSS overrides in static/css/style.css for Home and footer
+- [x] Implement Automated PDF Generation inside `pdf_generator.py`:
+    - [x] Create Matplotlib depreciation line chart generator
+    - [x] Create `generate_valuation_report_pdf` using ReportLab
+    - [x] Create `generate_valuation_certificate_pdf` (certificate ID, date, AI Engine version, no signatures)
+- [x] Implement Download Routes in `app.py`:
+    - [x] Add `/report/<int:car_id>/pdf` route
+    - [x] Add `/report/<int:car_id>/certificate` route (supports view inline)
+- [x] Update Frontend Templates:
+    - [x] Redesign `.spec-badge` CSS inside `valuation.html` to be light theme
+    - [x] Add all 16 specs to the checklist panel in `valuation.html`
+    - [x] Render 16 yes/no specs with ✅ and ❌ emojis in `report.html`
+    - [x] Wire buttons to PDF/Certificate download routes and add a "View Certificate" action
+    - [x] Replace alert-based "Share" button with custom clipboard visual toast
+- [x] Update Javascript Logic in `script.js`:
+    - [x] Update `loadSpecifications` to set ✅ and ❌ status on all 16 boolean elements
+- [x] Verification:
+    - [x] Create validation script `scratch/test_valuation_pdf.py` and run tests
