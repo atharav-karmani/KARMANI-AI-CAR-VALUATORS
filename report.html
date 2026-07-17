@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMANI AI CAR VALUATORS - Technical Appraisal Report #REP-2026-{{ car.id }}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #F8FBFF 0%, #EAF7FF 100%) !important;
+            color: #1B2430 !important;
+            font-family: 'Outfit', sans-serif !important;
+        }
+
+        .report-watermark {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 5.5rem;
+            font-weight: 900;
+            color: rgba(30, 136, 255, 0.015);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-form-card {
+            background: rgba(255, 255, 255, 0.6) !important;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid #E6F0FF !important;
+            border-radius: 24px !important;
+            box-shadow: 0 20px 50px rgba(30, 136, 255, 0.04) !important;
+            padding: 3rem !important;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .report-card {
+            background: #FFFFFF !important;
+            border: 1px solid #E6F0FF !important;
+            border-radius: 20px !important;
+            box-shadow: 0 10px 30px rgba(30, 136, 255, 0.02) !important;
+            padding: 2.25rem !important;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px) !important;
+            box-shadow: 0 15px 35px rgba(30, 136, 255, 0.06) !important;
+            border-color: #1E88FF !important;
+        }
+
+        /* Staggered delay animations for cards */
+        .report-card:nth-child(1) { animation-delay: 0.05s; }
+        .report-card:nth-child(2) { animation-delay: 0.1s; }
+        .report-card:nth-child(3) { animation-delay: 0.15s; }
+        .report-card:nth-child(4) { animation-delay: 0.2s; }
+
+        .spec-grid-item {
+            border-bottom: 1.5px solid #E6F0FF !important;
+            padding-bottom: 0.65rem !important;
+            margin-bottom: 0.25rem !important;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .spec-grid-item span {
+            color: #6B7280 !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem !important;
+            font-weight: 500 !important;
+        }
+
+        .spec-grid-item span i {
+            color: #1E88FF;
+            width: 18px;
+            text-align: center;
+        }
+
+        .spec-grid-item strong {
+            color: #1B2430 !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+        }
+
+        /* Responsive Grid System */
+        .report-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-gradient {
+            padding: 0.95rem 1.75rem;
+            border-radius: 30px;
+            border: none;
+            color: #FFFFFF !important;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            background: linear-gradient(135deg, #1E88FF, #42A5F5) !important;
+            box-shadow: 0 4px 15px rgba(30, 136, 255, 0.15) !important;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px) scale(1.05) !important;
+            box-shadow: 0 6px 20px rgba(30, 136, 255, 0.25) !important;
+        }
+
+        @media (max-width: 1024px) {
+            .report-grid {
+                grid-template-columns: 1fr !important;
+                gap: 2rem !important;
+            }
+            .glass-form-card {
+                padding: 1.5rem !important;
+            }
+        }
+
+        @media print {
+            body {
+                background: #FFFFFF !important;
+                color: #000000 !important;
+            }
+            .navbar, footer, .report-actions-panel, .glow-node {
+                display: none !important;
+            }
+            .valuation-section {
+                padding: 1.5rem 0 !important;
+            }
+            .report-card {
+                background: #FFFFFF !important;
+                border: 1px solid #DDDDDD !important;
+                box-shadow: none !important;
+                color: #000000 !important;
+            }
+            h2, h3, h4, span, label, p, td, th, div, strong {
+                color: #000000 !important;
+                text-shadow: none !important;
+            }
+            .report-watermark {
+                color: rgba(0, 0, 0, 0.02) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Linear Gradient definitions for SVGs -->
+    <svg style="width:0; height:0; position:absolute;">
+      <defs>
+        <linearGradient id="cyanBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#1E88FF" />
+          <stop offset="100%" stop-color="#42A5F5" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <!-- Premium Sticky Navigation Bar -->
+    {% include 'navbar.html' %}
+
+    <!-- Report Section Layout -->
+    <section class="valuation-section" style="padding-top: 8.5rem; padding-bottom: 5rem; min-height: 100vh; position: relative; overflow: hidden;">
+        <div class="container" style="max-width: 1350px;">
+            
+            <div class="glass-form-card">
+                
+                <!-- Watermark backdrop -->
+                <div class="report-watermark">APEX VERIFIED</div>
+
+                <!-- 1. Report Metadata Header -->
+                <div class="report-card" style="margin-bottom: 2.5rem; padding: 2.5rem; border-left: 5px solid #1E88FF;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+                        <div style="flex: 1; min-width: 300px; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                                <span style="background: rgba(30, 136, 255, 0.1); border: 1px solid rgba(30, 136, 255, 0.25); color: #1E88FF; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-file-shield"></i> AI VEHICLE APPRAISAL REPORT</span>
+                                <span style="background: rgba(30, 136, 255, 0.1); border: 1px solid rgba(30, 136, 255, 0.25); color: #1E88FF; padding: 0.35rem 0.75rem; border-radius: 6px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-circle-check"></i> Verified AI Report</span>
+                                
+                                <button type="button" style="padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid #E6F0FF; background: #FFFFFF; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.8rem; cursor: pointer; transition: all 0.2s;" title="Toggle Favorite" onclick="toggleGlobalFavorite(this.querySelector('i'), {{ car.id }})">
+                                    <i class="{% if car.is_favorite == 1 %}fa-solid{% else %}fa-regular{% endif %} fa-star" style="color: #FFC107;"></i> <span style="color: #1B2430; font-weight: 600;">Favorite</span>
+                                </button>
+                            </div>
+                            <h2 style="font-size: 2.2rem; font-weight: 800; color: #1B2430; margin: 0.5rem 0 0.25rem 0; letter-spacing: -0.02em;">REP-2026-{{ car.id }}</h2>
+                            <p style="font-size: 1.25rem; color: #4B5563; margin: 0; font-weight: 500;">
+                                Vehicle: <span style="color: #1E88FF; font-weight: 700;">{{ car.brand }} {{ car.model }} ({{ car.year }})</span>
+                            </p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                            <div style="font-size: 0.9rem; display: grid; grid-template-columns: auto auto; gap: 0.65rem 1.5rem; text-align: left; background: #FFFFFF; border: 1px solid #E6F0FF; padding: 1.25rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                                <span style="color: #6B7280;"><i class="fa-solid fa-hashtag" style="color: #1E88FF; margin-right: 0.25rem;"></i> Report Number:</span>
+                                <strong style="color: #1B2430;">REP-2026-{{ car.id }}</strong>
+                                
+                                <span style="color: #6B7280;"><i class="fa-solid fa-calendar-day" style="color: #1E88FF; margin-right: 0.25rem;"></i> Generated Date:</span>
+                                <strong style="color: #1B2430;">{{ car.date }}</strong>
+                                
+                                <span style="color: #6B7280;"><i class="fa-solid fa-user" style="color: #1E88FF; margin-right: 0.25rem;"></i> Owner Name:</span>
+                                <strong style="color: #1B2430;">{{ user_name }}</strong>
+                                
+                                <span style="color: #6B7280;"><i class="fa-solid fa-location-dot" style="color: #1E88FF; margin-right: 0.25rem;"></i> Reg. State & No:</span>
+                                <strong style="color: #1E88FF;">{{ car.state }} ({{ car.reg_no if car.reg_no else 'N/A' }})</strong>
+                            </div>
+                            
+                            <div style="background: #FFFFFF; padding: 10px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #E6F0FF;">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=http://localhost:5000/report/{{ car.id }}" alt="Report QR Code" style="width: 80px; height: 80px; display: block;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Performance scorecards circular progress -->
+                <div class="report-card" style="margin-bottom: 2.5rem;">
+                    <h4 style="font-size: 1.25rem; color: #1B2430; margin: 0 0 2rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;">
+                        <i class="fa-solid fa-chart-simple" style="color: #1E88FF;"></i> Key Performance Scorecards
+                    </h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem; text-align: center;">
+                        
+                        <!-- Score 1: Health Score -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                            <div class="circle-progress-wrapper" style="position: relative; width: 100px; height: 100px;">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#E6F0FF" stroke-width="8" fill="transparent" />
+                                    <circle cx="50" cy="50" r="40" stroke="url(#cyanBlueGrad)" stroke-width="8" fill="transparent"
+                                             stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 * (1 - (car.health_score or 90) / 100) }}"
+                                             stroke-linecap="round" transform="rotate(-90 50 50)" />
+                                </svg>
+                                <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <strong style="font-size: 1.25rem; color: #1B2430;">{{ car.health_score or 90 }}%</strong>
+                                </div>
+                            </div>
+                            <span style="font-size: 0.85rem; color: #4B5563; font-weight: 600;">Health Score</span>
+                        </div>
+
+                        <!-- Score 2: AI Confidence -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                            <div class="circle-progress-wrapper" style="position: relative; width: 100px; height: 100px;">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#E6F0FF" stroke-width="8" fill="transparent" />
+                                    <circle cx="50" cy="50" r="40" stroke="url(#cyanBlueGrad)" stroke-width="8" fill="transparent"
+                                             stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 * (1 - (car.confidence or 95) / 100) }}"
+                                             stroke-linecap="round" transform="rotate(-90 50 50)" />
+                                </svg>
+                                <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <strong style="font-size: 1.25rem; color: #1B2430;">{{ car.confidence or 95 }}%</strong>
+                                </div>
+                            </div>
+                            <span style="font-size: 0.85rem; color: #4B5563; font-weight: 600;">AI Confidence</span>
+                        </div>
+
+                        <!-- Score 3: Market Demand -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                            <div class="circle-progress-wrapper" style="position: relative; width: 100px; height: 100px;">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#E6F0FF" stroke-width="8" fill="transparent" />
+                                    <circle cx="50" cy="50" r="40" stroke="url(#cyanBlueGrad)" stroke-width="8" fill="transparent"
+                                             stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 * (1 - (recal.demand_score or 85) / 100) }}"
+                                             stroke-linecap="round" transform="rotate(-90 50 50)" />
+                                </svg>
+                                <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <strong style="font-size: 1.25rem; color: #1B2430;">{{ recal.demand_score or 85 }}%</strong>
+                                </div>
+                            </div>
+                            <span style="font-size: 0.85rem; color: #4B5563; font-weight: 600;">Market Demand</span>
+                        </div>
+
+                        <!-- Score 4: Popularity -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                            <div class="circle-progress-wrapper" style="position: relative; width: 100px; height: 100px;">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#E6F0FF" stroke-width="8" fill="transparent" />
+                                    <circle cx="50" cy="50" r="40" stroke="url(#cyanBlueGrad)" stroke-width="8" fill="transparent"
+                                             stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 * (1 - (recal.popularity_score or 80) / 100) }}"
+                                             stroke-linecap="round" transform="rotate(-90 50 50)" />
+                                </svg>
+                                <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <strong style="font-size: 1.25rem; color: #1B2430;">{{ recal.popularity_score or 80 }}%</strong>
+                                </div>
+                            </div>
+                            <span style="font-size: 0.85rem; color: #4B5563; font-weight: 600;">Popularity</span>
+                        </div>
+
+                        <!-- Score 5: Reliability -->
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem;">
+                            <div class="circle-progress-wrapper" style="position: relative; width: 100px; height: 100px;">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#E6F0FF" stroke-width="8" fill="transparent" />
+                                    <circle cx="50" cy="50" r="40" stroke="url(#cyanBlueGrad)" stroke-width="8" fill="transparent"
+                                             stroke-dasharray="251.2" stroke-dashoffset="{{ 251.2 * (1 - (ai_scores.reliability or 85) / 100) }}"
+                                             stroke-linecap="round" transform="rotate(-90 50 50)" />
+                                </svg>
+                                <div style="position: absolute; top: 0; left: 0; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                                    <strong style="font-size: 1.25rem; color: #1B2430;">{{ ai_scores.reliability or 85 }}%</strong>
+                                </div>
+                            </div>
+                            <span style="font-size: 0.85rem; color: #4B5563; font-weight: 600;">Reliability</span>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- 3. Document Verification Badges -->
+                <div class="report-card" style="margin-bottom: 2.5rem;">
+                    <h4 style="font-size: 1.15rem; color: #1B2430; margin: 0 0 1.25rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;">
+                        <i class="fa-solid fa-folder-check" style="color: #1E88FF;"></i> Document Verification Badges
+                    </h4>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <!-- Verified Status -->
+                        <span style="background: rgba(30, 136, 255, 0.1); border: 1px solid rgba(30, 136, 255, 0.25); color: #1E88FF; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                        
+                        <!-- Insurance Active Badge -->
+                        {% if car.insurance and (car.insurance.lower() == 'yes' or car.insurance.lower() == 'active' or car.insurance.lower() == 'icici lombard' or car.insurance.lower() == 'hdfc ergo') %}
+                        <span style="background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.25); color: #2ECC71; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-shield-check"></i> Insurance Active</span>
+                        {% else %}
+                        <span style="background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.25); color: #E74C3C; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-shield-xmark"></i> Insurance Expired</span>
+                        {% endif %}
+
+                        <!-- PUC Valid Badge -->
+                        {% if car.puc_available and car.puc_available.lower() == 'yes' %}
+                        <span style="background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.25); color: #2ECC71; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-smog"></i> PUC Valid</span>
+                        {% else %}
+                        <span style="background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.25); color: #E74C3C; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-circle-xmark"></i> PUC Missing</span>
+                        {% endif %}
+
+                        <!-- RC Verified Badge -->
+                        {% if car.rc_available and car.rc_available.lower() == 'yes' %}
+                        <span style="background: rgba(30, 136, 255, 0.1); border: 1px solid rgba(30, 136, 255, 0.25); color: #1E88FF; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-id-card"></i> RC Verified</span>
+                        {% else %}
+                        <span style="background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.25); color: #E74C3C; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-id-card"></i> RC Missing</span>
+                        {% endif %}
+
+                        <!-- Fitness Valid Badge -->
+                        <span style="background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.25); color: #2ECC71; padding: 0.4rem 0.85rem; border-radius: 30px; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-heart-pulse"></i> Fitness Valid</span>
+                    </div>
+                </div>
+
+                <!-- 4. Main Two-Column Layout Grid -->
+                <div class="report-grid">
+                    
+                    <!-- LEFT COLUMN: Specifications & Features -->
+                    <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+                        
+                        <!-- A. Vehicle Specifications -->
+                        <div class="report-card">
+                            <h4 style="font-size: 1.35rem; color: #1B2430; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;"><i class="fa-solid fa-car" style="color: #1E88FF;"></i> Vehicle Specifications</h4>
+                            
+                            <!-- Vehicle Photo/Silhouette visual based on body type -->
+                            <div style="width: 100%; height: 130px; background: #F8FBFF; border: 1px dashed #E6F0FF; border-radius: 12px; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+                                <i class="fa-solid fa-car-side" style="font-size: 4rem; color: #D1E9FF;"></i>
+                                <span style="position: absolute; bottom: 8px; right: 12px; font-size: 0.725rem; color: #6B7280; text-transform: uppercase; font-weight: 600;">{{ spec.body_type if spec.body_type else 'Silhouette' }}</span>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem;">
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-tag"></i> Brand</span>
+                                    <strong>{{ car.brand }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-car"></i> Model</span>
+                                    <strong>{{ car.model }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-sliders"></i> Variant</span>
+                                    <strong>{{ car.variant }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-calendar"></i> Mfg. Year</span>
+                                    <strong>{{ car.year }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-calendar-check"></i> Reg. Year</span>
+                                    <strong>{{ car.reg_year }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-gas-pump"></i> Fuel Type</span>
+                                    <strong>{{ car.fuel }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-gear"></i> Transmission</span>
+                                    <strong>{{ car.transmission }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-road"></i> Distance Driven</span>
+                                    <strong style="color: #1E88FF !important;">{{ car.kms | indian_currency }} Kms</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-user-tie"></i> Owners</span>
+                                    <strong>{{ car.owners }} Owner</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-shield-halved"></i> Insurance</span>
+                                    <strong>{{ car.insurance }} ({{ car.insurance_type if car.insurance_type else 'N/A' }})</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Technical specifications card if loaded -->
+                        {% if spec %}
+                        <div class="report-card">
+                            <h4 style="font-size: 1.35rem; color: #1B2430; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;"><i class="fa-solid fa-gears" style="color: #1E88FF;"></i> Technical Specifications Index</h4>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem; margin-bottom: 1.5rem;">
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-cube"></i> Engine Capacity</span>
+                                    <strong>{{ spec.engine_capacity }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-circle-info"></i> Engine Type</span>
+                                    <strong style="font-size: 0.95rem !important; line-height: 1.35; text-align: right;">{{ spec.engine_type }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-bolt"></i> Max Power</span>
+                                    <strong>{{ spec.power }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-gauge-high"></i> Max Torque</span>
+                                    <strong>{{ spec.torque }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-gas-pump"></i> ARA Mileage</span>
+                                    <strong>{{ spec.mileage }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-arrows-up-down"></i> Ground Clearance</span>
+                                    <strong>{{ spec.ground_clearance }}</strong>
+                                </div>
+                                <div class="spec-grid-item">
+                                    <span><i class="fa-solid fa-box-open"></i> Boot Space</span>
+                                    <strong>{{ spec.boot_space }}</strong>
+                                </div>
+                            </div>
+
+                            <h5 style="font-size: 1.1rem; color: #1B2430; margin: 1.5rem 0 1rem 0; font-weight: 700; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.5rem;"><i class="fa-solid fa-shield" style="color: #2ECC71; margin-right: 0.5rem;"></i> Comfort & Safety Features</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.5rem;">
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> ABS Safety</span>
+                                    <strong>{% if spec.abs and spec.abs.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Airbags</span>
+                                    <strong>{% if spec.airbags and (spec.airbags == 'Yes' or spec.airbags|int > 0) %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Sunroof</span>
+                                    <strong>{% if spec.sunroof and spec.sunroof.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Cruise Control</span>
+                                    <strong>{% if spec.cruise_control and spec.cruise_control.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Reverse Camera</span>
+                                    <strong>{% if spec.reverse_camera and spec.reverse_camera.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Android Auto</span>
+                                    <strong>{% if spec.android_auto and spec.android_auto.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Apple CarPlay</span>
+                                    <strong>{% if spec.apple_carplay and spec.apple_carplay.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> ESP Stability</span>
+                                    <strong>{% if spec.esp and spec.esp.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> TPMS Monitor</span>
+                                    <strong>{% if spec.tpms and spec.tpms.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Hill Assist</span>
+                                    <strong>{% if spec.hill_assist and spec.hill_assist.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Fog Lamps</span>
+                                    <strong>{% if spec.fog_lamps and spec.fog_lamps.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> ADAS Safety</span>
+                                    <strong>{% if spec.adas and spec.adas.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Power Steering</span>
+                                    <strong>{% if spec.power_steering and spec.power_steering.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> ACC Climate</span>
+                                    <strong>{% if spec.automatic_climate_control and spec.automatic_climate_control.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Traction Control</span>
+                                    <strong>{% if spec.traction_control and spec.traction_control.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                                <div class="spec-grid-item" style="border: none; padding: 0.35rem 0;">
+                                    <span style="font-size: 0.85rem;"><i class="fa-solid fa-circle-check" style="color: #1E88FF; margin-right: 0.25rem;"></i> Parking Sensors</span>
+                                    <strong>{% if spec.parking_sensors and spec.parking_sensors.lower() == 'yes' %}✅{% else %}❌{% endif %}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- RIGHT COLUMN: AI Valuation & Charts -->
+                    <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+                        
+                        <!-- C. AI Valuation Metrics Card -->
+                        <div class="report-card" style="border-left: 5px solid #1E88FF;">
+                            <h4 style="font-size: 1.35rem; color: #1B2430; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;"><i class="fa-solid fa-microchip" style="color: #1E88FF;"></i> Neural AI Appraisal Metrics</h4>
+                            
+                            <!-- Main Price Highlight Row -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem; text-align: left;">
+                                <div>
+                                    <span style="font-size: 0.85rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 0.25rem;">Estimated Market Price</span>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <h2 style="font-size: 3.2rem; font-weight: 800; background: linear-gradient(135deg, #1E88FF, #42A5F5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; line-height: 1;">₹ {{ car.price | indian_currency }}</h2>
+                                        <i class="fa-solid fa-circle-arrow-up" style="color: #2ECC71; font-size: 1.75rem; filter: drop-shadow(0 2px 5px rgba(46,204,113,0.2));" title="Highly Appraised Segment"></i>
+                                    </div>
+                                </div>
+                                <div style="text-align: right; min-width: 150px;">
+                                    <span style="font-size: 0.85rem; color: #6B7280; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 0.25rem;">Expected Selling Price</span>
+                                    <h3 style="font-size: 1.85rem; font-weight: 700; color: #1B2430; margin: 0;">₹ {{ car.price_expected | indian_currency }}</h3>
+                                </div>
+                            </div>
+                            
+                            <!-- Fair Price Range Panel -->
+                            <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; text-align: left;">
+                                <span style="font-size: 0.9rem; color: #4B5563; font-weight: 600;"><i class="fa-solid fa-arrows-left-right" style="color: #1E88FF; margin-right: 0.35rem;"></i> Fair Price Range:</span>
+                                <strong style="font-size: 1.2rem; color: #1E88FF;">₹ {{ car.price_low | indian_currency }} - ₹ {{ car.price_high | indian_currency }}</strong>
+                            </div>
+                            
+                            <!-- AI Metrics Parameters Grid -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; border-top: 1px solid #E6F0FF; padding-top: 1.5rem;">
+                                <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 0.85rem; border-radius: 10px; text-align: left;">
+                                    <span style="font-size: 0.75rem; color: #6B7280; display: block; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">AI Score</span>
+                                    <strong style="font-size: 1.25rem; color: #1B2430;">{{ car.score }}/100</strong>
+                                </div>
+                                <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 0.85rem; border-radius: 10px; text-align: left;">
+                                    <span style="font-size: 0.75rem; color: #6B7280; display: block; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Confidence</span>
+                                    <strong style="font-size: 1.25rem; color: #2ECC71;">{{ car.confidence }}%</strong>
+                                </div>
+                                <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 0.85rem; border-radius: 10px; text-align: left;">
+                                    <span style="font-size: 0.75rem; color: #6B7280; display: block; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Depreciation</span>
+                                    <strong style="font-size: 1.25rem; color: #F39C12;">{{ car.depreciation }}%</strong>
+                                </div>
+                                <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 0.85rem; border-radius: 10px; text-align: left;">
+                                    <span style="font-size: 0.75rem; color: #6B7280; display: block; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">Market Demand</span>
+                                    <strong style="font-size: 1.25rem; color: #1E88FF;">{{ recal.demand_score }}%</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- D. Pricing Charts Card -->
+                        <div class="report-card">
+                            <h4 style="font-size: 1.2rem; color: #1B2430; margin: 0 0 1.5rem 0; text-align: left; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;"><i class="fa-solid fa-chart-pie" style="color: #1E88FF;"></i> Pricing Trend & Value Distribution</h4>
+                            
+                            <div class="report-trend-grid" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.5rem; align-items: center;">
+                                <!-- 5-Year Trend line chart -->
+                                <div style="height: 200px; position: relative;">
+                                    <canvas id="reportTrendChart"></canvas>
+                                </div>
+                                <!-- Depreciation doughnut chart -->
+                                <div style="height: 180px; position: relative;">
+                                    <canvas id="reportDepChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Inspection Verification Checklist Grid -->
+                        <div class="report-card">
+                            <h4 style="font-size: 1.2rem; color: #1B2430; margin: 0 0 1.25rem 0; text-align: left; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;"><i class="fa-solid fa-list-check" style="color: #1E88FF;"></i> Inspection Verification Checklist</h4>
+                            
+                            <div class="report-checklist-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.875rem; text-align: left;">
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">Engine condition</span>
+                                    <strong style="color: #1B2430;">{{ car.engine_condition }}</strong>
+                                </div>
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">Gearbox shifts</span>
+                                    <strong style="color: #1B2430;">{{ car.gearbox_condition }}</strong>
+                                </div>
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">Clutch condition</span>
+                                    <strong style="color: #1B2430;">{{ car.clutch_condition or 'Excellent' }}</strong>
+                                </div>
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">Brakes condition</span>
+                                    <strong style="color: #1B2430;">{{ car.brake_condition }}</strong>
+                                </div>
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">Tyres tread</span>
+                                    <strong style="color: #1B2430;">{{ car.tyre_condition }}</strong>
+                                </div>
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">Suspension response</span>
+                                    <strong style="color: #1B2430;">{{ car.suspension_condition }}</strong>
+                                </div>
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">Battery condition</span>
+                                    <strong style="color: #1B2430;">{{ car.battery_condition or 'Healthy' }}</strong>
+                                </div>
+                                <div style="border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #6B7280; display: block; font-size: 0.75rem;">AC condition</span>
+                                    <strong style="color: #1B2430;">{{ car.ac_condition }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Future Value Forecast & suggestions -->
+                <div class="report-grid">
+                    
+                    <div class="report-card" style="text-align: left;">
+                        <h4 style="font-size: 1.15rem; color: #1B2430; margin: 0 0 1.25rem 0;"><i class="fa-solid fa-hourglass-half" style="color: #1E88FF;"></i> Resale Depreciation Forecast</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.95rem;">
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                <span style="color: #6B7280;">In 1 Year (AI Forecast)</span>
+                                <strong style="color: #1B2430;">₹ {{ recal.future_1 | indian_currency }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                <span style="color: #6B7280;">In 2 Years (AI Forecast)</span>
+                                <strong style="color: #1B2430;">₹ {{ recal.future_2 | indian_currency }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                <span style="color: #6B7280;">In 3 Years (AI Forecast)</span>
+                                <strong style="color: #1B2430;">₹ {{ recal.future_3 | indian_currency }}</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding-bottom: 0.4rem;">
+                                <span style="color: #6B7280;">Demand Score Index</span>
+                                <strong style="color: #2ECC71;">{{ recal.demand_score }}% (High Demand)</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="report-card" style="text-align: left;">
+                        <h4 style="font-size: 1.15rem; color: #1B2430; margin: 0 0 1.25rem 0;"><i class="fa-solid fa-lightbulb" style="color: #1E88FF;"></i> Dynamic Appraisal Tips</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.9rem;">
+                            <p style="margin: 0; color: #4B5563;"><strong style="color: #1E88FF;">Buyer Guideline:</strong> {{ recal.buyer_recom }}</p>
+                            <p style="margin: 0; color: #4B5563;"><strong style="color: #1E88FF;">Seller Guideline:</strong> {{ recal.seller_recom }}</p>
+                            <p style="margin: 0; color: #4B5563;"><strong style="color: #1E88FF;">Maintenance:</strong> {{ recal.maintenance_tips }}</p>
+                            <p style="margin: 0; color: #4B5563;"><strong style="color: #1E88FF;">Negotiation:</strong> {{ recal.negotiation_tips }}</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- E. AI Recommendation Box -->
+                <div class="report-card" style="margin-bottom: 2.5rem; text-align: left; border-left: 5px solid #1E88FF;">
+                    <h4 style="font-size: 1.25rem; color: #1B2430; margin: 0 0 1.25rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;"><i class="fa-solid fa-brain" style="color: #1E88FF;"></i> AI Recommendation Analysis</h4>
+                    <p style="font-size: 1.05rem; line-height: 1.75; color: #4B5563; margin: 0;">{{ explanation }}</p>
+                </div>
+
+                <!-- MARKET INTELLIGENCE MODULE -->
+                <div class="report-card" style="margin-bottom: 2.5rem; text-align: left;">
+                    <h4 style="font-size: 1.35rem; color: #1B2430; margin: 0 0 1.75rem 0; display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid #E6F0FF; padding-bottom: 0.75rem;">
+                        <i class="fa-solid fa-chart-line" style="color: #1E88FF;"></i> Real-time Market Intelligence Insights
+                    </h4>
+                    
+                    <!-- 1. Stats Row -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                        <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 1.25rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                            <span style="font-size: 0.85rem; color: #6B7280; text-transform: uppercase; display: block; margin-bottom: 0.35rem; font-weight: 500;">Average Market Price</span>
+                            <strong style="font-size: 1.5rem; color: #1B2430; display: block;">₹ {{ market_intel.avg_market_price | indian_currency }}</strong>
+                        </div>
+                        <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 1.25rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                            <span style="font-size: 0.85rem; color: #6B7280; text-transform: uppercase; display: block; margin-bottom: 0.35rem; font-weight: 500;">Lowest Market Price</span>
+                            <strong style="font-size: 1.5rem; color: #E74C3C; display: block;">₹ {{ market_intel.lowest_market_price | indian_currency }}</strong>
+                        </div>
+                        <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 1.25rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                            <span style="font-size: 0.85rem; color: #6B7280; text-transform: uppercase; display: block; margin-bottom: 0.35rem; font-weight: 500;">Highest Market Price</span>
+                            <strong style="font-size: 1.5rem; color: #2ECC71; display: block;">₹ {{ market_intel.highest_market_price | indian_currency }}</strong>
+                        </div>
+                        <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 1.25rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.01);">
+                            <span style="font-size: 0.85rem; color: #6B7280; text-transform: uppercase; display: block; margin-bottom: 0.35rem; font-weight: 500;">Estimated Days to Sell</span>
+                            <strong style="font-size: 1.5rem; color: #1E88FF; display: block;">{{ selling_time.days }}</strong>
+                        </div>
+                    </div>
+
+                    <!-- 2. Demand/Supply indicators, Dealer vs Individual, Best/Worst State -->
+                    <div class="report-grid" style="margin-bottom: 2.5rem;">
+                        
+                        <!-- Left Panel: Selling Comparisons & Indicators -->
+                        <div>
+                            <h5 style="font-size: 1.05rem; color: #1B2430; margin: 0 0 1rem 0; font-weight: 700;"><i class="fa-solid fa-scale-balanced" style="color: #1E88FF; margin-right: 0.5rem;"></i> Channels & Liquidities</h5>
+                            <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.9rem; background: #F8FBFF; border: 1px solid #E6F0FF; padding: 1.25rem; border-radius: 12px;">
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #4B5563;">Dealer Buying Valuation</span>
+                                    <strong style="color: #1B2430;">₹ {{ market_intel.dealer_price | indian_currency }}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #4B5563;">Individual Resale Value</span>
+                                    <strong style="color: #1B2430;">₹ {{ market_intel.individual_price | indian_currency }}</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.4rem;">
+                                    <span style="color: #4B5563;">Current Market Demand</span>
+                                    <strong style="color: #1E88FF;">{{ market_intel.demand_level }}% (High)</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: #4B5563;">Current Market Supply</span>
+                                    <strong style="color: #F39C12;">{{ market_intel.supply_level }}% (Moderate)</strong>
+                                </div>
+                            </div>
+
+                            <h5 style="font-size: 1.05rem; color: #1B2430; margin: 1.5rem 0 1rem 0; font-weight: 700;"><i class="fa-solid fa-map-pin" style="color: #1E88FF; margin-right: 0.5rem;"></i> Regional Market Arbitrage</h5>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div style="background: rgba(46, 204, 113, 0.05); border: 1px solid rgba(46, 204, 113, 0.15); padding: 0.85rem; border-radius: 8px; text-align: left;">
+                                    <span style="font-size: 0.725rem; color: #6B7280; display: block; font-weight: 600;">BEST STATE TO SELL</span>
+                                    <strong style="color: #2ECC71; font-size: 0.95rem;">{{ market_intel.best_state }}</strong>
+                                </div>
+                                <div style="background: rgba(231, 76, 60, 0.05); border: 1px solid rgba(231, 76, 60, 0.15); padding: 0.85rem; border-radius: 8px; text-align: left;">
+                                    <span style="font-size: 0.725rem; color: #6B7280; display: block; font-weight: 600;">WORST STATE TO SELL</span>
+                                    <strong style="color: #E74C3C; font-size: 0.95rem;">{{ market_intel.worst_state }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: State-wise prices -->
+                        <div>
+                            <h5 style="font-size: 1.05rem; color: #1B2430; margin: 0 0 1rem 0; font-weight: 700;"><i class="fa-solid fa-globe" style="color: #1E88FF; margin-right: 0.5rem;"></i> State-wise Market Price Sheets</h5>
+                            <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.875rem;">
+                                {% for state, val in market_intel.state_prices.items() %}
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1.5px solid #E6F0FF; padding-bottom: 0.35rem;">
+                                    <span style="color: #4B5563;">{{ state }} Region Appraisal</span>
+                                    <strong style="color: #1B2430;">₹ {{ val | indian_currency }}</strong>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Seasonal Demand Graph and Top 5 Similar Vehicles -->
+                    <div class="report-grid">
+                        
+                        <!-- Similar Vehicles Section -->
+                        <div>
+                            <h5 style="font-size: 1.05rem; color: #1B2430; margin: 0 0 1rem 0; font-weight: 700;"><i class="fa-solid fa-car-side" style="color: #1E88FF; margin-right: 0.5rem;"></i> Top 5 Similar Segment Market Listings</h5>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                {% for sim in market_intel.similar_cars %}
+                                <div style="background: #F8FBFF; border: 1px solid #E6F0FF; padding: 0.75rem 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="text-align: left;">
+                                        <strong style="color: #1B2430; font-size: 0.9rem; display: block;">{{ sim.brand }} {{ sim.model }}</strong>
+                                        <span style="font-size: 0.75rem; color: #6B7280;">{{ sim.variant }}</span>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <strong style="color: #1E88FF; font-size: 0.95rem; display: block;">₹ {{ sim.price | indian_currency }}</strong>
+                                        <span style="font-size: 0.75rem; color: #2ECC71; font-weight: 600;">Score: {{ sim.score }}</span>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Seasonal graph -->
+                        <div>
+                            <h5 style="font-size: 1.05rem; color: #1B2430; margin: 0 0 1rem 0; font-weight: 700;"><i class="fa-solid fa-calendar-days" style="color: #1E88FF; margin-right: 0.5rem;"></i> Monthly Seasonal Demand Fluctuations</h5>
+                            <div style="height: 230px; position: relative;">
+                                <canvas id="seasonalDemandChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- QR code, signature and metadata verification -->
+                <div class="report-grid" style="align-items: center; border-top: 1px solid #E6F0FF; padding-top: 2rem;">
+                    
+                    <!-- QR Verification card -->
+                    <div class="report-card" style="display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem; background: #FFFFFF !important;">
+                        <div style="background: #FFFFFF; padding: 8px; border-radius: 12px; display: inline-block; box-shadow: 0 10px 25px rgba(30, 136, 255, 0.05); border: 1px solid #E6F0FF;">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=http://localhost:5000/report/{{ car.id }}" alt="Report QR Code" style="width: 100px; height: 100px; display: block;">
+                        </div>
+                        <div style="text-align: left;">
+                            <h5 style="font-size: 1.05rem; color: #1B2430; margin: 0 0 0.25rem 0; font-weight: 700;">Verify Report Authenticity</h5>
+                            <p style="font-size: 0.85rem; color: #6B7280; margin: 0 0 0.5rem 0; line-height: 1.4;">Scan to verify report authenticity on the live KARMANI AI database.</p>
+                            <span style="font-size: 0.775rem; color: #1E88FF; font-weight: 600;">ID: VAL-{{ car.id }}-SECURE</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Verification block -->
+                    <div style="text-align: right; padding-right: 1rem;">
+                        <span style="font-size: 0.75rem; color: #6B7280; display: block; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">VALUATED BY</span>
+                        <span style="font-size: 1.15rem; font-weight: 800; color: #1E88FF; display: block; margin: 0.25rem 0;">KARMANI AI CAR VALUATORS</span>
+                        <span style="font-size: 0.85rem; color: #4B5563; display: block; font-weight: 600; line-height: 1.4;">Artificial Intelligence Vehicle Valuation Engine</span>
+                        <span style="font-size: 0.85rem; color: #6B7280; display: block; font-weight: 500;">Powered by Machine Learning</span>
+                        <span style="font-size: 0.9rem; color: #2ECC71; display: block; font-weight: 700; margin-top: 0.35rem;"><i class="fa-solid fa-circle-check"></i> AI VERIFIED ✓</span>
+                    </div>
+
+                </div>
+
+                <!-- F. Technical Action Sheet Button Panels -->
+                <div class="report-actions-panel" style="border-top: 1px solid #E6F0FF; padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1;">
+                    {% if session.get('user_id') %}
+                    <a href="/dashboard" class="btn-result-reset" style="padding: 0.95rem 2rem; border-radius: 30px; text-decoration: none; background: #FFFFFF; border: 1px solid #E6F0FF; color: #1B2430; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02);"><i class="fa-solid fa-arrow-left-long"></i> Back to Dashboard</a>
+                    {% else %}
+                    <a href="/valuation" class="btn-result-reset" style="padding: 0.95rem 2rem; border-radius: 30px; text-decoration: none; background: #FFFFFF; border: 1px solid #E6F0FF; color: #1B2430; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02);"><i class="fa-solid fa-arrow-left-long"></i> Back to appraisal</a>
+                    {% endif %}
+                    
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <a href="/report/{{ car.id }}/pdf" class="btn-gradient" style="background: linear-gradient(135deg, #1E88FF, #42A5F5); box-shadow: 0 4px 15px rgba(30, 136, 255, 0.15); display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none; padding: 0.75rem 1.4rem; border-radius: 20px; color: #FFFFFF; font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-file-pdf"></i> Download PDF</a>
+                        <button type="button" class="btn-gradient" onclick="navigator.clipboard.writeText(window.location.href); showToastNotification('✓ Report URL successfully copied to clipboard!');" style="background: linear-gradient(135deg, #1E88FF, #42A5F5); box-shadow: 0 4px 15px rgba(30, 136, 255, 0.15); display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.75rem 1.4rem; border-radius: 20px; color: #FFFFFF; border: none; cursor: pointer; font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-share-nodes"></i> Share</button>
+                        <a href="/garage/add/{{ car.id }}" class="btn-gradient" style="background: linear-gradient(135deg, #1E88FF, #42A5F5); box-shadow: 0 4px 15px rgba(30, 136, 255, 0.15); display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none; padding: 0.75rem 1.4rem; border-radius: 20px; color: #FFFFFF; font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-warehouse"></i> Save to Garage</a>
+                        <a href="/report/{{ car.id }}/certificate" class="btn-gradient" style="background: linear-gradient(135deg, #1E88FF, #42A5F5); box-shadow: 0 4px 15px rgba(30, 136, 255, 0.15); display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none; padding: 0.75rem 1.4rem; border-radius: 20px; color: #FFFFFF; font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-certificate"></i> Download Certificate</a>
+                        <a href="/report/{{ car.id }}/certificate?view=inline" target="_blank" class="btn-gradient" style="background: linear-gradient(135deg, #1E88FF, #42A5F5); box-shadow: 0 4px 15px rgba(30, 136, 255, 0.15); display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none; padding: 0.75rem 1.4rem; border-radius: 20px; color: #FFFFFF; font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-eye"></i> View Certificate</a>
+                        <button type="button" class="btn-gradient" onclick="window.print()" style="background: linear-gradient(135deg, #1E88FF, #42A5F5); box-shadow: 0 4px 15px rgba(30, 136, 255, 0.15); display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.75rem 1.4rem; border-radius: 20px; color: #FFFFFF; border: none; cursor: pointer; font-weight: 600; font-size: 0.875rem;"><i class="fa-solid fa-print"></i> Print Report</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Chart triggers script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Line Chart: 5-Year Trend
+            const trendCtx = document.getElementById('reportTrendChart').getContext('2d');
+            const trendData = {{ trend_prices | tojson }};
+            const currentYr = 2026;
+            const years = [currentYr - 4, currentYr - 3, currentYr - 2, currentYr - 1, currentYr];
+            
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Market Price (₹)',
+                        data: trendData,
+                        borderColor: '#1E88FF',
+                        borderWidth: 3,
+                        backgroundColor: 'rgba(30, 136, 255, 0.08)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#1E88FF',
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { 
+                            grid: { color: '#E6F0FF' }, 
+                            ticks: { color: '#4B5563', font: { family: 'Outfit', size: 9 } } 
+                        },
+                        y: { 
+                            grid: { color: '#E6F0FF' }, 
+                            ticks: { 
+                                color: '#4B5563', 
+                                font: { family: 'Outfit', size: 9 },
+                                callback: function(val) {
+                                    if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + 'L';
+                                    return '₹' + val.toLocaleString('en-IN');
+                                }
+                            } 
+                        }
+                    }
+                }
+            });
+
+            // 2. Doughnut Chart: Depreciation Distribution
+            const depCtx = document.getElementById('reportDepChart').getContext('2d');
+            const netPercent = 100 - {{ car.depreciation or 18 }};
+            const depPercent = {{ car.depreciation or 18 }};
+            
+            new Chart(depCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Net Value', 'Depreciation'],
+                    datasets: [{
+                        data: [netPercent, depPercent],
+                        backgroundColor: ['#1E88FF', 'rgba(231, 76, 60, 0.85)'],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#4B5563',
+                                font: { family: 'Outfit', size: 9 }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // 3. Line Chart: Seasonal Demand Fluctuation
+            const seasonalCtx = document.getElementById('seasonalDemandChart').getContext('2d');
+            const seasonalData = {{ market_intel.seasonal_data | tojson }};
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            new Chart(seasonalCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Demand Price Factor (₹)',
+                        data: seasonalData,
+                        borderColor: '#1E88FF',
+                        borderWidth: 3,
+                        backgroundColor: 'rgba(30, 136, 255, 0.08)',
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#1E88FF',
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { 
+                            grid: { color: '#E6F0FF' }, 
+                            ticks: { color: '#4B5563', font: { family: 'Outfit', size: 9 } } 
+                        },
+                        y: { 
+                            grid: { color: '#E6F0FF' }, 
+                            ticks: { 
+                                color: '#4B5563', 
+                                font: { family: 'Outfit', size: 9 },
+                                callback: function(val) {
+                                    if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + 'L';
+                                    return '₹' + val.toLocaleString('en-IN');
+                                }
+                            } 
+                        }
+                    }
+                }
+            });
+        });
+
+        function toggleGlobalFavorite(icon, carId) {
+            fetch(`/api/toggle-favorite/${carId}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'added') {
+                        icon.className = 'fa-solid fa-star';
+                        showToastNotification('✓ Added to Favorites');
+                    } else if (res.status === 'removed') {
+                        icon.className = 'fa-regular fa-star';
+                        showToastNotification('Removed from Favorites');
+                    } else {
+                        alert(res.message || 'Please login to save favorites.');
+                    }
+                });
+        }
+
+        function showToastNotification(message) {
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '2rem';
+            toast.style.right = '2rem';
+            toast.style.background = '#FFFFFF';
+            toast.style.border = '1px solid #E6F0FF';
+            toast.style.color = '#1B2430';
+            toast.style.padding = '0.85rem 1.5rem';
+            toast.style.borderRadius = '8px';
+            toast.style.boxShadow = '0 10px 25px rgba(30, 136, 255, 0.08)';
+            toast.style.zIndex = '9999';
+            toast.style.fontSize = '0.9rem';
+            toast.style.fontWeight = '600';
+            toast.style.backdropFilter = 'blur(10px)';
+            toast.style.animation = 'fadeInUp 0.3s ease-out';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+    </script>
+</body>
+</html>

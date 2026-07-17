@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ error_code }} - KARMANI AI CAR VALUATORS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-main);
+        }
+        .error-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 4rem 3rem;
+            max-width: 520px;
+            width: 100%;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.05em;
+        }
+        .error-title {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .error-desc {
+            color: var(--text-gray);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <!-- Glowing background nodes -->
+        <div class="glow-node glow-node-1" style="top:20%; left:20%; background: var(--primary-glow);"></div>
+        <div class="glow-node glow-node-2" style="bottom:20%; right:20%; background: var(--accent-glow);"></div>
+
+        <div class="error-card">
+            <a href="/" style="display: inline-block; margin-bottom: 2rem;">
+                <img src="/static/images/logo_horizontal.svg" alt="KARMANI AI" style="height: 42px;">
+            </a>
+            <div class="error-code">{{ error_code }}</div>
+            <h1 class="error-title">{{ error_title }}</h1>
+            <p class="error-desc">{{ error_desc }}</p>
+            <a href="/" class="btn-submit-valuation" style="padding: 1rem 2.5rem; border-radius: 12px; text-decoration: none; font-size: 1rem; display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center; margin: 0 auto; box-shadow: var(--shadow-sm);">
+                <i class="fa-solid fa-house"></i> Return to Homepage
+            </a>
+        </div>
+    </div>
+</body>
+</html>

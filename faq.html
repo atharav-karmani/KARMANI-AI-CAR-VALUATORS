@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions | KARMANI AI CAR VALUATORS</title>
+    <meta name="description" content="Find answers to all your questions about vehicle valuation, machine learning algorithms, and digital garages at KARMANI AI CAR VALUATORS.">
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .faq-hero {
+            padding: 9rem 0 5rem 0;
+            background: linear-gradient(135deg, rgba(0, 157, 255, 0.04) 0%, rgba(0, 217, 255, 0.02) 100%);
+            border-bottom: 1px solid var(--card-border);
+            text-align: center;
+        }
+        .faq-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .faq-title {
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+        }
+        .faq-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .faq-section {
+            padding: 5rem 0;
+            background: #F8FCFF;
+        }
+        .faq-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            align-items: flex-start;
+        }
+        @media (max-width: 991px) {
+            .faq-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+        .faq-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .faq-item {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.01);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .faq-item:hover {
+            border-color: #0ea5e9;
+            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.05);
+        }
+        .faq-item.active {
+            border-color: #0284C7;
+            box-shadow: 0 10px 30px rgba(2, 132, 199, 0.08);
+        }
+        .faq-header {
+            width: 100%;
+            padding: 1.5rem 1.75rem;
+            background: #FFFFFF;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            outline: none;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .faq-question {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.4;
+        }
+        .faq-icon-box {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: #F0F9FF;
+            border: 1px solid #E0F2FE;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0ea5e9;
+            font-size: 0.8rem;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+        }
+        .faq-item.active .faq-icon-box {
+            background: #0284C7;
+            border-color: #0284C7;
+            color: #FFFFFF;
+            transform: rotate(180deg);
+        }
+        .faq-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: #FFFFFF;
+        }
+        .faq-content {
+            padding: 0 1.75rem 1.75rem 1.75rem;
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+            border-top: 1px solid transparent;
+        }
+        .faq-item.active .faq-body {
+            /* The script dynamically handles max-height values for smooth transitions */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Component -->
+    {% include 'navbar.html' %}
+
+    <!-- Hero Section -->
+    <header class="faq-hero">
+        <div class="faq-hero-content">
+            <h1 class="faq-title">Frequently Asked Questions</h1>
+            <p class="faq-subtitle">Everything you need to know about KARMANI AI CAR VALUATORS.</p>
+        </div>
+    </header>
+
+    <!-- Main Content Accordion Grid -->
+    <main class="faq-section">
+        <div class="faq-container">
+            
+            <!-- Left Column: FAQs 1 to 10 -->
+            <div class="faq-column">
+                
+                <!-- Q1 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">1. What is KARMANI AI CAR VALUATORS?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">KARMANI AI CAR VALUATORS is India's leading AI-powered vehicle intelligence platform. It uses machine learning models to analyze market data, vehicle parameters, and historical launch details. This ensures you receive transparent and accurate pricing estimates in seconds.</p>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">2. How does AI estimate car prices?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Our predictive engine utilizes Random Forest Regression algorithms trained on thousands of vehicle transactions in India. It maps characteristics like brand, engine size, fuel type, age, ownership history, and condition parameters to find a precise market range. This removes human bias and dealer inflation from the appraisal process.</p>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">3. Which car brands are supported?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">We support over 28 major Indian and international passenger vehicle brands. This includes top market leaders like Maruti Suzuki, Hyundai, Tata, Mahindra, Honda, Toyota, and Kia, as well as luxury brands like BMW, Mercedes-Benz, and Audi. You can check valuations for discontinued models too.</p>
+                    </div>
+                </div>
+
+                <!-- Q4 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">4. Is the valuation free?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Yes, appraising any passenger car and generating an instant AI valuation range is completely free. We believe every vehicle owner in India deserves access to fair, transparent pricing. Registered users also get advanced features like Digital Garage slots and bookmarks without any cost.</p>
+                    </div>
+                </div>
+
+                <!-- Q5 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">5. How accurate is the valuation?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Our Machine Learning engine maintains a 98% prediction accuracy rate compared to real pre-owned market transactions. The pricing is calibrated across regional registration states, odometer intervals, and physical inspection grades. However, final value may vary slightly depending on localized dealer densities and individual car maintenance logs.</p>
+                    </div>
+                </div>
+
+                <!-- Q6 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">6. What factors affect resale value?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Resale values are heavily dependent on vehicle age, kilometers driven, ownership index, and physical mechanical logs. Additionally, details like safety NCAP ratings, variant spec tiers, valid comprehensive insurance, paint condition, and brand demand shifts play critical roles. Keeping clean records slows down the depreciation coefficient.</p>
+                    </div>
+                </div>
+
+                <!-- Q7 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">7. How is depreciation calculated?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Depreciation is computed dynamically using segment-based residual value models. Hatchbacks generally depreciate faster, whereas SUVs retain high margins longer due to structural demand. Typically, a new car loses 20% in its first year, and then continues dropping 10-15% annually depending on maintenance history.</p>
+                    </div>
+                </div>
+
+                <!-- Q8 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">8. Can I compare two cars?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Yes, we provide a Compare Cars Matrix tool that matches any two passenger vehicle variants side-by-side. It highlights engine capacities, transmissions, estimated fuel mileages, and safety ratings. This helps you weigh options and decide which vehicle offers better value.</p>
+                    </div>
+                </div>
+
+                <!-- Q9 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">9. Does mileage affect price?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Mileage is one of the most critical factors mapped by our ML algorithm. High odometer readouts indicate engine wear, translating to higher maintenance costs and faster depreciation. Conversely, low-mileage vehicles command premium pricing in the second-hand market.</p>
+                    </div>
+                </div>
+
+                <!-- Q10 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">10. Does ownership history matter?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Yes, the number of previous owners is highly correlated with how a vehicle depreciates. Single-owner vehicles represent lower maintenance risks and attract premium values. Each additional owner typically triggers a cumulative downgrade in valuation coefficients.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Column: FAQs 11 to 20 -->
+            <div class="faq-column">
+                
+                <!-- Q11 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">11. Can I save my reports?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Registered users can bookmark their valuation reports directly to their profile with a single click. This lets you monitor the car's estimated value over time without re-entering parameters. Saved reports can also be downloaded and printed as PDF documents.</p>
+                    </div>
+                </div>
+
+                <!-- Q12 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">12. What is the Digital Garage?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">The Digital Garage is a virtual fleet management dashboard for logged-in users. It lets you register your vehicles, track odometer milestones, upload registration certificates (RC) and insurance policies. It also provides maintenance countdowns and alert reminders automatically.</p>
+                    </div>
+                </div>
+
+                <!-- Q13 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">13. Is my data secure?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Absolutely. We implement strict data encryption, secure session tokens, and CSRF request protections to keep your personal information safe. Your registered vehicle details and uploaded documents are only accessible through your authenticated dashboard. We never share your data with unauthorized third parties.</p>
+                    </div>
+                </div>
+
+                <!-- Q14 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">14. How often is market data updated?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Our backend data sheets, historical launch indexes, and demand metrics are updated regularly to track current inflation rates. This keeps our valuation outputs aligned with actual pre-owned transaction trends in India. Our machine learning models are also periodically retrained with new datasets.</p>
+                    </div>
+                </div>
+
+                <!-- Q15 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">15. Can dealerships use this platform?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Yes, dealerships, fleet managers, and individual brokers can use our tools to verify pre-owned vehicle stock ranges. The platform provides a quick reference index to help commercial partners evaluate cars fairly. Large-scale business integrations can also benefit from our admin panel tools.</p>
+                    </div>
+                </div>
+
+                <!-- Q16 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">16. Does insurance affect valuation?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Yes, having a valid comprehensive or Zero-Depreciation insurance policy significantly protects a vehicle's appraised value. It proves that any potential repair liabilities are fully covered, making the vehicle more attractive to buyers. Expired insurance, conversely, results in a deduction from the overall health score.</p>
+                    </div>
+                </div>
+
+                <!-- Q17 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">17. What AI model powers the system?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">The platform is powered by an advanced Random Forest Regressor model built with Scikit-Learn. It parses multiple parameters simultaneously and matches them against thousands of training data inputs. This ensures highly stable pricing outputs that avoid the volatility of simple averages.</p>
+                    </div>
+                </div>
+
+                <!-- Q18 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">18. Can I download valuation reports?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Yes, you can generate and download a comprehensive, professional PDF report for any vehicle appraised on our platform. The report contains spec details, a breakdown of condition parameters, estimated market ranges, and a dynamic depreciation curve. It is perfect to share with potential buyers as a trust certificate.</p>
+                    </div>
+                </div>
+
+                <!-- Q19 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">19. Is the platform mobile friendly?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">Yes, our entire website is built using fully responsive CSS grid systems and layout engines. It is designed to render perfectly on smartphones, tablets, and wide desktop screens. You can run appraisals, check market trends, or update your digital garage on the go.</p>
+                    </div>
+                </div>
+
+                <!-- Q20 -->
+                <div class="faq-item">
+                    <button class="faq-header">
+                        <span class="faq-question">20. How can I contact the developer?</span>
+                        <div class="faq-icon-box"><i class="fa-solid fa-chevron-down"></i></div>
+                    </button>
+                    <div class="faq-body">
+                        <p class="faq-content">You can easily get in touch with our founder and developer, Atharav Karmani, by visiting the Contact page. The page features a contact form to send inquiries directly to the team, along with his SRM B.Tech CSE academic profile and email. We typically respond to all feedback within 24 to 48 hours.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    {% include 'footer.html' %}
+
+    <!-- JS Accordion Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const header = item.querySelector('.faq-header');
+                const body = item.querySelector('.faq-body');
+                
+                header.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    
+                    // Close all active items
+                    faqItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.faq-body').style.maxHeight = null;
+                    });
+                    
+                    if (!isActive) {
+                        item.classList.add('active');
+                        // Set dynamic max-height for smooth transition
+                        body.style.maxHeight = body.scrollHeight + "px";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

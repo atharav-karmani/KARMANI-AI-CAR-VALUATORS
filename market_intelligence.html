@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Market Intelligence - KARMANI AI CAR VALUATORS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Modern SVG Map Styles */
+        .map-wrapper {
+            position: relative;
+            background: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(15px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+        #map-container {
+            width: 100%;
+            max-width: 500px;
+            height: 520px;
+        }
+        #map-container svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
+        }
+        /* State Path Interactive Styling */
+        .state-path {
+            cursor: pointer;
+            transition: fill 0.3s ease, filter 0.3s ease, stroke 0.3s ease, stroke-width 0.3s ease;
+            stroke: rgba(255, 255, 255, 0.15);
+            stroke-width: 1.2;
+        }
+        .state-path:hover {
+            filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.95)) !important;
+            stroke: var(--accent) !important;
+            stroke-width: 2.2 !important;
+        }
+        .state-path.selected {
+            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 1)) !important;
+            stroke: #FFF !important;
+            stroke-width: 2.8 !important;
+        }
+        /* Dropdown Jump Selector styles */
+        .search-jump-container {
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .search-jump-input {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 0.85rem 1rem 0.85rem 2.5rem;
+            color: #111827;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-jump-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+        .search-jump-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.95rem;
+        }
+        .search-jump-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #FFFFFF; border: 1px solid rgba(0, 157, 255, 0.15);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 100;
+            margin-top: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+        .search-jump-item {
+            padding: 0.75rem 1rem;
+            color: #111827;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            display: flex;
+            justify-content: space-between;
+        }
+        .search-jump-item:hover {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--accent);
+        }
+        .search-jump-badge {
+            font-size: 0.725rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        /* Heatmap Legend styles */
+        .legend-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 450px;
+            margin-top: 1.5rem;
+            background: var(--bg-card); border: 1px solid var(--card-border);
+            border: 1px solid rgba(255,255,255,0.04);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        /* Sidebar stats metrics styles */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .metric-cell {
+            background: var(--bg-card); border: 1px solid var(--card-border);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: 0.85rem;
+            text-align: left;
+        }
+        .metric-cell span {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .metric-cell strong {
+            display: block;
+            font-size: 1.15rem;
+            color: #111827;
+            margin-top: 0.25rem;
+        }
+        /* Custom side panel charts container */
+        .panel-charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        .panel-chart-card {
+            background: var(--bg-card); border: 1px solid var(--card-border);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 10px;
+            padding: 1rem;
+        }
+        .panel-chart-card span {
+            display: block;
+            text-align: left;
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        /* Custom comparison module styling */
+        .compare-selector-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            margin-top: 2rem;
+        }
+        .compare-dropdowns-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 1.5rem;
+            align-items: flex-end;
+        }
+        .compare-dropdown-group {
+            position: relative;
+            text-align: left;
+        }
+        .compare-dropdown-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .compare-select-btn {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            color: #111827;
+            font-size: 0.95rem;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        /* Side by Side compare cards styling */
+        .compare-results-overlay {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 2.5rem;
+        }
+        .compare-state-card {
+            background: var(--bg-card); border: 1px solid var(--card-border);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px;
+            padding: 2rem;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Premium Sticky Navigation Bar -->
+    {% include 'navbar.html' %}
+
+    <!-- Main Dashboard Container -->
+    <section class="valuation-section" style="padding-top: 7rem; min-height: 100vh; position: relative;">
+        <!-- Glowing nodes -->
+        <div class="glow-node glow-node-1"></div>
+        <div class="glow-node glow-node-2"></div>
+
+        <div class="container">
+            
+            <header style="text-align: left; margin-bottom: 3rem;">
+                <span style="color: var(--accent); font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.5rem;"><i class="fa-solid fa-earth-asia"></i> Geospatial Analytics</span>
+                <h1 style="font-size: 2.8rem; font-weight: 800; color: #111827; margin: 0; line-height: 1.2;">India Market <span class="accent-text">Intelligence</span></h1>
+                <p style="color: var(--text-gray); font-size: 1.1rem; margin-top: 0.5rem;">Interactive Indian state heat map with real-time pre-owned pricing arbitrage indexes.</p>
+            </header>
+
+            <!-- Grid Layout -->
+            <div class="market-intel-grid" style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2.5rem; align-items: start;">
+                
+                <!-- LEFT COLUMN: SVG MAP AND CONTROLS -->
+                <div>
+                    
+                    <!-- Search bar jump -->
+                    <div class="search-jump-container">
+                        <i class="fa-solid fa-search search-jump-icon"></i>
+                        <input type="text" id="state-search-box" class="search-jump-input" placeholder="Jump directly to any State or UT..." autocomplete="off">
+                        <div class="search-jump-dropdown" id="state-search-results"></div>
+                    </div>
+
+                    <!-- Map wrapper container -->
+                    <div class="map-wrapper">
+                        <h4 style="font-size: 1.15rem; color: #111827; margin: 0 0 1.5rem 0; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center;">
+                            <span><i class="fa-solid fa-map-location-dot" style="color: var(--accent);"></i> Click State/UT to Inspect</span>
+                            <span style="font-size: 0.775rem; color: var(--text-gray);">Interactive Vector Grid</span>
+                        </h4>
+                        
+                        <div id="map-container">
+                            <!-- SVG injected dynamically -->
+                        </div>
+
+                        <!-- Heat Map Legend -->
+                        <div class="legend-container">
+                            <div class="legend-item"><div class="legend-color" style="background: #2E7D32;"></div><span>Very High</span></div>
+                            <div class="legend-item"><div class="legend-color" style="background: #4CAF50;"></div><span>High</span></div>
+                            <div class="legend-item"><div class="legend-color" style="background: #FFEB3B;"></div><span>Medium</span></div>
+                            <div class="legend-item"><div class="legend-color" style="background: #FF9800;"></div><span>Low</span></div>
+                            <div class="legend-item"><div class="legend-color" style="background: #F44336;"></div><span>Very Low</span></div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN: STATE DETAILS glassmorphism side panel -->
+                <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 16px; min-height: 520px; backdrop-filter: blur(15px);">
+                    
+                    <div id="panel-empty-state" style="text-align: center; padding: 6rem 0;">
+                        <i class="fa-solid fa-location-crosshairs" style="font-size: 4rem; color: rgba(0, 240, 255, 0.15); margin-bottom: 1.5rem; display: block;"></i>
+                        <h3 style="color: #111827; font-size: 1.35rem; margin-bottom: 0.5rem;">No State Selected</h3>
+                        <p style="color: var(--text-gray); font-size: 0.95rem; max-width: 320px; margin: 0 auto;">Hover over or click any state/territory on the map to unlock regional valuation telemetry sheets.</p>
+                    </div>
+
+                    <div id="panel-details-box" style="display: none;">
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+                            <div style="text-align: left;">
+                                <h2 id="panel-state-name" style="font-size: 2.10rem; font-weight: 800; color: #111827; margin: 0;">Maharashtra</h2>
+                                <span id="panel-state-region" style="font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">West Region</span>
+                            </div>
+                            <span id="panel-demand-badge" class="search-jump-badge" style="font-size: 0.85rem; padding: 0.25rem 0.75rem;">Very High</span>
+                        </div>
+
+                        <!-- Grid values -->
+                        <div class="metrics-grid">
+                            <div class="metric-cell">
+                                <span>Average Price</span>
+                                <strong id="panel-avg-price">₹ 8,90,000</strong>
+                            </div>
+                            <div class="metric-cell">
+                                <span>Expected Sell Price</span>
+                                <strong id="panel-expected-price">₹ 9,07,000</strong>
+                            </div>
+                            <div class="metric-cell">
+                                <span>Price Range</span>
+                                <strong id="panel-price-range" style="font-size: 0.95rem; margin-top: 0.45rem;">₹ 2.4L - ₹ 78L</strong>
+                            </div>
+                            <div class="metric-cell">
+                                <span>Active Listings</span>
+                                <strong id="panel-listings">8,400</strong>
+                            </div>
+                            <div class="metric-cell">
+                                <span>Popular Brand</span>
+                                <strong id="panel-pop-brand">Maruti Suzuki</strong>
+                            </div>
+                            <div class="metric-cell">
+                                <span>Popular Model</span>
+                                <strong id="panel-pop-model">Swift</strong>
+                            </div>
+                            <div class="metric-cell">
+                                <span>Estimated Sale Time</span>
+                                <strong id="panel-sell-time">8-14 Days</strong>
+                            </div>
+                            <div class="metric-cell">
+                                <span>Recommended Month</span>
+                                <strong id="panel-best-month">November</strong>
+                            </div>
+                        </div>
+
+                        <!-- Progress sliders for supply & demand -->
+                        <div style="text-align: left; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem;">
+                                    <span style="color: var(--text-gray);">Buyer Demand Index</span>
+                                    <strong id="panel-demand-pct" style="color: var(--accent);">92%</strong>
+                                </div>
+                                <div style="width: 100%; height: 6px; background: rgba(0,157,255,0.08); border-radius: 4px; overflow: hidden;">
+                                    <div id="panel-demand-bar" style="height: 100%; background: var(--accent); width: 92%; transition: width 0.4s;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.3rem;">
+                                    <span style="color: var(--text-gray);">Seller Supply Index</span>
+                                    <strong id="panel-supply-pct" style="color: #FF9800;">82%</strong>
+                                </div>
+                                <div style="width: 100%; height: 6px; background: rgba(0,157,255,0.08); border-radius: 4px; overflow: hidden;">
+                                    <div id="panel-supply-bar" style="height: 100%; background: #FF9800; width: 82%; transition: width 0.4s;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI Recommendations text block -->
+                        <div style="background: rgba(0, 157, 255, 0.05); border: 1px solid rgba(0, 157, 255, 0.2); padding: 1.25rem; border-radius: 10px; text-align: left; font-size: 0.875rem;">
+                            <span style="color: var(--accent); font-weight: 700; font-size: 0.775rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.4rem;"><i class="fa-solid fa-brain"></i> AI Recommendation Summary</span>
+                            <p id="panel-ai-recom" style="color: var(--text-gray); margin: 0; line-height: 1.6;"></p>
+                        </div>
+
+                        <!-- Interactive Chart.js grids -->
+                        <div class="panel-charts-container">
+                            <div class="panel-chart-card">
+                                <span>Price Trend Index</span>
+                                <div style="height: 120px; position: relative;">
+                                    <canvas id="chartPriceTrend"></canvas>
+                                </div>
+                            </div>
+                            <div class="panel-chart-card">
+                                <span>Brand Share %</span>
+                                <div style="height: 120px; position: relative;">
+                                    <canvas id="chartBrandShare"></canvas>
+                                </div>
+                            </div>
+                            <div class="panel-chart-card">
+                                <span>Fuel Distribution</span>
+                                <div style="height: 120px; position: relative;">
+                                    <canvas id="chartFuelDist"></canvas>
+                                </div>
+                            </div>
+                            <div class="panel-chart-card">
+                                <span>Vehicle Age %</span>
+                                <div style="height: 120px; position: relative;">
+                                    <canvas id="chartAgeDist"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- COMPARISON MODULE PANEL -->
+            <div class="compare-selector-card">
+                <h4 style="font-size: 1.35rem; color: #111827; margin: 0 0 0.5rem 0; text-align: left;"><i class="fa-solid fa-shuffle" style="color: var(--accent);"></i> Compare Regional Pre-Owned Arbitrages</h4>
+                <p style="color: var(--text-gray); font-size: 0.95rem; text-align: left; margin-bottom: 1.5rem;">Select any two states/union territories to analyze side-by-side pricing spreads and find liquidation arbitrages.</p>
+
+                <div class="compare-dropdowns-row">
+                    <div class="compare-dropdown-group">
+                        <label>Base State/UT (A)</label>
+                        <select id="compare-state-a" class="glass-select" style="width: 100%; border: 1px solid rgba(255,255,255,0.08); padding: 0.85rem; border-radius: 8px; background: rgba(10,15,30,0.8); color: #111827; outline: none;"></select>
+                    </div>
+                    <div class="compare-dropdown-group">
+                        <label>Compare State/UT (B)</label>
+                        <select id="compare-state-b" class="glass-select" style="width: 100%; border: 1px solid rgba(255,255,255,0.08); padding: 0.85rem; border-radius: 8px; background: rgba(10,15,30,0.8); color: #111827; outline: none;"></select>
+                    </div>
+                    <button type="button" class="btn-submit-valuation" id="compare-action-btn" style="padding: 0.95rem 2.5rem; font-size: 0.95rem; border-radius: 8px;"><i class="fa-solid fa-scale-balanced"></i> Run Comparison</button>
+                </div>
+
+                <!-- Comparison Result Cards (display: none initially) -->
+                <div class="compare-results-overlay" id="compare-results-box" style="display: none;">
+                    
+                    <div class="compare-state-card" id="compare-card-a">
+                        <h4 class="compare-name" style="font-size: 1.6rem; font-weight: 800; color: var(--accent); margin: 0 0 1.25rem 0;">State A</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;">
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Average Valuation</span>
+                                <strong class="comp-avg" style="color: #111827;">₹ 0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Active listings</span>
+                                <strong class="comp-listings" style="color: #111827;">0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Growth Index</span>
+                                <strong class="comp-growth" style="color: #111827;">0%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Buyer Demand</span>
+                                <strong class="comp-demand" style="color: var(--accent);">High</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-gray);">Selling Speed</span>
+                                <strong class="comp-speed" style="color: #4CAF50;">Fast</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="compare-state-card" id="compare-card-b">
+                        <h4 class="compare-name" style="font-size: 1.6rem; font-weight: 800; color: #FF9800; margin: 0 0 1.25rem 0;">State B</h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;">
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Average Valuation</span>
+                                <strong class="comp-avg" style="color: #111827;">₹ 0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Active listings</span>
+                                <strong class="comp-listings" style="color: #111827;">0</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Growth Index</span>
+                                <strong class="comp-growth" style="color: #111827;">0%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.4rem;">
+                                <span style="color: var(--text-gray);">Buyer Demand</span>
+                                <strong class="comp-demand" style="color: var(--accent);">High</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-gray);">Selling Speed</span>
+                                <strong class="comp-speed" style="color: #4CAF50;">Fast</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Side by Side AI Arbitrage recommendation block -->
+                    <div class="stat-card" style="grid-column: span 2; padding: 2rem; background: rgba(0, 157, 255, 0.05); border: 1px solid rgba(0, 157, 255, 0.2); border-radius: 12px; text-align: left; font-size: 0.95rem;">
+                        <h5 style="color: var(--accent); margin: 0 0 0.5rem 0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;"><i class="fa-solid fa-code-compare"></i> Inter-State Arbitrage recommendation</h5>
+                        <p id="compare-arbitrage-text" style="color: var(--text-gray); margin: 0; line-height: 1.6;"></p>
+                    </div>
+
+                </div>
+
+            </div>
+
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- Custom logic scripts -->
+    <script>
+        // --- 1. Master State Metadata ---
+        const stateMetadata = {
+            'an': { name: 'Andaman and Nicobar Islands', region: 'Northeast', demand: 'Very Low', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'ap': { name: 'Andhra Pradesh', region: 'South', demand: 'High', pop_brand: 'Hyundai', pop_model: 'Creta' },
+            'ar': { name: 'Arunachal Pradesh', region: 'Northeast', demand: 'Low', pop_brand: 'Mahindra', pop_model: 'Bolero' },
+            'as': { name: 'Assam', region: 'Northeast', demand: 'Medium', pop_brand: 'Maruti Suzuki', pop_model: 'Swift' },
+            'br': { name: 'Bihar', region: 'East', demand: 'Medium', pop_brand: 'Mahindra', pop_model: 'Scorpio' },
+            'ch': { name: 'Chandigarh', region: 'North', demand: 'High', pop_brand: 'Hyundai', pop_model: 'i20' },
+            'ct': { name: 'Chhattisgarh', region: 'Central', demand: 'Medium', pop_brand: 'Maruti Suzuki', pop_model: 'Ertiga' },
+            'dn': { name: 'Dadra and Nagar Haveli', region: 'West', demand: 'Low', pop_brand: 'Maruti Suzuki', pop_model: 'WagonR' },
+            'dd': { name: 'Daman and Diu', region: 'West', demand: 'Low', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'dl': { name: 'Delhi', region: 'North', demand: 'High', pop_brand: 'Maruti Suzuki', pop_model: 'Dzire' },
+            'ga': { name: 'Goa', region: 'West', demand: 'Medium', pop_brand: 'Hyundai', pop_model: 'i10' },
+            'gj': { name: 'Gujarat', region: 'West', demand: 'High', pop_brand: 'Maruti Suzuki', pop_model: 'Swift' },
+            'hr': { name: 'Haryana', region: 'North', demand: 'High', pop_brand: 'Maruti Suzuki', pop_model: 'Brezza' },
+            'hp': { name: 'Himachal Pradesh', region: 'North', demand: 'Medium', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'jk': { name: 'Jammu and Kashmir', region: 'North', demand: 'Low', pop_brand: 'Hyundai', pop_model: 'Santro' },
+            'jh': { name: 'Jharkhand', region: 'East', demand: 'Medium', pop_brand: 'Mahindra', pop_model: 'Bolero' },
+            'ka': { name: 'Karnataka', region: 'South', demand: 'Very High', pop_brand: 'Toyota', pop_model: 'Innova Crysta' },
+            'kl': { name: 'Kerala', region: 'South', demand: 'High', pop_brand: 'Maruti Suzuki', pop_model: 'Swift' },
+            'ld': { name: 'Lakshadweep', region: 'South', demand: 'Very Low', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'mp': { name: 'Madhya Pradesh', region: 'Central', demand: 'Medium', pop_brand: 'Maruti Suzuki', pop_model: 'WagonR' },
+            'mh': { name: 'Maharashtra', region: 'West', demand: 'Very High', pop_brand: 'Maruti Suzuki', pop_model: 'Swift' },
+            'mn': { name: 'Manipur', region: 'Northeast', demand: 'Low', pop_brand: 'Maruti Suzuki', pop_model: 'Eeco' },
+            'ml': { name: 'Meghalaya', region: 'Northeast', demand: 'Low', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'mz': { name: 'Mizoram', region: 'Northeast', demand: 'Very Low', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'nl': { name: 'Nagaland', region: 'Northeast', demand: 'Low', pop_brand: 'Mahindra', pop_model: 'Bolero' },
+            'or': { name: 'Odisha', region: 'East', demand: 'Medium', pop_brand: 'Hyundai', pop_model: 'Grand i10' },
+            'py': { name: 'Puducherry', region: 'South', demand: 'Medium', pop_brand: 'Maruti Suzuki', pop_model: 'Baleno' },
+            'pb': { name: 'Punjab', region: 'North', demand: 'High', pop_brand: 'Mahindra', pop_model: 'Thar' },
+            'rj': { name: 'Rajasthan', region: 'West', demand: 'Medium', pop_brand: 'Maruti Suzuki', pop_model: 'Dzire' },
+            'sk': { name: 'Sikkim', region: 'Northeast', demand: 'Low', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'tn': { name: 'Tamil Nadu', region: 'South', demand: 'High', pop_brand: 'Hyundai', pop_model: 'i20' },
+            'tg': { name: 'Telangana', region: 'South', demand: 'High', pop_brand: 'Hyundai', pop_model: 'Creta' },
+            'tr': { name: 'Tripura', region: 'Northeast', demand: 'Very Low', pop_brand: 'Maruti Suzuki', pop_model: 'Omni' },
+            'up': { name: 'Uttar Pradesh', region: 'North', demand: 'High', pop_brand: 'Maruti Suzuki', pop_model: 'WagonR' },
+            'ut': { name: 'Uttarakhand', region: 'North', demand: 'Medium', pop_brand: 'Maruti Suzuki', pop_model: 'Alto' },
+            'wb': { name: 'West Bengal', region: 'East', demand: 'Medium', pop_brand: 'Hyundai', pop_model: 'i10' }
+        };
+
+        const heatColors = {
+            'Very High': '#2E7D32',
+            'High': '#4CAF50',
+            'Medium': '#FFEB3B',
+            'Low': '#FF9800',
+            'Very Low': '#F44336'
+        };
+
+        const stateData = {};
+        const stateList = [];
+
+        // Build data structure
+        Object.keys(stateMetadata).forEach(id => {
+            const meta = stateMetadata[id];
+            let basePrice = 580000;
+            let listings = 1200;
+            
+            if (meta.demand === 'Very High') { basePrice = 850000; listings = 7500; }
+            else if (meta.demand === 'High') { basePrice = 720000; listings = 4800; }
+            else if (meta.demand === 'Medium') { basePrice = 580000; listings = 2500; }
+            else if (meta.demand === 'Low') { basePrice = 420000; listings = 800; }
+            else if (meta.demand === 'Very Low') { basePrice = 300000; listings = 150; }
+            
+            if (meta.region === 'South') basePrice *= 1.08;
+            if (meta.region === 'West') basePrice *= 1.04;
+            if (meta.region === 'North') basePrice *= 0.96;
+            if (meta.region === 'Northeast') basePrice *= 0.88;
+
+            const avg = Math.round(basePrice);
+            const low = Math.round(basePrice * 0.85);
+            const high = Math.round(basePrice * 1.18);
+            const expected = Math.round(basePrice * 1.02);
+
+            const demandPct = meta.demand === 'Very High' ? 95 :
+                              meta.demand === 'High' ? 82 :
+                              meta.demand === 'Medium' ? 60 :
+                              meta.demand === 'Low' ? 38 : 18;
+                              
+            const supplyPct = meta.demand === 'Very High' ? 70 :
+                              meta.demand === 'High' ? 85 :
+                              meta.demand === 'Medium' ? 62 :
+                              meta.demand === 'Low' ? 45 : 30;
+
+            let growthIndex = '+5.4%';
+            if (meta.demand === 'Very High') growthIndex = '+14.2%';
+            else if (meta.demand === 'High') growthIndex = '+9.6%';
+            else if (meta.demand === 'Low') growthIndex = '+2.1%';
+
+            stateData[id] = {
+                code: id,
+                name: meta.name,
+                region: meta.region,
+                avg_price: avg,
+                lowest_price: low,
+                highest_price: high,
+                expected_selling: expected,
+                pop_brand: meta.pop_brand,
+                pop_model: meta.pop_model,
+                listings: listings,
+                demand: meta.demand,
+                supply: supplyPct > 75 ? 'Very High' : supplyPct > 55 ? 'High' : 'Medium',
+                demand_pct: demandPct,
+                supply_pct: supplyPct,
+                growth: growthIndex,
+                confidence: meta.demand === 'Very High' ? 97 : meta.demand === 'High' ? 94 : 90,
+                selling_time: meta.demand === 'Very High' ? '7-12 Days' : meta.demand === 'High' ? '12-18 Days' : '20-30 Days',
+                best_month: meta.region === 'North' || meta.region === 'West' ? 'November' : 'October',
+                trend_data: [avg * 0.90, avg * 0.93, avg * 0.96, avg * 0.98, avg],
+                brand_shares: id === 'ka' ? [25, 20, 18, 15, 22] : [35, 22, 12, 10, 21], 
+                fuel_shares: meta.region === 'North' ? [65, 20, 15] : [60, 35, 5],
+                age_shares: [15, 48, 25, 12]
+            };
+
+            stateList.push({ id: id, name: meta.name, demand: meta.demand });
+        });
+
+        // Sort state list alphabetically
+        stateList.sort((a, b) => a.name.localeCompare(b.name));
+
+        // --- 2. Chart References ---
+        let chartPrice = null;
+        let chartBrand = null;
+        let chartFuel = null;
+        let chartAge = null;
+
+        function updateCharts(data) {
+            const currentYr = 2026;
+            const years = [currentYr - 4, currentYr - 3, currentYr - 2, currentYr - 1, currentYr];
+
+            // A. Price Trend Line Chart
+            if (chartPrice) chartPrice.destroy();
+            const ctxPrice = document.getElementById('chartPriceTrend').getContext('2d');
+            chartPrice = new Chart(ctxPrice, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        data: data.trend_data,
+                        borderColor: '#00F0FF',
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(0, 240, 255, 0.05)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.02)' }, ticks: { color: '#4B5563', font: { size: 8 } } },
+                        y: { 
+                            grid: { color: 'rgba(255,255,255,0.02)' }, 
+                            ticks: { 
+                                color: '#4B5563', 
+                                font: { size: 8 },
+                                callback: val => '₹' + (val / 100000).toFixed(1) + 'L'
+                            } 
+                        }
+                    }
+                }
+            });
+
+            // B. Brand Doughnut Chart
+            if (chartBrand) chartBrand.destroy();
+            const ctxBrand = document.getElementById('chartBrandShare').getContext('2d');
+            chartBrand = new Chart(ctxBrand, {
+                type: 'doughnut',
+                data: {
+                    labels: [data.pop_brand, 'Hyundai', 'Tata', 'Mahindra', 'Others'],
+                    datasets: [{
+                        data: data.brand_shares,
+                        backgroundColor: ['#00F0FF', '#FF9800', '#FF3366', '#4CAF50', 'rgba(255,255,255,0.1)'],
+                        borderWidth: 1,
+                        borderColor: '#0a0f1e'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            // C. Fuel Type Bar Chart
+            if (chartFuel) chartFuel.destroy();
+            const ctxFuel = document.getElementById('chartFuelDist').getContext('2d');
+            chartFuel = new Chart(ctxFuel, {
+                type: 'bar',
+                data: {
+                    labels: ['Petrol', 'Diesel', 'CNG/EV'],
+                    datasets: [{
+                        data: data.fuel_shares,
+                        backgroundColor: ['rgba(0, 240, 255, 0.7)', 'rgba(76, 175, 80, 0.7)', 'rgba(255, 152, 0, 0.7)'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#4B5563', font: { size: 8 } }, grid: { display: false } },
+                        y: { ticks: { color: '#4B5563', font: { size: 8 } }, grid: { color: 'rgba(255,255,255,0.02)' } }
+                    }
+                }
+            });
+
+            // D. Vehicle Age Distribution
+            if (chartAge) chartAge.destroy();
+            const ctxAge = document.getElementById('chartAgeDist').getContext('2d');
+            chartAge = new Chart(ctxAge, {
+                type: 'doughnut',
+                data: {
+                    labels: ['<2 Yrs', '2-5 Yrs', '5-8 Yrs', '>8 Yrs'],
+                    datasets: [{
+                        data: data.age_shares,
+                        backgroundColor: ['#00F0FF', '#4CAF50', '#FF9800', '#FF3366'],
+                        borderWidth: 1,
+                        borderColor: '#0a0f1e'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '50%'
+                }
+            });
+        }
+
+        // --- 3. State Click Handler ---
+        function selectState(id) {
+            const data = stateData[id.toLowerCase()];
+            if (!data) return;
+
+            // Highlight path in SVG
+            document.querySelectorAll('.state-path').forEach(p => p.classList.remove('selected'));
+            const p = document.getElementById(id.toLowerCase());
+            if (p) p.classList.add('selected');
+
+            // Hide empty state panel
+            document.getElementById('panel-empty-state').style.display = 'none';
+            document.getElementById('panel-details-box').style.display = 'block';
+
+            // Fill text values
+            document.getElementById('panel-state-name').textContent = data.name;
+            document.getElementById('panel-state-region').textContent = data.region + ' Region';
+            document.getElementById('panel-avg-price').textContent = '₹ ' + data.avg_price.toLocaleString('en-IN');
+            document.getElementById('panel-expected-price').textContent = '₹ ' + data.expected_selling.toLocaleString('en-IN');
+            
+            const lowLakh = (data.lowest_price / 100000).toFixed(1);
+            const highLakh = (data.highest_price / 100000).toFixed(1);
+            document.getElementById('panel-price-range').textContent = `₹ ${lowLakh}L - ₹ ${highLakh}L`;
+            
+            document.getElementById('panel-listings').textContent = data.listings.toLocaleString('en-IN');
+            document.getElementById('panel-pop-brand').textContent = data.pop_brand;
+            document.getElementById('panel-pop-model').textContent = data.pop_model;
+            document.getElementById('panel-sell-time').textContent = data.selling_time;
+            document.getElementById('panel-best-month').textContent = data.best_month;
+
+            // Badges & bars
+            const demandBadge = document.getElementById('panel-demand-badge');
+            demandBadge.textContent = data.demand + ' Demand';
+            demandBadge.style.background = heatColors[data.demand] + '20';
+            demandBadge.style.color = heatColors[data.demand];
+            demandBadge.style.border = `1px solid ${heatColors[data.demand]}50`;
+
+            document.getElementById('panel-demand-pct').textContent = data.demand_pct + '%';
+            document.getElementById('panel-demand-bar').style.width = data.demand_pct + '%';
+            document.getElementById('panel-demand-bar').style.background = heatColors[data.demand];
+
+            document.getElementById('panel-supply-pct').textContent = data.supply_pct + '%';
+            document.getElementById('panel-supply-bar').style.width = data.supply_pct + '%';
+
+            // Natural language AI insights
+            let recomText = `Pre-owned vehicle liquidity indexes in ${data.name} show a stable market health with a growth factor of ${data.growth}. `;
+            if (data.demand === 'Very High') {
+                recomText += `Due to low inventory supplies, sellers have extreme pricing leverage. Tendering high-volume compact cars or premium SUVs like the ${data.pop_model} in ${data.best_month} will yield optimal returns. We recommend liquidating within the local territory.`;
+            } else if (data.demand === 'High') {
+                recomText += `Steady demand profiles are centered on fuel-efficient utility trims. Selling speed indexes average at a fast ${data.selling_time}. We recommend local dealership trade-ins to capitalize on prevailing buyer indexes.`;
+            } else {
+                recomText += `Buyer indices indicate a cooling trend. To mitigate depreciation, we recommend utilizing inter-state arbitrage transfers to higher liquidity states like Karnataka (KA) or Maharashtra (MH) for up to 12% higher returns.`;
+            }
+            document.getElementById('panel-ai-recom').textContent = recomText;
+
+            // Trigger charts updates
+            updateCharts(data);
+        }
+
+        // --- 4. Initialize Map SVG & Events ---
+        function initMapInteractions() {
+            document.querySelectorAll('#map-container path').forEach(path => {
+                path.classList.add('state-path');
+                const id = path.getAttribute('id');
+                if (id) {
+                    const data = stateData[id.toLowerCase()];
+                    if (data) {
+                        path.style.fill = heatColors[data.demand] + 'd0';
+                    }
+                    path.addEventListener('click', () => {
+                        selectState(id);
+                    });
+                }
+            });
+        }
+
+        // --- 5. Document Loaded Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // Load SVG map dynamically from static
+            fetch('/static/india.svg')
+                .then(r => r.text())
+                .then(svgText => {
+                    document.getElementById('map-container').innerHTML = svgText;
+                    initMapInteractions();
+                })
+                .catch(err => console.error("Error loading India map SVG: ", err));
+
+            // Populate comparison selector lists
+            const selectA = document.getElementById('compare-state-a');
+            const selectB = document.getElementById('compare-state-b');
+            
+            stateList.forEach(s => {
+                const optA = document.createElement('option');
+                optA.value = s.id;
+                optA.textContent = s.name;
+                selectA.appendChild(optA);
+
+                const optB = document.createElement('option');
+                optB.value = s.id;
+                optB.textContent = s.name;
+                selectB.appendChild(optB);
+            });
+
+            // Set default compare selections
+            selectA.value = 'ka';
+            selectB.value = 'dl';
+
+            // Compare States Button trigger
+            document.getElementById('compare-action-btn').addEventListener('click', () => {
+                const idA = selectA.value;
+                const idB = selectB.value;
+                if (idA === idB) {
+                    alert("Please select two different states/union territories to compare.");
+                    return;
+                }
+
+                const dataA = stateData[idA];
+                const dataB = stateData[idB];
+
+                // Update compare result boxes
+                document.getElementById('compare-results-box').style.display = 'grid';
+
+                const cardA = document.getElementById('compare-card-a');
+                cardA.querySelector('.compare-name').textContent = dataA.name;
+                cardA.querySelector('.comp-avg').textContent = '₹ ' + dataA.avg_price.toLocaleString('en-IN');
+                cardA.querySelector('.comp-listings').textContent = dataA.listings.toLocaleString('en-IN');
+                cardA.querySelector('.comp-growth').textContent = dataA.growth;
+                cardA.querySelector('.comp-demand').textContent = dataA.demand;
+                cardA.querySelector('.comp-speed').textContent = dataA.selling_time;
+
+                const cardB = document.getElementById('compare-card-b');
+                cardB.querySelector('.compare-name').textContent = dataB.name;
+                cardB.querySelector('.comp-avg').textContent = '₹ ' + dataB.avg_price.toLocaleString('en-IN');
+                cardB.querySelector('.comp-listings').textContent = dataB.listings.toLocaleString('en-IN');
+                cardB.querySelector('.comp-growth').textContent = dataB.growth;
+                cardB.querySelector('.comp-demand').textContent = dataB.demand;
+                cardB.querySelector('.comp-speed').textContent = dataB.selling_time;
+
+                // Arbitrage suggestion logic
+                const diff = dataA.avg_price - dataB.avg_price;
+                const absDiff = Math.abs(diff);
+                const pct = ((absDiff / Math.min(dataA.avg_price, dataB.avg_price)) * 100).toFixed(1);
+                
+                let recom = '';
+                if (diff > 0) {
+                    recom = `Pre-owned vehicle average prices are **${pct}% higher in ${dataA.name}** compared to ${dataB.name}. ` +
+                            `This represents a clear **liquidation arbitrage**. Re-registering and liquidating a vehicle originating from ${dataB.name} into ${dataA.name} can increase your net resale yield by up to **₹ ${absDiff.toLocaleString('en-IN')}** under compression.`;
+                } else {
+                    recom = `Pre-owned vehicle average prices are **${pct}% higher in ${dataB.name}** compared to ${dataA.name}. ` +
+                            `This represents a clear **liquidation arbitrage**. Re-registering and liquidating a vehicle originating from ${dataA.name} into ${dataB.name} can increase your net resale yield by up to **₹ ${absDiff.toLocaleString('en-IN')}** under compression.`;
+                }
+                
+                document.getElementById('compare-arbitrage-text').innerHTML = recom;
+            });
+
+            // State jump search list filter
+            const searchBox = document.getElementById('state-search-box');
+            const searchDropdown = document.getElementById('state-search-results');
+
+            searchBox.addEventListener('focus', () => {
+                renderSearchDropdown(stateList);
+            });
+
+            searchBox.addEventListener('input', () => {
+                const term = searchBox.value.toLowerCase();
+                const filtered = stateList.filter(s => s.name.toLowerCase().includes(term));
+                renderSearchDropdown(filtered);
+            });
+
+            function renderSearchDropdown(list) {
+                searchDropdown.innerHTML = '';
+                if (list.length === 0) {
+                    searchDropdown.style.display = 'none';
+                    return;
+                }
+
+                list.forEach(s => {
+                    const div = document.createElement('div');
+                    div.className = 'search-jump-item';
+                    
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = s.name;
+                    
+                    const badge = document.createElement('span');
+                    badge.className = 'search-jump-badge';
+                    badge.textContent = s.demand;
+                    badge.style.background = heatColors[s.demand] + '20';
+                    badge.style.color = heatColors[s.demand];
+                    
+                    div.appendChild(nameSpan);
+                    div.appendChild(badge);
+
+                    div.addEventListener('click', () => {
+                        searchBox.value = s.name;
+                        searchDropdown.style.display = 'none';
+                        selectState(s.id);
+                    });
+                    
+                    searchDropdown.appendChild(div);
+                });
+                
+                searchDropdown.style.display = 'block';
+            }
+
+            // Close jump dropdown on outside clicks
+            document.addEventListener('click', (e) => {
+                if (!searchBox.contains(e.target) && !searchDropdown.contains(e.target)) {
+                    searchDropdown.style.display = 'none';
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMANI AI CAR VALUATORS - Saved Bookmarks & Favorites</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .favorite-card {
+            padding: 1.75rem;
+            background: var(--bg-card); border: 1px solid var(--card-border);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 480px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .favorite-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 15px 30px rgba(0, 240, 255, 0.05);
+        }
+        .card-checkbox {
+            position: absolute;
+            top: 1.25rem;
+            left: 1.25rem;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent);
+            cursor: pointer;
+            z-index: 10;
+        }
+        .card-star {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.25rem;
+            color: #FFC107;
+            z-index: 10;
+            transition: transform 0.2s;
+        }
+        .card-star:hover {
+            transform: scale(1.15);
+        }
+        .badge-health {
+            padding: 0.25rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.725rem;
+            font-weight: 700;
+            display: inline-block;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Bar -->
+    {% include 'navbar.html' %}
+
+    <!-- Favorites Module Layout -->
+    <section class="valuation-section" style="padding-top: 8.5rem; padding-bottom: 5rem; min-height: 100vh;">
+        <div class="glow-node glow-node-1" style="top: 15%; left: -10%;"></div>
+        <div class="glow-node glow-node-2" style="bottom: 15%; right: -10%;"></div>
+
+        <div class="container" style="max-width: 1350px;">
+            
+            <div class="section-header" style="margin-bottom: 2.5rem; text-align: left;">
+                <span class="section-badge">Premium Collection</span>
+                <h2 style="font-size: 2.5rem; font-weight: 800; color: #111827; margin: 0.5rem 0 0.15rem 0;">My Favorite Vehicles</h2>
+                <p style="color: var(--text-gray);">Manage, filter, track and compare your bookmarked vehicle reports side-by-side.</p>
+            </div>
+
+            <!-- A. Dynamic Statistics Section -->
+            <div id="stats-summary-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+                <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase;">Total Favorites</span>
+                    <h3 id="stat-count" style="font-size: 1.85rem; color: #111827; font-weight: 800; margin: 0.35rem 0 0 0;">{{ stats.count }}</h3>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase;">Average AI Score</span>
+                    <h3 id="stat-score" style="font-size: 1.85rem; color: var(--accent); font-weight: 800; margin: 0.35rem 0 0 0;">{{ stats.avg_score }}/100</h3>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase;">Highest Resale Value</span>
+                    <h3 id="stat-max-val" style="font-size: 1.85rem; color: #111827; font-weight: 800; margin: 0.35rem 0 0 0;">₹ {{ stats.max_value | indian_currency }}</h3>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase;">Average Market Price</span>
+                    <h3 id="stat-avg-val" style="font-size: 1.85rem; color: #111827; font-weight: 800; margin: 0.35rem 0 0 0;">₹ {{ stats.avg_value | indian_currency }}</h3>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase;">Top Brand</span>
+                    <h3 id="stat-brand" style="font-size: 1.85rem; color: var(--accent); font-weight: 800; margin: 0.35rem 0 0 0;">{{ stats.fav_brand }}</h3>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                    <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase;">Top Fuel Type</span>
+                    <h3 id="stat-fuel" style="font-size: 1.85rem; color: #111827; font-weight: 800; margin: 0.35rem 0 0 0;">{{ stats.fav_fuel }}</h3>
+                </div>
+            </div>
+
+            <!-- B. Dynamic Analytics Chart Panel -->
+            <div id="charts-drawer" class="dashboard-columns-grid" style="margin-bottom: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; height: 260px;">
+                    <span style="font-size: 0.85rem; color: #111827; font-weight: 600; display: block; margin-bottom: 1rem; text-align: left;"><i class="fa-solid fa-chart-pie" style="color: var(--accent);"></i> Brand Share</span>
+                    <div style="height: 180px; position: relative;"><canvas id="chartBrands"></canvas></div>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; height: 260px;">
+                    <span style="font-size: 0.85rem; color: #111827; font-weight: 600; display: block; margin-bottom: 1rem; text-align: left;"><i class="fa-solid fa-chart-simple" style="color: var(--accent);"></i> Price Distribution</span>
+                    <div style="height: 180px; position: relative;"><canvas id="chartPrices"></canvas></div>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; height: 260px;">
+                    <span style="font-size: 0.85rem; color: #111827; font-weight: 600; display: block; margin-bottom: 1rem; text-align: left;"><i class="fa-solid fa-gauge-high" style="color: var(--accent);"></i> AI Scores Plot</span>
+                    <div style="height: 180px; position: relative;"><canvas id="chartScores"></canvas></div>
+                </div>
+                <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; height: 260px;">
+                    <span style="font-size: 0.85rem; color: #111827; font-weight: 600; display: block; margin-bottom: 1rem; text-align: left;"><i class="fa-solid fa-gas-pump" style="color: var(--accent);"></i> Fuel Types</span>
+                    <div style="height: 180px; position: relative;"><canvas id="chartFuels"></canvas></div>
+                </div>
+            </div>
+
+            <!-- C. Search, Filter, Sort and Bulk Actions Dashboard Wrap -->
+            <div class="glass-form-card" style="padding: 2.25rem; margin-bottom: 3rem; border-radius: 16px;">
+                             <!-- Scrollbar & Search Explorer Styles -->
+                <style>
+                    #search-explorer-dropdown::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    #search-explorer-dropdown::-webkit-scrollbar-track {
+                        background: rgba(255, 255, 255, 0.02);
+                        border-radius: 10px;
+                    }
+                    #search-explorer-dropdown::-webkit-scrollbar-thumb {
+                        background: rgba(0, 240, 255, 0.3);
+                        border-radius: 10px;
+                    }
+                    #search-explorer-dropdown::-webkit-scrollbar-thumb:hover {
+                        background: rgba(0, 240, 255, 0.6);
+                    }
+                    .explorer-row {
+                        padding: 0.95rem 1.25rem;
+                        border-bottom: 1px solid rgba(255,255,255,0.03);
+                        display: flex;
+                        align-items: center;
+                        cursor: pointer;
+                        transition: all 0.2s ease-out;
+                    }
+                    .explorer-row:hover {
+                        background: rgba(0, 240, 255, 0.05) !important;
+                    }
+                    .explorer-row.selected {
+                        background: rgba(0, 240, 255, 0.08) !important;
+                        border-left: 3px solid var(--accent);
+                    }
+                </style>
+
+                <!-- Search Complete Indian Database Live Search Explorer -->
+                <div style="position: relative; margin-bottom: 1.5rem; text-align: left; z-index: 100;">
+                    <label for="search-input" style="color: #111827; font-weight: 700; font-size: 1.05rem; display: block; margin-bottom: 0.5rem;">
+                        <i class="fa-solid fa-magnifying-glass-chart" style="color: var(--accent);"></i> Search Complete Indian Passenger Vehicle Database
+                    </label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="text" id="search-input" class="glass-input" style="padding: 1.15rem 1.5rem; font-size: 1.1rem; flex: 1;" placeholder="Search 30,000+ Indian Cars (e.g. Creta SX, Swift Automatic, Fortuner 2024)..." autocomplete="off">
+                        <button type="button" class="btn-result-pdf" id="btn-select-all" style="padding: 0.95rem 1.25rem; border-radius: 8px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap;">
+                            <i class="fa-regular fa-square-check"></i> Select All Visible
+                        </button>
+                    </div>
+                    
+                    <!-- Search Results dropdown list -->
+                    <div id="search-explorer-dropdown" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(8, 12, 24, 0.98); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 12px; max-height: 550px; overflow-y: auto; z-index: 10000; box-shadow: 0 25px 50px rgba(0,0,0,0.9); backdrop-filter: blur(25px); margin-top: 8px; padding: 0.5rem 0;">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Comprehensive Multi-Variable Filters Row -->
+                <div class="filter-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; text-align: left;">
+                    <div class="form-group">
+                        <label for="filter-brand">Brand</label>
+                        <select id="filter-brand" class="glass-select">
+                            <option value="">All Brands</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-fuel">Fuel Type</label>
+                        <select id="filter-fuel" class="glass-select">
+                            <option value="">All Fuels</option>
+                            <option value="Petrol">Petrol</option>
+                            <option value="Diesel">Diesel</option>
+                            <option value="CNG">CNG</option>
+                            <option value="EV">Electric</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-trans">Transmission</label>
+                        <select id="filter-trans" class="glass-select">
+                            <option value="">All Transmissions</option>
+                            <option value="Manual">Manual</option>
+                            <option value="Automatic">Automatic</option>
+                            <option value="AMT">AMT</option>
+                            <option value="CVT">CVT</option>
+                            <option value="DCT">DCT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-year">Year</label>
+                        <select id="filter-year" class="glass-select">
+                            <option value="">All Years</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-body">Body Type</label>
+                        <select id="filter-body" class="glass-select">
+                            <option value="">All Body Types</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Sedan">Sedan</option>
+                            <option value="Hatchback">Hatchback</option>
+                            <option value="MUV">MUV</option>
+                            <option value="Coupe">Coupe</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter-price">Price Range</label>
+                        <select id="filter-price" class="glass-select">
+                            <option value="">All Prices</option>
+                            <option value="under_10">Under ₹10 Lakh</option>
+                            <option value="10_20">₹10 Lakh - ₹20 Lakh</option>
+                            <option value="20_50">₹20 Lakh - ₹50 Lakh</option>
+                            <option value="over_50">Over ₹50 Lakh</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sort-select">Sort Orders</label>
+                        <select id="sort-select" class="glass-select">
+                            <option value="newest">Newest Added</option>
+                            <option value="oldest">Oldest Added</option>
+                            <option value="price_desc">Highest Price</option>
+                            <option value="price_asc">Lowest Price</option>
+                            <option value="score_desc">Highest AI Score</option>
+                            <option value="score_asc">Lowest AI Score</option>
+                            <option value="confidence_desc">Highest Confidence</option>
+                            <option value="alpha">Alphabetical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Multi-select Bulk Action Bar -->
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <label style="color: #111827; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.95rem;">
+                            <input type="checkbox" id="select-all-box" style="width: 18px; height: 18px; accent-color: var(--accent);"> Select All
+                        </label>
+                        <span id="select-count" style="color: var(--text-gray); font-size: 0.9rem;">0 selected</span>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button type="button" class="btn-result-pdf" id="bulk-compare" style="font-size: 0.85rem; padding: 0.65rem 1.25rem;"><i class="fa-solid fa-code-compare"></i> Compare Selected</button>
+                        <button type="button" class="btn-result-pdf" id="bulk-download" style="font-size: 0.85rem; padding: 0.65rem 1.25rem;"><i class="fa-solid fa-download"></i> Download PDFs</button>
+                        <button type="button" class="btn-result-pdf" id="bulk-export" style="font-size: 0.85rem; padding: 0.65rem 1.25rem;"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                        <button type="button" class="btn-result-pdf" id="bulk-delete" style="font-size: 0.85rem; padding: 0.65rem 1.25rem; border-color: rgba(255, 51, 102, 0.25); color: #FF3366;"><i class="fa-solid fa-trash-can"></i> Delete Selected</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- D. Dynamic Cards Grid Wrapper -->
+            <div id="favorites-grid-wrapper" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.75rem;">
+                <!-- Filled dynamically by JavaScript -->
+            </div>
+
+            <!-- E. Empty State Illustration -->
+            <div id="favorites-empty-box" style="display: none; padding: 5rem 2rem; text-align: center; color: var(--text-gray);">
+                <i class="fa-regular fa-star" style="font-size: 5rem; color: rgba(255,255,255,0.06); margin-bottom: 1.5rem; display: block;"></i>
+                <h3 style="color: #111827; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">No Favorite Cars Yet</h3>
+                <p style="max-width: 480px; margin: 0 auto 2rem auto; line-height: 1.6;">Start running appraisals inside our valuation wizard and click the star bookmark icon to lock items here.</p>
+                <a href="/valuation" class="btn-submit-valuation" style="padding: 0.85rem 2.25rem; text-decoration: none; border-radius: 8px;">Explore Cars</a>
+            </div>
+
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- Client-side filter & rendering scripting engine -->
+    <script>
+        // Server injected bookmarks list JSON data
+        const favoritesData = {{ favorites | tojson }};
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('favorites-grid-wrapper');
+            const emptyBox = document.getElementById('favorites-empty-box');
+            
+            const searchInput = document.getElementById('search-input');
+            const explorerDropdown = document.getElementById('search-explorer-dropdown');
+            const btnSelectAll = document.getElementById('btn-select-all');
+
+            const brandFilter = document.getElementById('filter-brand');
+            const fuelFilter = document.getElementById('filter-fuel');
+            const transFilter = document.getElementById('filter-trans');
+            const yearFilter = document.getElementById('filter-year');
+            const bodyFilter = document.getElementById('filter-body');
+            const priceFilter = document.getElementById('filter-price');
+            const sortSelect = document.getElementById('sort-select');
+            
+            const selectAllBox = document.getElementById('select-all-box');
+            const selectCountLabel = document.getElementById('select-count');
+
+            let explorerPage = 1;
+            let explorerLoading = false;
+            let explorerEnded = false;
+            let explorerTimeout = null;
+            let favChanged = false;
+
+            const selectedCarIds = new Set();
+
+            // Populate Years dynamic options (2026 down to 1995)
+            for (let yr = 2026; yr >= 1995; yr--) {
+                const opt = document.createElement('option');
+                opt.value = yr;
+                opt.textContent = yr;
+                yearFilter.appendChild(opt);
+            }
+
+            // Populate Brands list dynamic options
+            fetch('/api/brands')
+                .then(r => r.json())
+                .then(brands => {
+                    brands.forEach(b => {
+                        const opt = document.createElement('option');
+                        opt.value = b;
+                        opt.textContent = b;
+                        brandFilter.appendChild(opt);
+                    });
+                });
+
+            // Format Indian currency in JS
+            function jsFormatCurrency(num) {
+                const s = num.toString();
+                if (s.length <= 3) return s;
+                const lastThree = s.slice(-3);
+                let remaining = s.slice(0, -3);
+                let out = [];
+                while (remaining.length > 2) {
+                    out.push(remaining.slice(-2));
+                    remaining = remaining.slice(0, -2);
+                }
+                if (remaining) out.push(remaining);
+                out.reverse();
+                return out.join(',') + ',' + lastThree;
+            }
+
+            function formatShowroomPrice(val) {
+                if (val >= 10000000) {
+                    return '₹ ' + (val / 10000000).toFixed(2) + ' Cr';
+                }
+                return '₹ ' + (val / 100000).toFixed(1) + ' Lakh';
+            }
+
+            // Render visual cards grid
+            function renderFavorites(list) {
+                grid.innerHTML = '';
+
+                if (list.length === 0) {
+                    grid.style.display = 'none';
+                    emptyBox.style.display = 'block';
+                    document.getElementById('stats-summary-grid').style.display = 'none';
+                    document.getElementById('charts-drawer').style.display = 'none';
+                    return;
+                }
+
+                grid.style.display = 'grid';
+                emptyBox.style.display = 'none';
+                document.getElementById('stats-summary-grid').style.display = 'grid';
+                document.getElementById('charts-drawer').style.display = 'grid';
+
+                list.forEach(car => {
+                    const card = document.createElement('div');
+                    card.className = 'favorite-card';
+                    card.setAttribute('data-id', car.car_id);
+
+                    const isChecked = selectedCarIds.has(car.car_id);
+
+                    let healthClass = 'border-color: rgba(76, 175, 80, 0.25); color: #4CAF50; background: rgba(76,175,80,0.06);';
+                    if (car.health < 60) {
+                        healthClass = 'border-color: rgba(255, 51, 102, 0.25); color: #FF3366; background: rgba(255,51,102,0.06);';
+                    } else if (car.health < 80) {
+                        healthClass = 'border-color: rgba(255, 193, 7, 0.25); color: #FFC107; background: rgba(255,193,7,0.06);';
+                    }
+
+                    card.innerHTML = `
+                        <input type="checkbox" class="card-checkbox" value="${car.car_id}" ${isChecked ? 'checked' : ''}>
+                        
+                        <button type="button" class="card-star" title="Remove Favorite" onclick="removeFavorite(${car.car_id})">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+
+                        <div>
+                            <div style="width: 100%; height: 110px; background: var(--bg-card); border: 1px solid var(--card-border); border: 1px dashed rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-car-side" style="font-size: 3.5rem; color: rgba(255,255,255,0.03);"></i>
+                            </div>
+
+                            <span style="font-size: 0.75rem; color: var(--text-gray); font-weight: 500;">Added: ${car.date_added}</span>
+                            <h3 style="font-size: 1.35rem; color: #111827; font-weight: 700; margin: 0.25rem 0 0.15rem 0; text-align: left; width: 85%;">${car.brand} ${car.model}</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-gray); margin: 0 0 1rem 0; text-align: left;">${car.year} Model • ${car.variant}</p>
+                            
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+                                <span class="badge-health" style="border: 1px solid rgba(255,255,255,0.1); color: var(--text-gray);">${car.fuel}</span>
+                                <span class="badge-health" style="border: 1px solid rgba(255,255,255,0.1); color: var(--text-gray);">${car.transmission}</span>
+                                <span class="badge-health" style="${healthClass} border: 1px solid;">Health: ${car.health}%</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; text-align: left;">
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-gray); display: block; text-transform: uppercase;">Valuation</span>
+                                    <strong style="font-size: 1.05rem; color: var(--accent); font-weight: 800;">₹ ${jsFormatCurrency(car.price)}</strong>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-gray); display: block; text-transform: uppercase;">Expected Price</span>
+                                    <strong style="font-size: 1.05rem; color: #111827; font-weight: 700;">₹ ${jsFormatCurrency(car.price_expected)}</strong>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-gray); display: block; text-transform: uppercase;">Depreciation</span>
+                                    <strong style="color: #FF3366;">${car.depreciation}%</strong>
+                                </div>
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-gray); display: block; text-transform: uppercase;">Confidence</span>
+                                    <strong style="color: #111827;">${car.confidence}%</strong>
+                                </div>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <a href="/report/${car.car_id}" class="btn-submit-valuation" style="font-size: 0.8rem; padding: 0.55rem; text-align: center; border-radius: 6px; text-decoration: none;">View Report</a>
+                                <a href="/compare?car_a=${car.car_id}" class="btn-result-pdf" style="font-size: 0.8rem; padding: 0.55rem; justify-content: center; border-radius: 6px; text-decoration: none;">Compare</a>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                <form action="/api/move-to-my-cars/${car.car_id}" method="POST" style="margin: 0;">
+                                    <button type="submit" class="btn-result-pdf" style="font-size: 0.75rem; padding: 0.45rem; justify-content: center; width: 100%; border-radius: 5px;" title="Convert to history only"><i class="fa-solid fa-folder-open"></i> Move History</button>
+                                </form>
+                                <form action="/delete-car/${car.car_id}" method="POST" style="margin: 0;" onsubmit="return confirm('Delete this record completely?');">
+                                    <button type="submit" class="btn-result-pdf" style="font-size: 0.75rem; padding: 0.45rem; justify-content: center; width: 100%; border-radius: 5px; border-color: rgba(255, 51, 102, 0.2); color: #FF3366;" title="Delete log file"><i class="fa-solid fa-trash"></i> Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+
+            // Sync stats values based on active filtered arrays
+            function updateStatsAndCharts(filteredList) {
+                const count = filteredList.length;
+                document.getElementById('stat-count').textContent = count;
+                if (count === 0) {
+                    document.getElementById('stat-score').textContent = '0/100';
+                    document.getElementById('stat-max-val').textContent = '₹ 0';
+                    document.getElementById('stat-avg-val').textContent = '₹ 0';
+                    document.getElementById('stat-brand').textContent = 'N/A';
+                    document.getElementById('stat-fuel').textContent = 'N/A';
+                    return;
+                }
+                let totalScore = 0, maxValue = 0, totalValue = 0;
+                const brands = {}, fuels = {};
+                filteredList.forEach(x => {
+                    totalScore += x.score; totalValue += x.price;
+                    if (x.price > maxValue) maxValue = x.price;
+                    brands[x.brand] = (brands[x.brand] || 0) + 1;
+                    fuels[x.fuel] = (fuels[x.fuel] || 0) + 1;
+                });
+                document.getElementById('stat-score').textContent = `${round(totalScore/count)}/100`;
+                document.getElementById('stat-max-val').textContent = `₹ ${jsFormatCurrency(maxValue)}`;
+                document.getElementById('stat-avg-val').textContent = `₹ ${jsFormatCurrency(round(totalValue/count))}`;
+                document.getElementById('stat-brand').textContent = maxKey(brands);
+                document.getElementById('stat-fuel').textContent = maxKey(fuels);
+
+                drawBrandChart(brands);
+                drawFuelChart(fuels);
+                drawPricesChart(filteredList.map(x => x.price));
+                drawScoresChart(filteredList.map(x => x.score));
+            }
+
+            function round(val) { return Math.round(val); }
+            function maxKey(dict) { return Object.keys(dict).reduce((a, b) => dict[a] > dict[b] ? a : b, 'N/A'); }
+
+            // Client-side local filtering of the favorites cards grid
+            function filterLocalFavorites() {
+                const q = searchInput.value.toLowerCase(), brand = brandFilter.value, fuel = fuelFilter.value, trans = transFilter.value, year = yearFilter.value, body = bodyFilter.value, price = priceFilter.value, sort = sortSelect.value;
+                let filtered = favoritesData.filter(car => {
+                    const matchQ = q === '' || car.brand.toLowerCase().includes(q) || car.model.toLowerCase().includes(q) || car.variant.toLowerCase().includes(q);
+                    const matchBrand = brand === '' || car.brand === brand;
+                    const matchFuel = fuel === '' || car.fuel === fuel;
+                    const matchTrans = trans === '' || car.transmission === trans;
+                    const matchYear = year === '' || car.year.toString() === year;
+                    let matchPrice = true;
+                    if (price === 'under_10') matchPrice = car.price < 1000000;
+                    else if (price === '10_20') matchPrice = car.price >= 1000000 && car.price <= 2000000;
+                    else if (price === '20_50') matchPrice = car.price >= 2000000 && car.price <= 5000000;
+                    else if (price === 'over_50') matchPrice = car.price > 5000000;
+                    return matchQ && matchBrand && matchFuel && matchTrans && matchYear && matchPrice;
+                });
+                if (sort === 'oldest') filtered.reverse();
+                else if (sort === 'price_desc') filtered.sort((a,b) => b.price - a.price);
+                else if (sort === 'price_asc') filtered.sort((a,b) => a.price - b.price);
+                else if (sort === 'score_desc') filtered.sort((a,b) => b.score - a.score);
+                else if (sort === 'score_asc') filtered.sort((a,b) => a.score - b.score);
+                else if (sort === 'confidence_desc') filtered.sort((a,b) => b.confidence - a.confidence);
+                else if (sort === 'alpha') filtered.sort((a,b) => a.brand.localeCompare(b.brand));
+                renderFavorites(filtered);
+                updateStatsAndCharts(filtered);
+            }
+
+
+            // Multiselect Bulk triggers
+            selectAllBox.addEventListener('change', () => {
+                const boxes = document.querySelectorAll('.card-checkbox');
+                boxes.forEach(box => {
+                    box.checked = selectAllBox.checked;
+                });
+                updateSelectCount();
+            });
+
+            function getSelectedIds() {
+                const ids = [];
+                document.querySelectorAll('.card-checkbox:checked').forEach(box => {
+                    ids.push(box.value);
+                });
+                return ids;
+            }
+
+            function updateSelectCount() {
+                const count = getSelectedIds().length;
+                selectCountLabel.textContent = `${count} selected`;
+            }
+
+            // Compare selected vehicles
+            document.getElementById('bulk-compare').addEventListener('click', () => {
+                const ids = getSelectedIds();
+                if (ids.length < 2) {
+                    alert('Please select at least 2 favorite cars to compare.');
+                    return;
+                }
+                location.href = `/compare?car_a=${ids[0]}&car_b=${ids[1]}`;
+            });
+
+            // Delete selected valuations
+            document.getElementById('bulk-delete').addEventListener('click', () => {
+                const ids = getSelectedIds();
+                if (ids.length === 0) {
+                    alert('Please select cars to remove.');
+                    return;
+                }
+                if (confirm(`Are you sure you want to delete these ${ids.length} vehicle logs completely?`)) {
+                    // Process deletions sequentially via form posts
+                    ids.forEach(id => {
+                        fetch(`/delete-car/${id}`, { method: 'POST' });
+                    });
+                    setTimeout(() => location.reload(), 800);
+                }
+            });
+
+            // Download reports triggers
+            document.getElementById('bulk-download').addEventListener('click', () => {
+                const count = getSelectedIds().length;
+                if (count === 0) {
+                    alert('Please select files to download.');
+                    return;
+                }
+                alert(`Preparing batch PDF bundle for ${count} vehicle valuations...`);
+            });
+
+            // Export to CSV files
+            document.getElementById('bulk-export').addEventListener('click', () => {
+                const ids = getSelectedIds();
+                const targetList = ids.length > 0 ? 
+                    favoritesData.filter(x => ids.includes(x.car_id.toString())) : 
+                    favoritesData;
+                
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Brand,Model,Variant,Year,Fuel,Transmission,AI Score,Price,Confidence\n";
+                
+                targetList.forEach(x => {
+                    csvContent += `"${x.brand}","${x.model}","${x.variant}",${x.year},"${x.fuel}","${x.transmission}",${x.score},${x.price},${x.confidence}\n`;
+                });
+                
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "favorite_cars_appraisal.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            // Initial render
+            renderFavorites(favoritesData);
+            updateStatsAndCharts(favoritesData);
+
+            // Chart draw helpers
+            function drawBrandChart(brandsData) {
+                if (charts.brands) charts.brands.destroy();
+                const ctx = document.getElementById('chartBrands').getContext('2d');
+                charts.brands = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(brandsData),
+                        datasets: [{
+                            data: Object.values(brandsData),
+                            backgroundColor: ['#00F0FF', '#0d6efd', '#FF3366', '#4CAF50', '#FFC107'],
+                            borderColor: '#060913',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        cutout: '60%'
+                    }
+                });
+            }
+
+            function drawFuelChart(fuelsData) {
+                if (charts.fuels) charts.fuels.destroy();
+                const ctx = document.getElementById('chartFuels').getContext('2d');
+                charts.fuels = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(fuelsData),
+                        datasets: [{
+                            data: Object.values(fuelsData),
+                            backgroundColor: ['#00F0FF', '#0d6efd', '#FF3366', '#4CAF50', '#FFC107'],
+                            borderColor: '#060913',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            function drawPricesChart(prices) {
+                if (charts.prices) charts.prices.destroy();
+                const ctx = document.getElementById('chartPrices').getContext('2d');
+                charts.prices = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: prices.map((_, i) => `Car ${i+1}`),
+                        datasets: [{
+                            data: prices,
+                            backgroundColor: 'rgba(0, 240, 255, 0.75)',
+                            borderColor: '#00F0FF',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 9 } } },
+                            y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 8 } } }
+                        }
+                    }
+                });
+            }
+
+            function drawScoresChart(scores) {
+                if (charts.scores) charts.scores.destroy();
+                const ctx = document.getElementById('chartScores').getContext('2d');
+                charts.scores = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: scores.map((_, i) => `#${i+1}`),
+                        datasets: [{
+                            data: scores,
+                            borderColor: '#0d6efd',
+                            backgroundColor: 'rgba(13, 110, 253, 0.05)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 9 } } },
+                            y: { min: 30, max: 100, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 8 } } }
+                        }
+                    }
+                });
+            }
+
+        });
+
+        // AJAX Toggle Favorite button inside cards
+        function removeFavorite(carId) {
+            fetch(`/api/toggle-favorite/${carId}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'removed') {
+                        alert('Removed from Favorites');
+                        const card = document.querySelector(`.favorite-card[data-id="${carId}"]`);
+                        if (card) {
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.9)';
+                            setTimeout(() => {
+                                location.reload();
+                            }, 300);
+                        }
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

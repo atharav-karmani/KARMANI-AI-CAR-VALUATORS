@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Login | KARMANI AI CAR VALUATORS</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #F5F8FC;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --border-color: rgba(0, 157, 255, 0.12);
+            --accent: #009DFF;
+            --accent-grad: linear-gradient(135deg, #009DFF 0%, #00D9FF 100%);
+            --text-main: #111827;
+            --text-gray: #4B5563;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 157, 255, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 217, 255, 0.04) 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Abstract glowing blobs */
+        .glow-blob {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 157, 255, 0.05) 0%, transparent 70%);
+            z-index: 1;
+        }
+        .glow-blob-1 { top: -100px; left: -100px; }
+        .glow-blob-2 { bottom: -100px; right: -100px; }
+
+        .login-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 2.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 157, 255, 0.08);
+            text-align: center;
+            z-index: 10;
+            position: relative;
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-section {
+            margin-bottom: 2rem;
+        }
+
+        .logo-section h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #111827;
+        }
+
+        .logo-section h1 span {
+            color: var(--accent);
+        }
+
+        .logo-section p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            margin-top: 0.25rem;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.5rem;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 157, 255, 0.15);
+            border-radius: 10px;
+            color: #111827;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(0, 157, 255, 0.15);
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .form-control:focus + i {
+            color: var(--accent);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #009DFF 0%, #00D9FF 100%);
+            border: none;
+            border-radius: 10px;
+            color: #FFFFFF;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 157, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 157, 255, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            padding: 0.85rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid transparent;
+            text-align: left;
+        }
+
+        .alert-danger {
+            background: rgba(244, 67, 54, 0.08);
+            border-color: rgba(244, 67, 54, 0.25);
+            color: #F44336;
+        }
+        
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.08);
+            border-color: rgba(255, 193, 7, 0.25);
+            color: #FF9800;
+        }
+
+        .alert-info {
+            background: rgba(0, 157, 255, 0.08);
+            border-color: rgba(0, 157, 255, 0.25);
+            color: var(--accent);
+        }
+
+        .alert-success {
+            background: rgba(76, 175, 80, 0.08);
+            border-color: rgba(76, 175, 80, 0.25);
+            color: #4CAF50;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-gray);
+            border-top: 1px solid rgba(0, 157, 255, 0.1);
+            padding-top: 1.25rem;
+        }
+
+        .footer-note span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-blob glow-blob-1"></div>
+    <div class="glow-blob glow-blob-2"></div>
+
+    <div class="login-container">
+        <div class="logo-section">
+            <img src="/static/images/logo_square.svg" alt="KARMANI AI CAR VALUATORS" style="width: 80px; height: 80px; margin-bottom: 1rem;">
+            <h1>KARMANI <span>CONSOLE</span></h1>
+            <p>Authorized Administrator Session Sign-in</p>
+        </div>
+
+        <!-- Flask Flash Notifications -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/admin/login" method="POST">
+            <div class="form-group">
+                <label for="email">Admin Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" class="form-control" placeholder="admin@karmani.com" required autocomplete="off">
+                    <i class="fa-regular fa-envelope"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <span>Secure Sign In</span>
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            </button>
+        </form>
+
+        <div class="footer-note">
+            <p>Setup configuration: Default Admin credentials are <span>admin@karmani.com</span> / <span>admin</span>.</p>
+        </div>
+    </div>
+
+</body>
+</html>

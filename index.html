@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ session.csrf_token }}">
+    <title>KARMANI AI CAR VALUATORS - India's AI-Powered Vehicle Intelligence Platform</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tom Select CSS & JS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* Light Premium Theme Overrides */
+        body {
+            background-color: #F8FCFF;
+            background-image: linear-gradient(180deg, #F8FCFF 0%, #EAF7FF 100%);
+            color: #334155;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Sticky transparent navbar overrides */
+        #navbar {
+            background-color: transparent !important;
+            border-bottom: 1px solid transparent !important;
+            box-shadow: none !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #navbar.scrolled {
+            background-color: #FFFFFF !important;
+            border-bottom: 1px solid #DCEBFF !important;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04) !important;
+        }
+
+        /* Section 2: Full Width Campaign Banner */
+        .campaign-banner {
+            max-width: 1350px;
+            margin: 105px auto 30px auto;
+            border-radius: 28px;
+            overflow: hidden;
+            height: 500px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+            animation: bannerFadeIn 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .campaign-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(to top, #F8FCFF 0%, rgba(248, 252, 255, 0) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .campaign-banner-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+        @keyframes bannerFadeIn {
+            from { opacity: 0; transform: scale(0.98) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Section 3: Floating Overlapping Hero Card */
+        .hero-overlap-wrapper {
+            margin-top: -60px; /* Overlap the banner by exactly 30px */
+            margin-bottom: 6rem;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .hero-glass-card {
+            width: 100%;
+            max-width: 1350px;
+            background: rgba(255, 255, 255, 0.94) !important;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+            padding: 3.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            animation: heroCardFadeUp 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        @keyframes heroCardFadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-overlap-container .luxury-car-svg {
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.12));
+            animation: carSleekFloat 6s ease-in-out infinite;
+        }
+        @keyframes carSleekFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .floating-card {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.15rem;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.92) !important;
+            border: 1px solid rgba(0, 157, 255, 0.15) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 10px 25px rgba(0, 85, 255, 0.05);
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .floating-card:hover {
+            transform: translateY(-5px) scale(1.03);
+            border-color: #0ea5ff !important;
+            box-shadow: 0 15px 35px rgba(0, 133, 255, 0.15) !important;
+        }
+        .card-value { top: -10px; left: -10px; }
+        .card-accuracy { bottom: -10px; left: 10px; }
+        .card-score { bottom: 30px; right: -15px; }
+        .card-report { top: 10px; right: -20px; }
+
+        /* Section 4: Live Statistics Strip */
+        .live-stats-strip {
+            max-width: 1100px;
+            margin: 0 auto 6rem auto;
+            background: #FFFFFF;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(15, 23, 42, 0.04);
+            border: 1px solid #DCEBFF;
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            text-align: center;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -1rem;
+            top: 15%;
+            height: 70%;
+            width: 1px;
+            background: #EAF7FF;
+        }
+        .stat-icon {
+            font-size: 1.75rem;
+            color: #0EA5FF;
+            margin-bottom: 0.75rem;
+        }
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 0.25rem;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Section 5: Why Choose KARMAN AI */
+        .why-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        .why-card {
+            background: #FFFFFF;
+            border: 1px solid #DCEBFF;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .why-card:hover {
+            transform: translateY(-5px);
+            border-color: #0EA5FF;
+            box-shadow: 0 15px 35px rgba(0, 133, 255, 0.08);
+        }
+        .why-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #F0F9FF;
+            color: #0EA5FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .why-card:hover .why-card-icon {
+            background: linear-gradient(135deg, #00C8FF, #2563EB);
+            color: #FFFFFF;
+        }
+
+        /* Section 6: Core Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 1.75rem;
+            margin-top: 3rem;
+            margin-bottom: 5rem;
+        }
+
+        /* Testimonials Carousel styles */
+        .testimonial-slider {
+            position: relative;
+            max-width: 800px;
+            margin: 3rem auto 0 auto;
+            overflow: hidden;
+            height: 280px;
+        }
+        .testimonial-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        .testimonial-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Responsive adaptations */
+        @media (max-width: 1200px) {
+            .hero-glass-card { padding: 2.5rem; gap: 2rem; }
+            .why-cards-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 992px) {
+            .hero-glass-card { grid-template-columns: 1fr; }
+            .hero-overlap-wrapper { margin-top: -120px; }
+            .live-stats-strip { grid-template-columns: repeat(2, 1fr); }
+            .stat-item:nth-child(2)::after { display: none; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .why-cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .live-stats-strip { grid-template-columns: 1fr; gap: 1.5rem; }
+            .stat-item::after { display: none !important; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .why-cards-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SECTION 1: Sticky Navigation -->
+    {% include 'navbar.html' %}
+
+    <!-- SECTION 2: Full Width Campaign Banner -->
+    <div class="campaign-banner">
+        <img src="/static/images/hero-banner.jpg" 
+             alt="KARMANI AI Car Valuation System Banner" 
+             loading="lazy"
+             width="1350"
+             height="500"
+             class="campaign-banner-image">
+    </div>
+
+    <!-- SECTION 3: Floating Hero Card -->
+    <div class="hero-overlap-wrapper" id="hero-card">
+        <div class="hero-glass-card">
+            <!-- Left Side Details -->
+            <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
+                <div class="hero-tagline-badge" style="background: rgba(14, 165, 255, 0.08); border: 1px solid rgba(14, 165, 255, 0.25); color: #0EA5FF; padding: 0.45rem 1rem; border-radius: 30px; display: inline-flex; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 1.5rem; align-self: flex-start; gap: 0.35rem; align-items: center;">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>India's Premier Automotive AI Platform</span>
+                </div>
+
+                <h1 class="hero-title" style="font-size: 2.8rem; font-weight: 800; color: #0F172A; line-height: 1.2; margin: 0 0 1.25rem 0;">
+                    Know Your Car's <br>
+                    <span style="background: linear-gradient(135deg, #00C8FF, #2563EB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">True Market Value</span>
+                </h1>
+
+                <p style="color: #64748B; line-height: 1.7; margin: 0 0 2rem 0; font-size: 1rem; font-weight: 500;">
+                    Professional AI-powered vehicle intelligence platform built for the Indian automobile ecosystem. Evaluate fair prices instantly using dynamic Random Forest regressors and live market intelligence.
+                </p>
+
+                <div class="hero-actions-row" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <a href="#valuation" class="btn-cta-primary" style="padding: 1rem 2rem; border-radius: 30px; background: linear-gradient(135deg, #00C8FF, #2563EB); color: #FFF; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(37,99,235,0.25);">
+                        Evaluate Car <i class="fa-solid fa-arrow-right-long"></i>
+                    </a>
+                    <a href="/compare" class="btn-cta-glass" style="padding: 1rem 2rem; border-radius: 30px; border: 2px solid #DCEBFF; color: #2563EB; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; background: #FFFFFF; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(15,23,42,0.02);">
+                        <i class="fa-solid fa-arrows-left-right"></i> Compare Cars
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right Side Visuals -->
+            <div style="display: flex; align-items: center; justify-content: center; position: relative; width: 100%;">
+                <div style="position: relative; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 300px;">
+                    <!-- Blue Sedan Custom SVG Illustration -->
+                    <svg viewBox="0 0 600 300" class="luxury-car-svg" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="paintGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#00C8FF" />
+                                <stop offset="100%" stop-color="#2563EB" />
+                            </linearGradient>
+                            <filter id="svgGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="6" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                        <ellipse cx="300" cy="250" rx="250" ry="20" fill="rgba(0, 200, 255, 0.1)" filter="url(#svgGlow)" />
+                        <ellipse cx="300" cy="250" rx="220" ry="12" fill="rgba(0, 0, 0, 0.05)" />
+                        <path d="M 60 200 L -20 180 L -20 230 Z" fill="rgba(0, 200, 255, 0.15)" filter="url(#svgGlow)" />
+                        <path d="M 70 215 L 530 215 C 550 185 550 160 510 150 C 440 120 370 85 220 85 C 130 110 70 160 70 215 Z" fill="#000" opacity="0.03" />
+                        <path d="M 68 208 C 60 185 65 165 78 152 C 95 135 125 120 145 115 C 185 92 245 85 340 88 C 390 92 460 115 480 125 C 520 145 540 160 544 175 C 548 190 535 204 515 208 C 508 192 490 180 470 180 C 450 180 432 192 425 208 L 225 208 C 218 192 200 180 180 180 C 160 180 142 192 135 208 L 68 208 Z" fill="url(#paintGrad)" />
+                        <path d="M 180 120 C 220 95 280 94 340 94 C 375 94 430 112 445 122 C 390 125 250 125 180 120 Z" fill="#0F172A" opacity="0.8" stroke="rgba(0, 200, 255, 0.3)" stroke-width="1.5" />
+                        <circle cx="180" cy="208" r="32" fill="#0F172A" stroke="rgba(0, 200, 255, 0.3)" stroke-width="4" />
+                        <circle cx="180" cy="208" r="22" fill="#1E293B" />
+                        <circle cx="180" cy="208" r="18" fill="none" stroke="#00C8FF" stroke-width="2" filter="url(#svgGlow)" />
+                        <path d="M 180 186 L 180 230 M 158 208 L 202 208" stroke="rgba(0, 200, 255, 0.8)" stroke-width="2" />
+                        <circle cx="470" cy="208" r="32" fill="#0F172A" stroke="rgba(0, 200, 255, 0.3)" stroke-width="4" />
+                        <circle cx="470" cy="208" r="22" fill="#1E293B" />
+                        <circle cx="470" cy="208" r="18" fill="none" stroke="#00C8FF" stroke-width="2" filter="url(#svgGlow)" />
+                        <path d="M 470 186 L 470 230 M 448 208 L 492 208" stroke="rgba(0, 200, 255, 0.8)" stroke-width="2" />
+                        <path d="M 70 178 C 80 178 92 188 88 194 C 78 194 70 188 68 182 Z" fill="#FFF" stroke="#00C8FF" stroke-width="1" filter="url(#svgGlow)" />
+                        <path d="M 536 172 C 542 172 546 180 542 186" fill="none" stroke="#2563EB" stroke-width="3" filter="url(#svgGlow)" />
+                    </svg>
+
+                    <!-- Floating Badge 1: Market Value -->
+                    <div class="floating-card card-value">
+                        <div style="background: rgba(0, 200, 255, 0.1); color: #00C8FF; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                            <i class="fa-solid fa-indian-rupee-sign"></i>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 0.7rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Appraised Value</div>
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #0F172A;">₹ 8.42 Lakh</div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge 2: AI Accuracy -->
+                    <div class="floating-card card-accuracy">
+                        <div style="background: rgba(16, 185, 129, 0.1); color: #10B981; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 0.7rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Confidence</div>
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #0F172A;">99.2%</div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge 3: AI Score -->
+                    <div class="floating-card card-score">
+                        <div style="background: rgba(37, 99, 235, 0.1); color: #2563EB; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                            <i class="fa-solid fa-gauge-high"></i>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 0.7rem; color: #64748B; font-weight: 700; text-transform: uppercase;">RTO Audit</div>
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #0F172A;">Verified</div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge 4: Report PDF -->
+                    <div class="floating-card card-report">
+                        <div style="background: rgba(239, 68, 68, 0.1); color: #EF4444; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 0.7rem; color: #64748B; font-weight: 700; text-transform: uppercase;">Appraisal Cert</div>
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #0F172A;">Generated</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 4: Live Statistics Strip -->
+    <div class="live-stats-strip reveal-fade-up">
+        <div class="stat-item">
+            <div class="stat-icon"><i class="fa-solid fa-car"></i></div>
+            <div class="stat-number" data-target="60000" data-suffix="+">0</div>
+            <div class="stat-label">Cars Analysed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-number" data-target="98" data-suffix="%">0</div>
+            <div class="stat-label">Prediction Accuracy</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon"><i class="fa-solid fa-tags"></i></div>
+            <div class="stat-number" data-target="28" data-suffix="+">0</div>
+            <div class="stat-label">Car Brands</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon"><i class="fa-solid fa-sliders"></i></div>
+            <div class="stat-number" data-target="1200" data-suffix="+">0</div>
+            <div class="stat-label">Variants Indexed</div>
+        </div>
+    </div>
+
+    <!-- SECTION 6: Core Features & Valuation Calculator -->
+    <section id="core-features" class="reveal-fade-up" style="padding: 6rem 0; background: #F8FCFF;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <span style="background: rgba(0, 200, 255, 0.08); color: #2563EB; padding: 0.4rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Ecosystem</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; color: #0F172A; margin: 0.5rem 0 1rem 0;">Core Platform Features</h2>
+                <p style="color: #64748B; max-width: 650px; margin: 0 auto;">Access professional automotive analytics tools designed for accuracy and fleet oversight.</p>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <div class="premium-glass-card" style="padding: 2rem; text-align: left; background: #FFF !important;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #F0F9FF; color: #0EA5FF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <h4 style="font-size: 1.15rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Vehicle Valuation</h4>
+                    <p style="font-size: 0.875rem; color: #64748B; line-height: 1.6;">Run dynamic market price estimates using localized neural regressors.</p>
+                </div>
+                <div class="premium-glass-card" style="padding: 2rem; text-align: left; background: #FFF !important;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #F0F9FF; color: #0EA5FF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-warehouse"></i>
+                    </div>
+                    <h4 style="font-size: 1.15rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Digital Garage</h4>
+                    <p style="font-size: 0.875rem; color: #64748B; line-height: 1.6;">Store and manage active fleets, service trackers, and documents.</p>
+                </div>
+                <div class="premium-glass-card" style="padding: 2rem; text-align: left; background: #FFF !important;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #F0F9FF; color: #0EA5FF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    </div>
+                    <h4 style="font-size: 1.15rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Market Trends</h4>
+                    <p style="font-size: 0.875rem; color: #64748B; line-height: 1.6;">Track supply indexes, dealer density margins, and regional updates.</p>
+                </div>
+                <div class="premium-glass-card" style="padding: 2rem; text-align: left; background: #FFF !important;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #F0F9FF; color: #0EA5FF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-arrows-left-right"></i>
+                    </div>
+                    <h4 style="font-size: 1.15rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Compare Cars</h4>
+                    <p style="font-size: 0.875rem; color: #64748B; line-height: 1.6;">Analyze technical attributes and resale estimates side-by-side.</p>
+                </div>
+                <div class="premium-glass-card" style="padding: 2rem; text-align: left; background: #FFF !important;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #F0F9FF; color: #0EA5FF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <h4 style="font-size: 1.15rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Smart Reports</h4>
+                    <p style="font-size: 0.875rem; color: #64748B; line-height: 1.6;">Download verified PDF appraisal sheets and tax audits instantly.</p>
+                </div>
+                <div class="premium-glass-card" style="padding: 2rem; text-align: left; background: #FFF !important;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: #F0F9FF; color: #0EA5FF; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1.25rem;">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <h4 style="font-size: 1.15rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Insurance Reminder</h4>
+                    <p style="font-size: 0.875rem; color: #64748B; line-height: 1.6;">Schedule email alerts for insurance deadlines and PUC renewals.</p>
+                </div>
+            </div>
+
+            <!-- Interactive Valuation Form Section -->
+            <div id="valuation" style="background: #FFFFFF; border: 1px solid #DCEBFF; border-radius: 24px; padding: 3rem; box-shadow: 0 15px 35px rgba(15,23,42,0.04);">
+                <div style="text-align: center; margin-bottom: 2.5rem;">
+                    <h3 style="font-size: 1.6rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Calculate Car Value Instantly</h3>
+                    <p style="color: #64748B; font-size: 0.95rem;">Fill out the parameters below to compute the fair market price of your vehicle.</p>
+                </div>
+
+                <form id="valuation-form">
+                    <div class="form-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; text-align: left;">
+                        <!-- 1. Brand -->
+                        <div class="form-group">
+                            <label for="car-brand" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Car Brand</label>
+                            <select id="car-brand" class="glass-select" required style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select Brand</option>
+                            </select>
+                        </div>
+                        <!-- 2. Model -->
+                        <div class="form-group">
+                            <label for="car-model" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Model</label>
+                            <select id="car-model" class="glass-select" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select Model</option>
+                            </select>
+                        </div>
+                        <!-- 3. Variant -->
+                        <div class="form-group">
+                            <label for="car-variant" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Variant</label>
+                            <select id="car-variant" class="glass-select" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select Variant</option>
+                            </select>
+                        </div>
+                        <!-- 4. Year -->
+                        <div class="form-group">
+                            <label for="car-year" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Manufacturing Year</label>
+                            <select id="car-year" class="glass-select" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select Year</option>
+                            </select>
+                        </div>
+                        <!-- 5. Fuel Type -->
+                        <div class="form-group">
+                            <label for="car-fuel" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Fuel Type</label>
+                            <select id="car-fuel" class="glass-select" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select Fuel Type</option>
+                                <option value="petrol">Petrol</option>
+                                <option value="diesel">Diesel</option>
+                                <option value="cng">CNG</option>
+                                <option value="lpg">LPG</option>
+                                <option value="electric">Electric</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                        <!-- 6. Transmission -->
+                        <div class="form-group">
+                            <label for="car-transmission" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Transmission</label>
+                            <select id="car-transmission" class="glass-select" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select Transmission</option>
+                                <option value="manual">Manual</option>
+                                <option value="automatic">Automatic</option>
+                            </select>
+                        </div>
+                        <!-- 7. State -->
+                        <div class="form-group">
+                            <label for="car-state" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">RTO Registration State</label>
+                            <select id="car-state" class="glass-select" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select State / UT</option>
+                            </select>
+                        </div>
+                        <!-- 8. Kilometers -->
+                        <div class="form-group">
+                            <label for="car-kms" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Kilometers Driven</label>
+                            <input type="number" id="car-kms" class="glass-input" placeholder="e.g. 35000" min="0" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit; font-size: 0.95rem;">
+                        </div>
+                        <!-- 9. Owners -->
+                        <div class="form-group">
+                            <label for="car-owners" style="font-size: 0.85rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem; display: block;">Owner Number</label>
+                            <select id="car-owners" class="glass-select" required disabled style="width: 100%; padding: 0.85rem 1rem; border-radius: 8px; border: 1px solid #DCEBFF; outline: none; background: #FFFFFF; font-family: inherit;">
+                                <option value="" disabled selected>Select Owners</option>
+                                <option value="1">1st Owner</option>
+                                <option value="2">2nd Owner</option>
+                                <option value="3">3rd Owner</option>
+                                <option value="4">4th Owner</option>
+                                <option value="5">5+ Owners</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Submit action -->
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button type="submit" class="btn-submit-valuation" id="calculate-btn" style="padding: 1rem 3rem; border-radius: 30px; background: linear-gradient(135deg, #00C8FF, #2563EB); border: none; color: #FFF; font-weight: 700; font-size: 1.05rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 25px rgba(37,99,235,0.25);">
+                            Get AI Valuation <i class="fa-solid fa-microchip"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Result panel -->
+                <div class="valuation-result-card" id="valuation-result-box" style="display: none; background: rgba(255,255,255,0.9); border: 2px solid #00C8FF; border-radius: 20px; padding: 2.5rem; margin-top: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; text-align: left;">
+                        <div>
+                            <span style="background: rgba(16, 185, 129, 0.1); color: #10B981; padding: 0.35rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;"><i class="fa-solid fa-circle-check"></i> Analysis Successful</span>
+                            <h3 id="result-car-name" style="font-size: 1.5rem; font-weight: 800; color: #0F172A; margin: 0.5rem 0 0.25rem 0;">Vehicle Name</h3>
+                            <p id="result-meta" style="color: #64748B; font-size: 0.9rem; margin: 0;">Details</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 0.8rem; color: #64748B; font-weight: 700; text-transform: uppercase; display: block;">Estimated Market Price</span>
+                            <h2 id="result-price-range" style="font-size: 2.2rem; font-weight: 800; color: #2563EB; margin: 0.25rem 0 0 0;">Value Range</h2>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; border-top: 1px solid #DCEBFF; padding-top: 1.5rem; display: flex; justify-content: flex-end; gap: 1rem;">
+                        <button type="button" class="btn-result-reset" id="reset-form-btn" style="padding: 0.85rem 1.5rem; border-radius: 20px; border: 1px solid #DCEBFF; color: #64748B; background: transparent; cursor: pointer; font-weight: 600; font-family: inherit;">Check Another Car</button>
+                        <button type="button" class="btn-result-pdf" style="padding: 0.85rem 1.5rem; border-radius: 20px; border: none; color: #FFF; background: #10B981; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; font-family: inherit;"><i class="fa-solid fa-file-pdf"></i> Download PDF Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: Why Choose KARMAN AI (About) -->
+    <section id="why-karman" class="reveal-fade-up" style="padding: 6rem 0; background: #FFFFFF; border-top: 1px solid #DCEBFF; border-bottom: 1px solid #DCEBFF;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <span style="background: rgba(0, 200, 255, 0.08); color: #2563EB; padding: 0.4rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Key Merits</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; color: #0F172A; margin: 0.5rem 0 1rem 0;">Why Trust KARMAN AI Valuations?</h2>
+                <p style="color: #64748B; max-width: 650px; margin: 0 auto;">Our neural models and analytical checks remove informational bias from used vehicle trades.</p>
+            </div>
+
+            <div class="why-cards-grid">
+                <div class="why-card">
+                    <div class="why-card-icon"><i class="fa-solid fa-brain"></i></div>
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin: 0 0 0.5rem 0;">AI Pricing</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0;">Multi-layered regressor trees mapping dynamic regional price tags.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin: 0 0 0.5rem 0;">Market Intel</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0;">Live mapping of supply indexes and dealer densities.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin: 0 0 0.5rem 0;">Resale Prediction</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0;">Establish long-term residual values for future configurations.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin: 0 0 0.5rem 0;">Vehicle Health</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0;">Condition parameters covering cosmetic and structural indices.</p>
+                </div>
+                <div class="why-card">
+                    <div class="why-card-icon"><i class="fa-solid fa-user-shield"></i></div>
+                    <h4 style="font-size: 1.05rem; font-weight: 700; color: #0F172A; margin: 0 0 0.5rem 0;">Fraud Detection</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0;">Validate local insurance blacklists and RTO registration blocks.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: AI Workflow -->
+    <section id="workflow" class="reveal-fade-up" style="padding: 6rem 0; background: #FFFFFF; border-top: 1px solid #DCEBFF; border-bottom: 1px solid #DCEBFF;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <span style="background: rgba(0, 200, 255, 0.08); color: #2563EB; padding: 0.4rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Pipeline</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; color: #0F172A; margin: 0.5rem 0 1rem 0;">How KARMAN AI Works</h2>
+                <p style="color: #64748B; max-width: 650px; margin: 0 auto;">Dynamic ML appraisal pipeline processing regional tax data and mechanical configurations.</p>
+            </div>
+
+            <div class="workflow-timeline">
+                <div class="workflow-step">
+                    <div class="workflow-step-num">1</div>
+                    <div class="workflow-icon-wrap"><i class="fa-solid fa-car-rear"></i></div>
+                    <h4 style="font-size: 1.1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Enter Vehicle</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0; max-width: 200px;">Input basic specs, driving history, and local RTO registration details.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-step-num">2</div>
+                    <div class="workflow-icon-wrap"><i class="fa-solid fa-gears"></i></div>
+                    <h4 style="font-size: 1.1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">AI Analysis</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0; max-width: 200px;">Our algorithm executes deep parameter trees mapping regional supply indicators.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-step-num">3</div>
+                    <div class="workflow-icon-wrap"><i class="fa-solid fa-scale-unbalanced"></i></div>
+                    <h4 style="font-size: 1.1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Market Comparison</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0; max-width: 200px;">Cross-reference dealer margins, state road tax, and local arbitrage index parameters.</p>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-step-num">4</div>
+                    <div class="workflow-icon-wrap"><i class="fa-solid fa-file-contract"></i></div>
+                    <h4 style="font-size: 1.1rem; font-weight: 700; color: #0F172A; margin-bottom: 0.5rem;">Report Generated</h4>
+                    <p style="font-size: 0.825rem; color: #64748B; line-height: 1.5; margin: 0; max-width: 200px;">Receive a verified digital appraisal certificate containing conditional scores.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: Customer Testimonials -->
+    <section id="testimonials" class="reveal-fade-up" style="padding: 6rem 0; background: #F8FCFF; border-bottom: 1px solid #DCEBFF;">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <span style="background: rgba(0, 200, 255, 0.08); color: #2563EB; padding: 0.4rem 1rem; border-radius: 30px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Testimonials</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; color: #0F172A; margin: 0.5rem 0 1rem 0;">What Our Users Say</h2>
+                <p style="color: #64748B; max-width: 650px; margin: 0 auto;">Trusted by thousands of drivers, dealers, and vehicle surveyors across India.</p>
+            </div>
+
+            <!-- Testimonial Slider viewport -->
+            <div class="testimonial-slider">
+                <div class="testimonial-track" id="testimonial-track">
+                    <!-- Slide 1 -->
+                    <div class="testimonial-slide">
+                        <div class="premium-glass-card" style="padding: 2.5rem; max-width: 650px; text-align: center; display: flex; flex-direction: column; align-items: center; background: #FFF !important; width: 100%;">
+                            <div style="display: flex; gap: 0.25rem; color: #FFC107; font-size: 1.1rem; margin-bottom: 1rem;">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p style="font-style: italic; color: #475569; font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem;">"Appraising my Honda City took less than 15 seconds. The estimated price was spot on with the offline valuation. Highly recommended!"</p>
+                            <h5 style="color: #0F172A; font-weight: 700; margin: 0 0 0.15rem 0; font-size: 1rem;">Anand Sharma</h5>
+                            <span style="color: #94A3B8; font-size: 0.8rem; font-weight: 600;">Mumbai, Maharashtra</span>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="testimonial-slide">
+                        <div class="premium-glass-card" style="padding: 2.5rem; max-width: 650px; text-align: center; display: flex; flex-direction: column; align-items: center; background: #FFF !important; width: 100%;">
+                            <div style="display: flex; gap: 0.25rem; color: #FFC107; font-size: 1.1rem; margin-bottom: 1rem;">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p style="font-style: italic; color: #475569; font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem;">"We use KARMANI AI dashboard to verify trade-in residual values. It saved our dealership group countless hours of manual audit checks."</p>
+                            <h5 style="color: #0F172A; font-weight: 700; margin: 0 0 0.15rem 0; font-size: 1rem;">Priya Patel</h5>
+                            <span style="color: #94A3B8; font-size: 0.8rem; font-weight: 600;">Surat, Gujarat</span>
+                        </div>
+                    </div>
+                    <!-- Slide 3 -->
+                    <div class="testimonial-slide">
+                        <div class="premium-glass-card" style="padding: 2.5rem; max-width: 650px; text-align: center; display: flex; flex-direction: column; align-items: center; background: #FFF !important; width: 100%;">
+                            <div style="display: flex; gap: 0.25rem; color: #FFC107; font-size: 1.1rem; margin-bottom: 1rem;">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p style="font-style: italic; color: #475569; font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem;">"Extremely detailed PDF reports. Having regional tax breakdowns and RTO details on one page makes financing applications super clear."</p>
+                            <h5 style="color: #0F172A; font-weight: 700; margin: 0 0 0.15rem 0; font-size: 1rem;">Karan Malhotra</h5>
+                            <span style="color: #94A3B8; font-size: 0.8rem; font-weight: 600;">Delhi NCR</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dots navigators -->
+            <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.5rem;">
+                <span class="testimonial-dot" onclick="switchTestimonial(0)" style="width: 10px; height: 10px; border-radius: 50%; background: #DCEBFF; cursor: pointer; transition: all 0.3s ease;"></span>
+                <span class="testimonial-dot" onclick="switchTestimonial(1)" style="width: 10px; height: 10px; border-radius: 50%; background: #DCEBFF; cursor: pointer; transition: all 0.3s ease;"></span>
+                <span class="testimonial-dot" onclick="switchTestimonial(2)" style="width: 10px; height: 10px; border-radius: 50%; background: #DCEBFF; cursor: pointer; transition: all 0.3s ease;"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: Supported Brands scrolling logos -->
+    <div class="marquee-container" id="brands-marquee">
+        <div class="marquee-track">
+            <a href="/brands?brand=Maruti Suzuki" class="marquee-item"><i class="fa-solid fa-car"></i> Maruti Suzuki</a>
+            <a href="/brands?brand=Hyundai" class="marquee-item"><i class="fa-solid fa-car-side"></i> Hyundai</a>
+            <a href="/brands?brand=Mahindra" class="marquee-item"><i class="fa-solid fa-truck-monster"></i> Mahindra</a>
+            <a href="/brands?brand=Tata" class="marquee-item"><i class="fa-solid fa-car"></i> Tata Motors</a>
+            <a href="/brands?brand=Toyota" class="marquee-item"><i class="fa-solid fa-car-side"></i> Toyota</a>
+            <a href="/brands?brand=Honda" class="marquee-item"><i class="fa-solid fa-car"></i> Honda</a>
+            <a href="/brands?brand=Skoda" class="marquee-item"><i class="fa-solid fa-car-side"></i> Skoda</a>
+            <a href="/brands?brand=Volkswagen" class="marquee-item"><i class="fa-solid fa-car"></i> Volkswagen</a>
+            <a href="/brands?brand=Kia" class="marquee-item"><i class="fa-solid fa-car-side"></i> Kia</a>
+            <a href="/brands?brand=MG" class="marquee-item"><i class="fa-solid fa-car"></i> MG Motor</a>
+            <a href="/brands?brand=Nissan" class="marquee-item"><i class="fa-solid fa-car-side"></i> Nissan</a>
+            <a href="/brands?brand=Renault" class="marquee-item"><i class="fa-solid fa-car-side"></i> Renault</a>
+            <a href="/brands?brand=Jeep" class="marquee-item"><i class="fa-solid fa-truck-pickup"></i> Jeep</a>
+            <a href="/brands?brand=Audi" class="marquee-item"><i class="fa-solid fa-car-side"></i> Audi</a>
+            <a href="/brands?brand=BMW" class="marquee-item"><i class="fa-solid fa-car-side"></i> BMW</a>
+            <a href="/brands?brand=Mercedes-Benz" class="marquee-item"><i class="fa-solid fa-car-side"></i> Mercedes-Benz</a>
+            <a href="/brands?brand=Volvo" class="marquee-item"><i class="fa-solid fa-car"></i> Volvo</a>
+            <a href="/brands?brand=Lexus" class="marquee-item"><i class="fa-solid fa-car-side"></i> Lexus</a>
+            <a href="/brands?brand=BYD" class="marquee-item"><i class="fa-solid fa-charging-station"></i> BYD</a>
+            
+            <!-- Repeated set for seamless loop scrolling -->
+            <a href="/brands?brand=Maruti Suzuki" class="marquee-item"><i class="fa-solid fa-car"></i> Maruti Suzuki</a>
+            <a href="/brands?brand=Hyundai" class="marquee-item"><i class="fa-solid fa-car-side"></i> Hyundai</a>
+            <a href="/brands?brand=Mahindra" class="marquee-item"><i class="fa-solid fa-truck-monster"></i> Mahindra</a>
+            <a href="/brands?brand=Tata" class="marquee-item"><i class="fa-solid fa-car"></i> Tata Motors</a>
+            <a href="/brands?brand=Toyota" class="marquee-item"><i class="fa-solid fa-car-side"></i> Toyota</a>
+            <a href="/brands?brand=Honda" class="marquee-item"><i class="fa-solid fa-car"></i> Honda</a>
+            <a href="/brands?brand=Skoda" class="marquee-item"><i class="fa-solid fa-car-side"></i> Skoda</a>
+            <a href="/brands?brand=Volkswagen" class="marquee-item"><i class="fa-solid fa-car"></i> Volkswagen</a>
+            <a href="/brands?brand=Kia" class="marquee-item"><i class="fa-solid fa-car-side"></i> Kia</a>
+            <a href="/brands?brand=MG" class="marquee-item"><i class="fa-solid fa-car"></i> MG Motor</a>
+            <a href="/brands?brand=Nissan" class="marquee-item"><i class="fa-solid fa-car-side"></i> Nissan</a>
+            <a href="/brands?brand=Renault" class="marquee-item"><i class="fa-solid fa-car-side"></i> Renault</a>
+            <a href="/brands?brand=Jeep" class="marquee-item"><i class="fa-solid fa-truck-pickup"></i> Jeep</a>
+            <a href="/brands?brand=Audi" class="marquee-item"><i class="fa-solid fa-car-side"></i> Audi</a>
+            <a href="/brands?brand=BMW" class="marquee-item"><i class="fa-solid fa-car-side"></i> BMW</a>
+            <a href="/brands?brand=Mercedes-Benz" class="marquee-item"><i class="fa-solid fa-car-side"></i> Mercedes-Benz</a>
+            <a href="/brands?brand=Volvo" class="marquee-item"><i class="fa-solid fa-car"></i> Volvo</a>
+            <a href="/brands?brand=Lexus" class="marquee-item"><i class="fa-solid fa-car-side"></i> Lexus</a>
+            <a href="/brands?brand=BYD" class="marquee-item"><i class="fa-solid fa-charging-station"></i> BYD</a>
+        </div>
+    </div>
+
+    <!-- SECTION 10: Final CTA -->
+    <section id="cta-section" class="reveal-fade-up" style="padding: 6rem 0; background: #FFFFFF;">
+        <div class="container" style="max-width: 1100px;">
+            <div style="background: linear-gradient(135deg, #00C8FF 0%, #2563EB 100%); border-radius: 28px; padding: 4.5rem 3rem; text-align: center; color: #FFFFFF; box-shadow: 0 20px 40px rgba(37,99,235,0.2);">
+                <h2 style="font-size: 2.5rem; font-weight: 800; margin: 0 0 1rem 0;">Ready to Know Your Car's Value?</h2>
+                <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto 2.5rem auto; color: rgba(255,255,255,0.9); font-weight: 500;">Run a dynamic ML appraisal mapping regional supply indicators and road tax configurations in seconds.</p>
+                <a href="#valuation" class="btn-submit-valuation" style="padding: 1.15rem 3rem; border-radius: 30px; background: #FFFFFF; color: #2563EB; font-weight: 800; font-size: 1.1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+                    Start AI Valuation <i class="fa-solid fa-calculator"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- HIDE IN DOM FAQ & CONTACT FORM SECTIONS TO KEEP JS SEARCH/FORM BINDINGS ACTIVE WITHOUT THROWING ERRORS -->
+    <div style="display: none;">
+        <input type="text" id="faq-search">
+        <div class="faq-item-redesign"><span class="faq-q-text">Q</span><div class="faq-answer-redesign">A</div><div class="faq-body-redesign"></div><i class="faq-icon-redesign"></i></div>
+        <form id="contact-form">
+            <input id="contact-name">
+            <input id="contact-email">
+            <input id="contact-subject">
+            <textarea id="contact-message"></textarea>
+        </form>
+    </div>
+
+    <!-- SECTION 11: Footer -->
+    {% include 'footer.html' %}
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/script.js"></script>
+
+    <!-- Testimonials Slider & Navbar Scroll Script -->
+    <script>
+        // Navbar scrolled trigger
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 40) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Testimonial slides controller
+        let activeTestimonialIndex = 0;
+        const track = document.getElementById('testimonial-track');
+        const dots = document.querySelectorAll('.testimonial-dot');
+
+        function switchTestimonial(index) {
+            activeTestimonialIndex = index;
+            track.style.transform = `translateX(-${index * 100}%)`;
+            dots.forEach((dot, idx) => {
+                dot.style.background = idx === index ? '#2563EB' : '#DCEBFF';
+                dot.style.transform = idx === index ? 'scale(1.2)' : 'scale(1)';
+            });
+        }
+
+        // Initialize dots styling
+        switchTestimonial(0);
+
+        // Auto transition testimonial slides
+        setInterval(() => {
+            let next = (activeTestimonialIndex + 1) % 3;
+            switchTestimonial(next);
+        }, 6000);
+    </script>
+</body>
+
+</html>

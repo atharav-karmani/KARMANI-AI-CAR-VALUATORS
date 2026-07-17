@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ car.brand_name }} {{ car.model_name }} {{ car.variant_name }} Details | KARMANI AI CAR VALUATORS</title>
+    <meta name="description" content="View comprehensive technical specifications, mileage, pricing, dimensions, and AI performance indicators.">
+    <!-- FontAwesome, Chart.js & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .car-details-hero {
+            padding: 8.5rem 0 3rem 0;
+            background: linear-gradient(135deg, rgba(0, 157, 255, 0.04) 0%, rgba(0, 217, 255, 0.01) 100%);
+            border-bottom: 1px solid var(--card-border);
+            text-align: left;
+        }
+        .details-hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .hero-title-meta {
+            flex: 1;
+            min-width: 320px;
+        }
+        .brand-link-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-decoration: none;
+        }
+        .brand-link-row:hover {
+            color: var(--primary);
+        }
+        .car-detail-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin: 0 0 0.5rem 0;
+        }
+        .car-detail-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            margin: 0;
+        }
+        .hero-pricing-block {
+            text-align: right;
+            min-width: 250px;
+        }
+        .showroom-val-big {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1.1;
+        }
+        .onroad-val-big {
+            font-size: 1rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        /* Layout Grid */
+        .details-grid-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 7rem 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2.5rem;
+        }
+        .details-card-block {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2.25rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .section-header-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 0.75rem;
+        }
+        .gallery-wrapper {
+            width: 100%;
+            height: 400px;
+            background: #E5E7EB;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            margin-bottom: 1.5rem;
+        }
+        .gallery-wrapper i {
+            font-size: 5rem;
+            color: var(--text-gray);
+            opacity: 0.35;
+        }
+        /* Spec Table styling */
+        .specs-table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+        .specs-card-item {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+            padding: 1.15rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .spec-item-icon-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            background: rgba(0, 157, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        .spec-meta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .spec-lbl-txt {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            font-weight: 600;
+        }
+        .spec-val-txt {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        /* Features badges */
+        .features-check-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+        .feature-badge-check {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+        .feature-badge-check.active i {
+            color: var(--accent-emerald);
+        }
+        .feature-badge-check.inactive i {
+            color: var(--text-gray);
+            opacity: 0.5;
+        }
+        /* Cost Calculator Widget */
+        .calculator-wrapper {
+            background: rgba(0, 157, 255, 0.03);
+            border: 1px solid rgba(0, 157, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        .slider-control-field {
+            width: 100%;
+            margin: 1rem 0;
+        }
+        .calc-result-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed rgba(0, 157, 255, 0.2);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        /* AI recommendation card */
+        .recommendation-panel {
+            background: linear-gradient(135deg, rgba(0, 157, 255, 0.05) 0%, rgba(0, 228, 167, 0.03) 100%);
+            border: 1px solid rgba(0, 157, 255, 0.15);
+            border-radius: 14px;
+            padding: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        /* Sidebar Sticky list widget */
+        .sticky-actions-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            text-align: left;
+        }
+        .sidebar-action-btn-large {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem;
+            padding: 0.9rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-decoration: none;
+            width: 100%;
+            margin-bottom: 0.85rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .sidebar-action-btn-large.primary {
+            background: var(--primary);
+            border: 1px solid var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(0, 157, 255, 0.2);
+        }
+        .sidebar-action-btn-large.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 157, 255, 0.25);
+        }
+        .sidebar-action-btn-large.secondary {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            color: var(--text-dark);
+        }
+        .sidebar-action-btn-large.secondary:hover {
+            border-color: rgba(0, 157, 255, 0.25);
+            background: rgba(0, 157, 255, 0.04);
+            color: var(--primary);
+        }
+        .sidebar-action-btn-large.danger {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            color: var(--text-dark);
+        }
+        .sidebar-action-btn-large.danger:hover {
+            color: #FF3366;
+            border-color: rgba(255, 51, 102, 0.2);
+            background: rgba(255, 51, 102, 0.04);
+        }
+        /* Variants Table */
+        .variant-matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .variant-matrix-table th {
+            font-weight: 700;
+            color: var(--text-gray);
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 1rem;
+        }
+        .variant-matrix-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .rotation-turntable {
+            perspective: 800px;
+            width: 100%;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at 50% 70%, rgba(0, 157, 255, 0.08) 0%, transparent 70%);
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            margin-top: 1rem;
+        }
+        .turntable-grid-circle {
+            position: absolute;
+            bottom: 15%;
+            width: 260px;
+            height: 80px;
+            border: 2px dashed rgba(0, 157, 255, 0.2);
+            border-radius: 50%;
+            transform: rotateX(75deg);
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0, 157, 255, 0.05);
+        }
+        .rotation-car-entity {
+            font-size: 6rem;
+            color: var(--primary);
+            transition: transform 0.05s ease-out;
+            transform-style: preserve-3d;
+            filter: drop-shadow(0 15px 12px rgba(0,0,0,0.18));
+            display: inline-block;
+        }
+        
+        @media (max-width: 900px) {
+            .details-grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    {% include 'navbar.html' %}
+
+    <!-- Page Header Hero block -->
+    <section class="car-details-hero">
+        <div class="details-hero-container">
+            <div class="hero-title-meta">
+                <a href="/brand/{{ car.brand_slug }}" class="brand-link-row">
+                    <i class="fa-solid fa-arrow-left-long"></i> Back to {{ car.brand_name }} Catalog
+                </a>
+                <h1 class="car-detail-title">{{ car.brand_name }} {{ car.model_name }}</h1>
+                <p class="car-detail-subtitle">{{ car.variant_name }} Trim • {{ car.generation_name }} • Launched: {{ car.launch_year }}{% if car.is_active == 0 %} (Discontinued){% endif %}</p>
+            </div>
+            <div class="hero-pricing-block">
+                {% for pl in car.price_labels %}
+                <div style="margin-bottom: 0.75rem;">
+                    <div style="display:flex; align-items:center; gap:0.5rem; {% if not loop.first %}margin-top:0.5rem;{% endif %}">
+                        <span style="display:inline-flex; align-items:center; gap:0.35rem; background:{{ pl.color }}15; color:{{ pl.color }}; border:1px solid {{ pl.color }}30; border-radius:20px; font-size:0.7rem; font-weight:800; padding:0.2rem 0.6rem; text-transform:uppercase; letter-spacing:0.04em;">
+                            <i class="fa-solid {{ pl.icon }}"></i> {{ pl.label }}
+                        </span>
+                    </div>
+                    {% if pl.value and pl.value > 0 %}
+                    <span class="showroom-val-big" {% if pl.type == 'historical_launch' %}style="color:var(--text-gray);"{% elif pl.type == 'ai_estimated_used' %}style="color:#A855F7;"{% endif %}>
+                        &#8377; {{ pl.value | indian_currency }}
+                    </span>
+                    {% else %}
+                    <span style="font-size:1rem; font-weight:700; color:#6B7280;">Official Live Price Currently Unavailable</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                {% if car.is_active == 0 and car.discontinued_year %}
+                    <div class="onroad-val-big">Discontinued in: <strong>{{ car.discontinued_year }}</strong></div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Grid Content Layout -->
+    <section style="background: var(--bg-main);">
+        <div class="details-grid-layout">
+            
+            <!-- Left Side main contents -->
+            <div>
+                <!-- Vehicle Gallery -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Interactive 360° Visualizer</h3>
+                    
+                    <div class="rotation-turntable">
+                        <div class="turntable-grid-circle"></div>
+                        <div class="rotation-car-entity" id="rotation-car-model">
+                            <i class="fa-solid fa-car-side" id="car-rotation-icon"></i>
+                        </div>
+                        <span style="position:absolute; bottom:15px; right:15px; background:rgba(17,24,39,0.85); color:#FFF; font-size:0.775rem; font-weight:700; padding:0.4rem 0.85rem; border-radius:30px; backdrop-filter:blur(5px);">
+                            <i class="fa-solid fa-rotate"></i> Angle: <span id="rotation-angle-lbl">0°</span>
+                        </span>
+                    </div>
+                    
+                    <div class="calculator-wrapper" style="margin-top:0; margin-bottom:1.5rem; padding: 1rem 1.25rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:0.8rem; color:var(--text-gray);">
+                            <span>DRAG SLIDER TO ROTATE VEHICLE (360°)</span>
+                            <span style="color:var(--primary); font-size: 0.9rem;"><i class="fa-solid fa-arrow-left-right"></i></span>
+                        </div>
+                        <input type="range" min="-180" max="180" value="0" id="rotation-slider" class="slider-control-field" style="margin: 0.75rem 0 0.25rem 0;" oninput="updateTurntableAngle(this.value)">
+                    </div>
+                    
+                    <div style="font-size:0.825rem; color:var(--text-gray); font-weight:600; text-align:center;">
+                        *Virtual 360° render simulation. Slide drag bar to inspect exterior body lines from all sides.
+                    </div>
+                    
+                    <!-- Image Gallery thumbnails with lightbox -->
+                    <div style="margin-top: 2rem; border-top: 1px solid rgba(0, 0, 0, 0.05); padding-top: 1.5rem;">
+                        <h4 style="font-size:0.95rem; font-weight:800; color:var(--text-dark); margin-bottom:0.75rem;">
+                            <i class="fa-solid fa-photo-film" style="color:var(--primary)"></i> Gallery & Media Library
+                        </h4>
+                        <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem;">
+                            <div class="gallery-thumb" onclick="openLightbox(0)">
+                                <img src="/static/images/cars/thumbnail.svg" class="lazy" alt="Isometric Wireframe">
+                                <div class="gallery-thumb-overlay"><i class="fa-solid fa-maximize"></i></div>
+                            </div>
+                            <div class="gallery-thumb" onclick="openLightbox(1)">
+                                <img src="/static/images/cars/front_view.svg" class="lazy" alt="Front Elevation">
+                                <div class="gallery-thumb-overlay"><i class="fa-solid fa-maximize"></i></div>
+                            </div>
+                            <div class="gallery-thumb" onclick="openLightbox(2)">
+                                <img src="/static/images/cars/rear_view.svg" class="lazy" alt="Rear View">
+                                <div class="gallery-thumb-overlay"><i class="fa-solid fa-maximize"></i></div>
+                            </div>
+                            <div class="gallery-thumb" onclick="openLightbox(3)">
+                                <img src="/static/images/cars/side_view.svg" class="lazy" alt="Side Profile">
+                                <div class="gallery-thumb-overlay"><i class="fa-solid fa-maximize"></i></div>
+                            </div>
+                            <div class="gallery-thumb" onclick="openLightbox(4)">
+                                <img src="/static/images/cars/dashboard_view.svg" class="lazy" alt="Dashboard Console">
+                                <div class="gallery-thumb-overlay"><i class="fa-solid fa-maximize"></i></div>
+                            </div>
+                            <div class="gallery-thumb" onclick="openLightbox(5)">
+                                <img src="/static/images/cars/interior_view.svg" class="lazy" alt="Interior Layout">
+                                <div class="gallery-thumb-overlay"><i class="fa-solid fa-maximize"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if car.is_active == 1 %}
+                <!-- Dynamic On-Road Pricing Table -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-indian-rupee-sign" style="color:var(--primary)"></i> Live Pricing & Road Tax Breakdown</h3>
+                    <p style="font-size:0.875rem; color:var(--text-gray); margin-bottom:1.5rem;">Select your state to recalculate regional RTO registration fees, comprehensive insurance policies, and fastags.</p>
+                    
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="pricing-state-selector">RTO Registration State</label>
+                            <select id="pricing-state-selector" class="filter-select-control" onchange="updateLivePricingBreakdown()">
+                                <option value="MH" selected>Maharashtra (MH)</option>
+                                <option value="DL">Delhi (DL)</option>
+                                <option value="KA">Karnataka (KA)</option>
+                                <option value="TN">Tamil Nadu (TN)</option>
+                                <option value="UP">Uttar Pradesh (UP)</option>
+                                <option value="GA">Goa (GA)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group-widget" style="text-align:right; display:flex; flex-direction:column; justify-content:center;">
+                            <span style="font-size:0.75rem; color:var(--text-gray); font-weight:700;">LIVE PRICING SOURCE</span>
+                            <span id="pricing-source-lbl" style="font-size:0.9rem; font-weight:700; color:var(--primary);">Autonomous Local Pricing Engine</span>
+                        </div>
+                    </div>
+                    
+                    <div style="overflow-x:auto;">
+                        <table class="variant-matrix-table">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span style="display:inline-flex; align-items:center; gap:0.35rem;">
+                                            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#EAB308;"></span>
+                                            Estimated Ex-Showroom Price
+                                        </span>
+                                    </td>
+                                    <td id="breakdown-ex-showroom" style="text-align:right; font-weight:700;">&#8377; {{ car.base_showroom_price | indian_currency }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Regional RTO Registration & Road Tax</td>
+                                    <td id="breakdown-rto" style="text-align:right; font-weight:700; color: #FF9800;">₹ --</td>
+                                </tr>
+                                <tr>
+                                    <td>Comprehensive Vehicle Insurance</td>
+                                    <td id="breakdown-insurance" style="text-align:right; font-weight:700;">₹ --</td>
+                                </tr>
+                                <tr>
+                                    <td>Accessories & Standard Fastag Kit</td>
+                                    <td id="breakdown-accessories" style="text-align:right; font-weight:700;">₹ --</td>
+                                </tr>
+                                <tr style="border-top: 2px solid var(--primary); background: rgba(0, 157, 255, 0.02);">
+                                    <td style="font-weight:900; font-size:1.05rem;">Estimated On-Road Price</td>
+                                    <td id="breakdown-on-road" style="text-align:right; font-weight:900; font-size:1.15rem; color:var(--primary);">₹ --</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-gray); margin-top:0.75rem; font-weight:500; text-align:left;">
+                        *On-road price estimates are indicators. Octroi charges, local cess, or dealer discounts might apply. Last refreshed: <span id="pricing-refresh-lbl">--</span>
+                    </div>
+                </div>
+
+                <!-- Live EMI Calculator Widget -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-calculator" style="color:var(--primary)"></i> Live EMI Calculator Widget</h3>
+                    <p style="font-size:0.875rem; color:var(--text-gray); margin-bottom:1.5rem;">Calculate monthly finance options, customize downpayment, interest rate, and tenure options.</p>
+                    
+                    <div class="calculator-wrapper">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:0.85rem; margin-bottom:0.35rem;">
+                            <span>Downpayment Amount (₹)</span>
+                            <span id="emi-downpayment-lbl" style="color:var(--primary);">₹ 1,50,000</span>
+                        </div>
+                        <input type="range" min="50000" max="1000000" step="50000" value="150000" id="emiDownpaymentSlider" class="slider-control-field" oninput="calculateEMI()">
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:0.85rem; margin-bottom:0.35rem; margin-top:1rem;">
+                            <span>Annual Interest Rate (%)</span>
+                            <span id="emi-rate-lbl" style="color:var(--primary);">9.8%</span>
+                        </div>
+                        <input type="range" min="7.5" max="15.0" step="0.1" value="9.8" id="emiRateSlider" class="slider-control-field" oninput="calculateEMI()">
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:0.85rem; margin-bottom:0.35rem; margin-top:1rem;">
+                            <span>Loan Tenure (Years)</span>
+                            <span id="emi-years-lbl" style="color:var(--primary);">5 Years</span>
+                        </div>
+                        <input type="range" min="1" max="7" step="1" value="5" id="emiYearsSlider" class="slider-control-field" oninput="calculateEMI()">
+
+                        <div class="calc-result-box" style="border-top-style:dashed;">
+                            <div style="text-align:left;">
+                                <span style="font-size:0.75rem; color:var(--text-gray); font-weight:700; text-transform:uppercase;">Estimated Monthly EMI</span>
+                                <div id="emi-result-lbl" style="font-size:1.75rem; font-weight:900; color:var(--primary); margin-top:0.15rem;">₹ --</div>
+                            </div>
+                            <div style="text-align:right; font-size:0.8rem; font-weight:600; color:var(--text-gray);">
+                                Total Loan: <span id="emi-loan-amount-lbl" style="color:var(--text-dark);">₹ --</span><br>
+                                Total Interest: <span id="emi-interest-lbl" style="color:var(--text-dark);">₹ --</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Discontinued Model Valuation Panel -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-clock-rotate-left" style="color:#FF3366;"></i> Used Market Resale & Depreciation</h3>
+                    <p style="font-size:0.875rem; color:var(--text-gray); margin-bottom:1.5rem;">This model variant has been discontinued by {{ car.brand_name }}. Estimated current resale values and depreciation curves are detailed below.</p>
+                    
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box" style="background:rgba(255,51,102,0.06); color:#FF3366;"><i class="fa-solid fa-wallet"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Original Launch Cost</span>
+                                <span class="spec-val-txt">₹ {{ car.original_launch_price | indian_currency }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box" style="background:rgba(0,228,167,0.06); color:var(--accent-emerald);"><i class="fa-solid fa-tag"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Est. Current Value</span>
+                                <span class="spec-val-txt">₹ {{ car.current_used_market_price | indian_currency }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box" style="background:rgba(156,39,176,0.06); color:#9C27B0;"><span style="font-weight:900;">%</span></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Depreciation Loss</span>
+                                <span class="spec-val-txt">{{ car.depreciation_percentage }}%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Resale Price Estimator Slider -->
+                    <div class="calculator-wrapper" style="background: rgba(255, 51, 102, 0.02); border-color: rgba(255, 51, 102, 0.1);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:0.9rem;">
+                            <span>Projected Condition Odometer</span>
+                            <span id="used-condition-odometer-lbl" style="color:#FF3366;">40,000 km</span>
+                        </div>
+                        <input type="range" min="10000" max="150000" step="10000" value="40000" id="usedOdometerSlider" class="slider-control-field" oninput="calculateUsedValuation()">
+                        
+                        <div class="calc-result-box" style="border-top-color:rgba(255, 51, 102, 0.2);">
+                            <div style="text-align:left;">
+                                <span style="font-size:0.75rem; color:var(--text-gray); font-weight:700; text-transform:uppercase;">AI Estimated Used Value</span>
+                                <div id="used-estimated-price-lbl" style="font-size:1.5rem; font-weight:900; color:var(--text-dark); margin-top:0.15rem;">₹ --</div>
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--text-gray); font-weight:500;">*Estimated used fair purchase rate.</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                
+                <!-- Core Specifications -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-gears" style="color:var(--primary)"></i> Technical Specifications</h3>
+                    <div class="specs-table-grid">
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-gas-pump"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Fuel type</span>
+                                <span class="spec-val-txt">{{ car.fuel_type }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-toggle-on"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Transmission</span>
+                                <span class="spec-val-txt">{{ car.transmission }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-gauge-high"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Engine Capacity</span>
+                                <span class="spec-val-txt">{{ car.engine }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-bolt"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Max Power</span>
+                                <span class="spec-val-txt">{{ car.power }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-ring"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Max Torque</span>
+                                <span class="spec-val-txt">{{ car.torque }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-leaf"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Mileage (ARA)</span>
+                                <span class="spec-val-txt">{{ car.mileage }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-circle-nodes"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Drivetrain</span>
+                                <span class="spec-val-txt">{{ car.drivetrain }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-droplet"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Fuel Tank</span>
+                                <span class="spec-val-txt">{{ car.fuel_tank }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Color Swatches Row -->
+                    <div style="margin-top: 2rem; border-top: 1px solid rgba(0, 0, 0, 0.05); padding-top: 1.5rem;">
+                        <h4 style="font-size:0.95rem; font-weight:800; color:var(--text-dark); margin-bottom:0.75rem;">
+                            <i class="fa-solid fa-palette" style="color:var(--primary)"></i> Available Color Options
+                        </h4>
+                        <div class="color-swatches-row">
+                            {% if car.colors %}
+                                {% for col in car.colors.split(',') %}
+                                    <div class="color-swatch {% if loop.first %}active{% endif %}" 
+                                         style="background-color: #E5E7EB;" 
+                                         title="{{ col.strip() }}"
+                                         onclick="setActiveColorSwatch(this)">
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <span style="font-size:0.875rem; color:var(--text-gray);">Color details not available</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dimensions & Capacity -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-arrows-left-right" style="color:var(--primary)"></i> Dimensions & Layout</h3>
+                    <div class="specs-table-grid">
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-chair"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Seating Capacity</span>
+                                <span class="spec-val-txt">{{ car.seating_capacity }} Persons</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-arrows-up-to-line"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Ground Clearance</span>
+                                <span class="spec-val-txt">{{ car.ground_clearance }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-ruler-horizontal"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Wheelbase</span>
+                                <span class="spec-val-txt">{{ car.wheelbase }}</span>
+                            </div>
+                        </div>
+                        <div class="specs-card-item">
+                            <div class="spec-item-icon-box"><i class="fa-solid fa-suitcase-rolling"></i></div>
+                            <div class="spec-meta-group">
+                                <span class="spec-lbl-txt">Boot Space</span>
+                                <span class="spec-val-txt">{{ car.boot_space }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Warranty & RSA Package Card -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-award" style="color:var(--primary)"></i> Manufacturer Warranty & Peace of Mind</h3>
+                    <p style="font-size:0.875rem; color:var(--text-gray); margin-bottom:1.5rem;">Explore official manufacturer warranty coverage, roadside assistance, and optional extended packages.</p>
+                    
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1.25rem;">
+                        <div style="background:rgba(0,157,255,0.02); border:1px solid var(--card-border); border-radius:12px; padding:1.25rem; text-align:left;">
+                            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; color:var(--primary); font-weight:800; font-size:0.95rem;">
+                                <i class="fa-solid fa-shield-halved"></i> Standard Warranty
+                            </div>
+                            <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem; font-size:0.825rem; color:var(--text-gray); font-weight:600;">
+                                <li><strong style="color:var(--text-dark);">Active Coverage:</strong> {% if car.is_active == 1 %}3 Years / 1,00,000 km{% else %}Expired (Discontinued){% endif %}</li>
+                                <li><strong style="color:var(--text-dark);">Engine & Gearbox:</strong> Covered</li>
+                                <li><strong style="color:var(--text-dark);">Battery (EV/Hybrid):</strong> {% if car.fuel_type in ['EV', 'Hybrid'] %}8 Years / 1,60,000 km{% else %}N/A{% endif %}</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background:rgba(0,157,255,0.02); border:1px solid var(--card-border); border-radius:12px; padding:1.25rem; text-align:left;">
+                            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; color:var(--primary); font-weight:800; font-size:0.95rem;">
+                                <i class="fa-solid fa-truck-pickup"></i> 24/7 Roadside Assist (RSA)
+                            </div>
+                            <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem; font-size:0.825rem; color:var(--text-gray); font-weight:600;">
+                                <li><strong style="color:var(--text-dark);">Emergency Towing:</strong> Free to nearest dealer</li>
+                                <li><strong style="color:var(--text-dark);">On-Site Support:</strong> Flat tires, jump-starts & minor mechanical fix</li>
+                                <li><strong style="color:var(--text-dark);">Toll-Free RSA Helpline:</strong> 1800-KARMANI-RSA</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features checklist -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-shield-halved" style="color:var(--primary)"></i> Comfort & Safety Features</h3>
+                    <div class="features-check-grid">
+                        <div class="feature-badge-check active">
+                            <i class="fa-solid fa-circle-check"></i> ABS with EBD
+                        </div>
+                        <div class="feature-badge-check active">
+                            <i class="fa-solid fa-circle-check"></i> ESP stability control
+                        </div>
+                        <div class="feature-badge-check {% if car.sunroof == 'No' %}inactive{% else %}active{% endif %}">
+                            <i class="fa-solid {% if car.sunroof == 'No' %}fa-circle-xmark{% else %}fa-circle-check{% endif %}"></i> Sunroof: {{ car.sunroof }}
+                        </div>
+                        <div class="feature-badge-check {% if car.adas == 'No' %}inactive{% else %}active{% endif %}">
+                            <i class="fa-solid {% if car.adas == 'No' %}fa-circle-xmark{% else %}fa-circle-check{% endif %}"></i> ADAS Radar
+                        </div>
+                        <div class="feature-badge-check {% if car.cruise_control == 'No' %}inactive{% else %}active{% endif %}">
+                            <i class="fa-solid {% if car.cruise_control == 'No' %}fa-circle-xmark{% else %}fa-circle-check{% endif %}"></i> Cruise Control
+                        </div>
+                        <div class="feature-badge-check active">
+                            <i class="fa-solid fa-circle-check"></i> Dual Airbags ({{ car.airbags }} Tot)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service Costs calculator -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-calculator" style="color:var(--primary)"></i> Service Cost Estimation Calculator</h3>
+                    <p style="font-size:0.875rem; color:var(--text-gray); margin-bottom:1rem;">Estimate maintenance and parts service costs using catalog details.</p>
+                    
+                    <div class="calculator-wrapper">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:0.9rem;">
+                            <span>Cumulative Odometer Distance</span>
+                            <span id="odometer-label" style="color:var(--primary);">30,000 km</span>
+                        </div>
+                        <input type="range" min="10000" max="100000" step="10000" value="30000" id="odometerSlider" class="slider-control-field" oninput="calculateMaintenanceCosts()">
+                        
+                        <div class="calc-result-box">
+                            <div style="text-align:left;">
+                                <span style="font-size:0.75rem; color:var(--text-gray); font-weight:700; text-transform:uppercase;">Scheduled Maintenance Estimate</span>
+                                <div id="service-price-label" style="font-size:1.5rem; font-weight:900; color:var(--text-dark); margin-top:0.15rem;">₹ 12,450</div>
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--text-gray); font-weight:500;">*Estimated values including fluids, labor & tax.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resale Forecast Card -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-chart-line" style="color:var(--primary)"></i> AI Resale Value & Depreciation Forecast</h3>
+                    <p style="font-size:0.875rem; color:var(--text-gray); margin-bottom:1.5rem;">Estimated future resale value retention timeline over the next 5 years.</p>
+                    <div class="resale-chart-wrapper">
+                        <canvas id="depreciationChart" style="width:100%; height:220px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pros & Cons -->
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-thumbs-up" style="color:var(--primary)"></i> Pros & Cons</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:2rem;">
+                        <div>
+                            <h4 style="font-size:1rem; font-weight:800; color:var(--accent-emerald); margin-bottom:0.85rem;"><i class="fa-solid fa-circle-check"></i> Advantages</h4>
+                            <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.65rem; font-size:0.9rem; font-weight:600; color:var(--text-gray); text-align:left;">
+                                {% for pro in pros %}
+                                <li><i class="fa-solid fa-check" style="color:var(--accent-emerald); margin-right:0.45rem;"></i> {{ pro }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="font-size:1rem; font-weight:800; color:#FF3366; margin-bottom:0.85rem;"><i class="fa-solid fa-circle-xmark"></i> Drawbacks</h4>
+                            <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.65rem; font-size:0.9rem; font-weight:600; color:var(--text-gray); text-align:left;">
+                                {% for con in cons %}
+                                <li><i class="fa-solid fa-xmark" style="color:#FF3366; margin-right:0.45rem;"></i> {{ con }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Variants list -->
+                {% if other_variants %}
+                <div class="details-card-block">
+                    <h3 class="section-header-title"><i class="fa-solid fa-network-wired" style="color:var(--primary)"></i> Alternate Variants comparison</h3>
+                    <div style="overflow-x:auto;">
+                        <table class="variant-matrix-table">
+                            <thead>
+                                <tr>
+                                    <th>Variant Configuration</th>
+                                    <th>Fuel type</th>
+                                    <th>Transmission</th>
+                                    <th>Showroom Price</th>
+                                    <th>Compare</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for v in other_variants %}
+                                <tr>
+                                    <td>{{ car.model_name }} {{ v.name }}</td>
+                                    <td>{{ v.fuel_type }}</td>
+                                    <td>{{ v.transmission }}</td>
+                                    <td style="color:var(--primary);">₹ {{ v.price | indian_currency }}</td>
+                                    <td>
+                                        <a href="/car/{{ v.id }}" style="color:var(--primary); text-decoration:none;"><i class="fa-solid fa-eye"></i> View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+            
+            <!-- Right side Sticky cards -->
+            <div style="display:flex; flex-direction:column; gap:2rem;">
+                
+                <!-- Quick Actions card -->
+                <div class="sticky-actions-card">
+                    <h3 class="filter-section-title"><i class="fa-solid fa-bolt" style="color:var(--primary)"></i> Quick Operations</h3>
+                    <a href="/valuation?brand={{ car.brand_name | urlencode }}&model={{ car.model_name | urlencode }}&variant={{ car.variant_name | urlencode }}&fuel={{ car.fuel_type | urlencode }}&transmission={{ car.transmission | urlencode }}" class="sidebar-action-btn-large primary">
+                        <i class="fa-solid fa-microchip"></i> Run AI Valuation
+                    </a>
+                    <a href="/brands/compare/{{ car.variant_id }}" class="sidebar-action-btn-large secondary">
+                        <i class="fa-solid fa-code-compare" style="color:var(--primary)"></i> Compare side-by-side
+                    </a>
+                    <a href="/brands/add-garage/{{ car.variant_id }}" class="sidebar-action-btn-large secondary">
+                        <i class="fa-solid fa-warehouse" style="color:var(--primary)"></i> Add to Digital Garage
+                    </a>
+                    <a href="/brands/add-favorite/{{ car.variant_id }}" class="sidebar-action-btn-large danger">
+                        <i class="fa-regular fa-star" style="color:#FF3366"></i> Bookmark to Favorites
+                    </a>
+                    <a href="/api/download-pdf/{{ car.variant_id }}" class="sidebar-action-btn-large secondary" target="_blank">
+                        <i class="fa-solid fa-file-pdf" style="color:#E02424"></i> Download PDF Report
+                    </a>
+                </div>
+                
+                <!-- AI analytics Scores card -->
+                <div class="sidebar-filter-card">
+                    <h3 class="filter-section-title"><i class="fa-solid fa-brain" style="color:var(--primary)"></i> AI Appraisal Analytics</h3>
+                    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem; margin-bottom:0.25rem;">
+                                <span style="color:var(--text-gray);">Market Popularity</span>
+                                <span style="color:var(--text-dark);">{{ car.popularity_score }}%</span>
+                            </div>
+                            <div class="resale-progress-bar"><div class="resale-progress-fill" style="width: {{ car.popularity_score }}%;"></div></div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem; margin-bottom:0.25rem;">
+                                <span style="color:var(--text-gray);">Expected Resale Retention</span>
+                                <span style="color:var(--text-dark);">{{ car.resale_score }}%</span>
+                            </div>
+                            <div class="resale-progress-bar"><div class="resale-progress-fill" style="width: {{ car.resale_score }}%;"></div></div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem; margin-bottom:0.25rem;">
+                                <span style="color:var(--text-gray);">Demand Heat Index</span>
+                                <span style="color:var(--text-dark);">{{ car.demand_score }}%</span>
+                            </div>
+                            <div class="resale-progress-bar"><div class="resale-progress-fill" style="width: {{ car.demand_score }}%;"></div></div>
+                        </div>
+                        <div>
+                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.85rem; margin-bottom:0.25rem;">
+                                <span style="color:var(--text-gray);">Reliability Metric</span>
+                                <span style="color:var(--text-dark);">{{ car.reliability_score }}/100</span>
+                            </div>
+                            <div class="resale-progress-bar"><div class="resale-progress-fill" style="width: {{ car.reliability_score }}%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Recommendation Text block -->
+                <div class="sidebar-filter-card">
+                    <h3 class="filter-section-title"><i class="fa-solid fa-sparkles" style="color:var(--primary)"></i> AI Recommendation</h3>
+                    <div class="recommendation-panel">
+                        This {{ car.brand_name }} {{ car.model_name }} is categorized under <strong>{{ car.insurance_category }}</strong> insurance risk. With a calculated annual ownership cost of roughly ₹{{ car.ownership_cost | indian_currency }}, and an AI demand score of {{ car.demand_score }}%, this vehicle offers a highly balanced value proposition, suited for long-term ownership and solid secondary resale value.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    {% include 'footer.html' %}
+
+    <!-- Cost calculator scripting -->
+    <script>
+        const baseShowroomPrice = {{ car.base_showroom_price }};
+        const brandName = "{{ car.brand_name }}";
+
+        function calculateMaintenanceCosts() {
+            const kms = parseInt(document.getElementById('odometerSlider').value);
+            // Formats slider text
+            document.getElementById('odometer-label').textContent = kms.toLocaleString('en-IN') + ' km';
+            
+            // Basic maintenance estimate logic: premium brands cost more, higher kms cost more
+            let costFactor = 0.015; // 1.5% base cost per service
+            if (["BMW", "Mercedes-Benz", "Audi", "Porsche", "Ferrari", "Lamborghini", "Bentley", "Rolls Royce", "Aston Martin"].includes(brandName)) {
+                costFactor = 0.04; // 4% for premium luxury brands
+            } else if (["Toyota", "Honda", "Maruti Suzuki"].includes(brandName)) {
+                costFactor = 0.01; // 1% for ultra reliable brands
+            }
+            
+            // Add a kilometer multiplier
+            const multiplier = 0.5 + (kms / 60000); // at 30k, multiplier = 1.0
+            const estimatedCost = Math.round(baseShowroomPrice * costFactor * multiplier);
+            
+            // Limits the minimum/maximum bounds to look realistic
+            const finalEstimate = Math.max(3500, Math.min(estimatedCost, 250000));
+            
+            document.getElementById('service-price-label').textContent = '₹ ' + finalEstimate.toLocaleString('en-IN');
+        }
+        
+        // Dynamic Live Pricing update using Hybrid Pricing Engine
+        function updateLivePricingBreakdown() {
+            const stateSelector = document.getElementById('pricing-state-selector');
+            if (!stateSelector) return;
+            const state = stateSelector.value;
+            const brand = "{{ car.brand_name }}";
+            const model = "{{ car.model_name }}";
+            const variant = "{{ car.variant_name }}";
+            const fuel = "{{ car.fuel_type }}";
+            const trans = "{{ car.transmission }}";
+            const year = "{{ car.launch_year }}";
+            
+            fetch(`/api/live-pricing?brand=${encodeURIComponent(brand)}&model=${encodeURIComponent(model)}&variant=${encodeURIComponent(variant)}&fuel=${encodeURIComponent(fuel)}&transmission=${encodeURIComponent(trans)}&year=${year}&state=${state}`)
+                .then(r => r.json())
+                .then(data => {
+                    // Extract prices from the new hybrid engine response
+                    const primaryPrice = data.primary_price || 0;
+                    const source = data.source || 'Internal Database';
+                    const lastUpdated = data.last_updated || '--';
+                    
+                    // Find specific price types from the prices array
+                    let exShowroom = primaryPrice;
+                    let onRoad = 0;
+                    let rto = 0;
+                    let insurance = 0;
+                    let accessories = 0;
+                    
+                    if (data.prices && data.prices.length > 0) {
+                        data.prices.forEach(p => {
+                            if (p.type === 'official_current' || p.type === 'estimated_showroom' || p.type === 'historical_launch') {
+                                if (p.value > 0) exShowroom = p.value;
+                            }
+                            if (p.type === 'estimated_onroad') {
+                                if (p.value > 0) onRoad = p.value;
+                            }
+                        });
+                    }
+                    
+                    // If we have an ex-showroom but no on-road, compute it
+                    if (exShowroom > 0 && onRoad === 0) {
+                        // State RTO rates
+                        const rtoRates = {MH: 0.12, DL: 0.085, KA: 0.15, TN: 0.10, UP: 0.08, GA: 0.09, KL: 0.11, HR: 0.07, GJ: 0.06, RJ: 0.085, WB: 0.10};
+                        let rtoRate = rtoRates[state] || 0.10;
+                        if (fuel === 'Diesel') rtoRate += 0.015;
+                        if (fuel === 'EV') rtoRate = 0.02;
+                        
+                        rto = Math.round(exShowroom * rtoRate);
+                        let insRate = exShowroom > 2500000 ? 0.038 : (exShowroom < 800000 ? 0.025 : 0.028);
+                        insurance = Math.round(exShowroom * insRate) + 12000;
+                        accessories = Math.round(exShowroom * 0.012);
+                        onRoad = exShowroom + rto + insurance + accessories;
+                    } else if (onRoad > exShowroom) {
+                        rto = Math.round((onRoad - exShowroom) * 0.55);
+                        insurance = Math.round((onRoad - exShowroom) * 0.35);
+                        accessories = Math.round((onRoad - exShowroom) * 0.10);
+                    }
+                    
+                    const fmt = v => '₹ ' + v.toLocaleString('en-IN');
+                    
+                    document.getElementById('breakdown-ex-showroom').textContent = fmt(exShowroom);
+                    document.getElementById('breakdown-rto').textContent = fmt(rto);
+                    document.getElementById('breakdown-insurance').textContent = fmt(insurance);
+                    document.getElementById('breakdown-accessories').textContent = fmt(accessories);
+                    document.getElementById('breakdown-on-road').textContent = fmt(onRoad);
+                    
+                    // Update source and refresh labels
+                    const sourceEl = document.getElementById('pricing-source-lbl');
+                    if (sourceEl) sourceEl.textContent = source;
+                    const refreshEl = document.getElementById('pricing-refresh-lbl');
+                    if (refreshEl) refreshEl.textContent = lastUpdated;
+                    
+                    // Update EMI slider max based on ex-showroom
+                    const downpaymentSlider = document.getElementById('emiDownpaymentSlider');
+                    if (downpaymentSlider) {
+                        downpaymentSlider.max = Math.round(exShowroom * 0.8);
+                        if (parseInt(downpaymentSlider.value) > downpaymentSlider.max) {
+                            downpaymentSlider.value = Math.round(exShowroom * 0.2);
+                        }
+                        calculateEMI();
+                    }
+                })
+                .catch(err => console.error("Error updating price breakdown: ", err));
+        }
+
+        // Live EMI calculations
+        function calculateEMI() {
+            const downpaymentSlider = document.getElementById('emiDownpaymentSlider');
+            if (!downpaymentSlider) return;
+            
+            const downpayment = parseInt(downpaymentSlider.value);
+            document.getElementById('emi-downpayment-lbl').textContent = '₹ ' + downpayment.toLocaleString('en-IN');
+            
+            const rate = parseFloat(document.getElementById('emiRateSlider').value);
+            document.getElementById('emi-rate-lbl').textContent = rate.toFixed(1) + '%';
+            
+            const years = parseInt(document.getElementById('emiYearsSlider').value);
+            document.getElementById('emi-years-lbl').textContent = years + ' Years';
+            
+            // Get ex-showroom from breakdown if loaded, otherwise fallback to local
+            const exShowroomText = document.getElementById('breakdown-ex-showroom') ? document.getElementById('breakdown-ex-showroom').textContent.replace(/[^\d]/g, '') : '';
+            const exShowroom = exShowroomText ? parseInt(exShowroomText) : baseShowroomPrice;
+            
+            const principal = exShowroom - downpayment;
+            if (principal <= 0) {
+                document.getElementById('emi-result-lbl').textContent = '₹ 0';
+                document.getElementById('emi-loan-amount-lbl').textContent = '₹ 0';
+                document.getElementById('emi-interest-lbl').textContent = '₹ 0';
+                return;
+            }
+            
+            const monthlyRate = (rate / 12) / 100;
+            const months = years * 12;
+            
+            // Standard EMI formula: E = P * r * (1+r)^n / ((1+r)^n - 1)
+            const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+            const totalAmount = emi * months;
+            const totalInterest = totalAmount - principal;
+            
+            document.getElementById('emi-result-lbl').textContent = '₹ ' + Math.round(emi).toLocaleString('en-IN');
+            document.getElementById('emi-loan-amount-lbl').textContent = '₹ ' + principal.toLocaleString('en-IN');
+            document.getElementById('emi-interest-lbl').textContent = '₹ ' + Math.round(totalInterest).toLocaleString('en-IN');
+        }
+
+        // Used car value slide condition
+        function calculateUsedValuation() {
+            const usedSlider = document.getElementById('usedOdometerSlider');
+            if (!usedSlider) return;
+            
+            const kms = parseInt(usedSlider.value);
+            document.getElementById('used-condition-odometer-lbl').textContent = kms.toLocaleString('en-IN') + ' km';
+            
+            const baseUsed = {{ car.current_used_market_price or 0 }};
+            // 40,000 km is baseline. Higher mileage drops value, lower mileage raises value
+            const ageMultiplier = 1.0 - ((kms - 40000) / 250000);
+            const finalVal = Math.round(baseUsed * Math.max(0.65, Math.min(1.2, ageMultiplier)));
+            
+            document.getElementById('used-estimated-price-lbl').textContent = '₹ ' + finalVal.toLocaleString('en-IN');
+        }
+        
+        // Color mapping for swatches
+        function getColorHex(colorName) {
+            const lower = colorName.toLowerCase().trim();
+            if (lower.includes('white')) return '#FFFFFF';
+            if (lower.includes('red')) return '#E11D48';
+            if (lower.includes('silver')) return '#E5E7EB';
+            if (lower.includes('grey') || lower.includes('gray') || lower.includes('granite')) return '#4B5563';
+            if (lower.includes('blue') || lower.includes('ocean')) return '#1D4ED8';
+            if (lower.includes('orange')) return '#F97316';
+            if (lower.includes('black')) return '#111827';
+            if (lower.includes('forest') || lower.includes('green')) return '#15803D';
+            if (lower.includes('bronze') || lower.includes('gold')) return '#CA8A04';
+            if (lower.includes('purple')) return '#7E22CE';
+            return '#9CA3AF'; // fallback slate grey
+        }
+
+        function setActiveColorSwatch(el) {
+            document.querySelectorAll('.color-swatch').forEach(sw => sw.classList.remove('active'));
+            el.classList.add('active');
+            showToast(`Selected color: ${el.getAttribute('title')}`);
+        }
+
+        function showToast(msg) {
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+            const toast = document.createElement('div');
+            toast.className = 'toast success';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Lightbox state
+        const galleryImages = [
+            "/static/images/cars/thumbnail.svg",
+            "/static/images/cars/front_view.svg",
+            "/static/images/cars/rear_view.svg",
+            "/static/images/cars/side_view.svg",
+            "/static/images/cars/dashboard_view.svg",
+            "/static/images/cars/interior_view.svg"
+        ];
+        const galleryCaptions = [
+            "Exterior Profile - Isometric 3D Wireframe",
+            "Exterior Profile - Front Elevation Outline",
+            "Exterior Profile - Rear Tail Light Outline",
+            "Exterior Profile - Aerodynamic Side Contour Profile",
+            "Interior Cabin - Cockpit Instrumentation & Dashboard Panel",
+            "Interior Cabin - Seating & Panoramic Sunroof Skylight Layout"
+        ];
+        let currentImageIndex = 0;
+
+        function openLightbox(index) {
+            currentImageIndex = index;
+            const lightbox = document.getElementById('gallery-lightbox');
+            lightbox.classList.add('active');
+            updateLightboxContent();
+        }
+
+        function closeLightbox() {
+            document.getElementById('gallery-lightbox').classList.remove('active');
+        }
+
+        function navigateLightbox(step) {
+            currentImageIndex = (currentImageIndex + step + galleryImages.length) % galleryImages.length;
+            updateLightboxContent();
+        }
+
+        function updateLightboxContent() {
+            document.getElementById('lightbox-main-img').src = galleryImages[currentImageIndex];
+            document.getElementById('lightbox-caption').textContent = galleryCaptions[currentImageIndex];
+            document.getElementById('lightbox-counter').textContent = `Image ${currentImageIndex + 1} of ${galleryImages.length}`;
+        }
+
+        // Resale prediction Chart.js drawing
+        let depChartInstance = null;
+        function initDepreciationChart() {
+            const ctx = document.getElementById('depreciationChart');
+            if (!ctx) return;
+            
+            const brand = "{{ car.brand_name }}";
+            const price = {{ car.base_showroom_price or 0 }};
+            
+            fetch(`/api/resale-prediction?brand=${encodeURIComponent(brand)}&price=${price}`)
+                .then(r => r.json())
+                .then(data => {
+                    const labels = data.map(d => d.year.toString());
+                    const values = data.map(d => d.value);
+                    const retention = data.map(d => d.retention_pct);
+                    
+                    if (depChartInstance) {
+                        depChartInstance.destroy();
+                    }
+                    
+                    depChartInstance = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Est. Used Market Price (INR)',
+                                data: values,
+                                borderColor: '#009DFF',
+                                backgroundColor: 'rgba(0, 157, 255, 0.05)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.35,
+                                pointBackgroundColor: '#00D9FF',
+                                pointHoverRadius: 7
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const val = context.raw;
+                                            const pct = retention[context.dataIndex];
+                                            return ` Value: INR ${val.toLocaleString('en-IN')} (${pct}% Retained)`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    grid: { color: 'rgba(0,0,0,0.03)' },
+                                    ticks: {
+                                        callback: function(value) {
+                                            if (value >= 100000) return 'INR ' + (value/100000).toFixed(1) + ' L';
+                                            return 'INR ' + value.toLocaleString('en-IN');
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: { display: false }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(err => console.error("Error drawing chart: ", err));
+        }
+
+        // 360 Visualizer turntable rotation logic
+        function updateTurntableAngle(value) {
+            document.getElementById('rotation-angle-lbl').textContent = value + '°';
+            const carModel = document.getElementById('rotation-car-model');
+            if (carModel) {
+                carModel.style.transform = `rotateY(${value}deg)`;
+            }
+            
+            // Adjust slider gradient fill dynamically for modern look
+            const slider = document.getElementById('rotation-slider');
+            if (slider) {
+                const min = parseInt(slider.min);
+                const max = parseInt(slider.max);
+                const pct = ((parseInt(value) - min) / (max - min)) * 100;
+                slider.style.background = `linear-gradient(to right, var(--primary) ${pct}%, var(--card-border) ${pct}%)`;
+            }
+        }
+
+        // Setup initial triggers
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateMaintenanceCosts();
+            const stateSelector = document.getElementById('pricing-state-selector');
+            if (stateSelector) {
+                updateLivePricingBreakdown();
+            }
+            const usedSlider = document.getElementById('usedOdometerSlider');
+            if (usedSlider) {
+                calculateUsedValuation();
+            }
+            // Set initial visualizer slider fill
+            updateTurntableAngle(0);
+            
+            // Setup colors swatches
+            document.querySelectorAll(".color-swatch").forEach(sw => {
+                const title = sw.getAttribute("title") || "";
+                sw.style.backgroundColor = getColorHex(title);
+            });
+            
+            // Draw chart
+            initDepreciationChart();
+        });
+    </script>
+    
+    <!-- Lightbox Overlay -->
+    <div id="gallery-lightbox" class="lightbox-overlay">
+        <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+        <button class="lightbox-nav-btn prev" onclick="navigateLightbox(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="lightbox-nav-btn next" onclick="navigateLightbox(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <div class="lightbox-inner">
+            <img id="lightbox-main-img" class="lightbox-img" src="" alt="Enlarged view">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+            <div id="lightbox-counter" class="lightbox-counter"></div>
+        </div>
+    </div>
+</body>
+</html>

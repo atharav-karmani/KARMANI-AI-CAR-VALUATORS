@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ manufacturer.name }} Catalog Explorer | KARMANI AI CAR VALUATORS</title>
+    <meta name="description" content="Browse all available {{ manufacturer.name }} vehicle variants, estimated on-road prices, specifications, and AI ratings.">
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .brand-detail-hero {
+            padding: 8.5rem 0 3.5rem 0;
+            background: linear-gradient(135deg, rgba(0, 157, 255, 0.04) 0%, rgba(0, 217, 255, 0.02) 100%);
+            border-bottom: 1px solid var(--card-border);
+            text-align: left;
+        }
+        .hero-flex-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .hero-left-brand {
+            flex: 1;
+            min-width: 320px;
+        }
+        .hero-brand-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero-brand-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            padding: 4px;
+            background: #FFFFFF;
+            object-fit: cover;
+            box-shadow: var(--shadow-sm);
+        }
+        .hero-brand-name {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        .hero-brand-desc {
+            font-size: 1.05rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            max-width: 720px;
+        }
+        .hero-meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .hero-meta-badge {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            color: var(--text-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .explorer-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 7rem 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2.5rem;
+        }
+        /* Sidebar Filter styling */
+        .sidebar-filter-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            height: fit-content;
+            box-shadow: var(--shadow-sm);
+            text-align: left;
+        }
+        .filter-section-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .filter-group-widget {
+            margin-bottom: 1.75rem;
+        }
+        .filter-group-label {
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        .filter-select-control {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: #FFFFFF;
+            color: var(--text-dark);
+            outline: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .filter-search-field {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background: #FFFFFF;
+            color: var(--text-dark);
+            outline: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .btn-filter-apply {
+            width: 100%;
+            background: var(--primary);
+            border: 1px solid var(--primary);
+            color: #FFFFFF;
+            padding: 0.85rem;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 157, 255, 0.2);
+            transition: all 0.25s ease;
+        }
+        .btn-filter-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 157, 255, 0.25);
+        }
+        .btn-filter-reset {
+            display: block;
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            text-decoration: none;
+        }
+        .btn-filter-reset:hover {
+            color: var(--primary);
+        }
+        /* Grid and Car Cards */
+        .cars-results-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .catalog-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-weight: 600;
+        }
+        .car-catalog-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s ease;
+            text-align: left;
+        }
+        .car-catalog-card:hover {
+            border-color: rgba(0, 157, 255, 0.15);
+            box-shadow: var(--shadow-md);
+        }
+        .car-image-container {
+            width: 240px;
+            height: 180px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #E5E7EB;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid var(--card-border);
+        }
+        .car-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .car-placeholder-icon {
+            font-size: 3rem;
+            color: var(--text-gray);
+            opacity: 0.35;
+        }
+        .car-safety-badge-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(17, 24, 39, 0.85);
+            color: #FFC107;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.725rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            backdrop-filter: blur(5px);
+        }
+        .car-info-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .car-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .car-name-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin: 0;
+            letter-spacing: -0.01em;
+        }
+        .car-type-badge {
+            background: rgba(0, 157, 255, 0.06);
+            border: 1px solid rgba(0, 157, 255, 0.12);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .car-pricing-block {
+            text-align: right;
+        }
+        .showroom-price-lbl {
+            font-size: 0.75rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            display: block;
+        }
+        .showroom-price-val {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+        .on-road-price-lbl {
+            font-size: 0.725rem;
+            color: var(--text-gray);
+            font-weight: 500;
+            margin-top: 0.15rem;
+        }
+        .car-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+            margin: 1.25rem 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            padding: 1rem 0;
+        }
+        .car-spec-item {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .car-spec-val {
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 0.925rem;
+        }
+        /* AI Score tags */
+        .ai-scores-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.75rem;
+        }
+        .ai-score-tag {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--text-gray);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.775rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .ai-score-tag span {
+            color: var(--primary);
+            font-weight: 800;
+        }
+        /* Buttons container */
+        .car-actions-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .btn-car-details {
+            background: var(--primary);
+            border: 1px solid var(--primary);
+            color: #FFFFFF;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-car-details:hover {
+            box-shadow: 0 4px 10px rgba(0, 157, 255, 0.2);
+        }
+        .btn-car-action {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            color: var(--text-dark);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .btn-car-action:hover {
+            border-color: rgba(0, 157, 255, 0.25);
+            background: rgba(0, 157, 255, 0.04);
+            color: var(--primary);
+        }
+        .btn-car-action.fav:hover {
+            color: #FF3366;
+            border-color: rgba(255, 51, 102, 0.2);
+            background: rgba(255, 51, 102, 0.04);
+        }
+        
+        @media (max-width: 900px) {
+            .explorer-layout {
+                grid-template-columns: 1fr;
+            }
+            .car-catalog-card {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .car-image-container {
+                width: 100%;
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    {% include 'navbar.html' %}
+
+    <!-- Brand Header -->
+    <section class="brand-detail-hero">
+        <div class="hero-flex-wrapper">
+            <div class="hero-left-brand">
+                <div class="hero-brand-header">
+                    <img src="{{ manufacturer.logo_path }}" alt="{{ manufacturer.name }}" class="hero-brand-logo" onerror="this.src='/static/images/logo_favicon.svg'">
+                    <div>
+                        <h1 class="hero-brand-name">{{ manufacturer.name }}</h1>
+                        <span class="hero-brand-desc" style="font-size:0.875rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--primary);">Brand Explorer Directory</span>
+                    </div>
+                </div>
+                <p class="hero-brand-desc">{{ manufacturer.description }}</p>
+                <div class="hero-meta-badges">
+                    <span class="hero-meta-badge"><i class="fa-solid fa-earth-asia" style="color:var(--primary)"></i> Origin: {{ manufacturer.country }}</span>
+                    <span class="hero-meta-badge"><i class="fa-solid fa-calendar-days" style="color:#FFC107"></i> Founded: {{ manufacturer.founded }}</span>
+                    <span class="hero-meta-badge"><i class="fa-solid fa-globe" style="color:var(--accent-emerald)"></i> <a href="{{ manufacturer.website }}" target="_blank" style="text-decoration:none; color:inherit;">Official Website</a></span>
+                    {% if manufacturer.market_share > 0 %}
+                    <span class="hero-meta-badge"><i class="fa-solid fa-chart-pie" style="color:#9C27B0"></i> Market Share: {{ manufacturer.market_share }}%</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Explorer Layout (Filter Sidebar + List) -->
+    <section style="background: var(--bg-main);">
+        <div class="explorer-layout">
+            
+            <!-- Filters Sidebar -->
+            <aside>
+                <div class="sidebar-filter-card">
+                    <h3 class="filter-section-title">
+                        <span><i class="fa-solid fa-sliders"></i> Filter Catalog</span>
+                        <a href="/brand/{{ manufacturer.slug }}" style="font-size:0.75rem; text-decoration:none; color:var(--primary);">Reset</a>
+                    </h3>
+                    
+                    <form action="/brand/{{ manufacturer.slug }}" method="GET" id="catalog-filter-form">
+                        <!-- Search group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="search">Keywords</label>
+                            <input type="text" name="search" id="search" class="filter-search-field" placeholder="Model, variant..." value="{{ active_filters.search }}">
+                        </div>
+                        
+                        <!-- Body Type Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="body_type">Body Type</label>
+                            <select name="body_type" id="body_type" class="filter-select-control">
+                                <option value="">All Bodies</option>
+                                {% for b in bodies %}
+                                <option value="{{ b }}" {% if active_filters.body_type == b %}selected{% endif %}>{{ b }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Fuel Type Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="fuel">Fuel Type</label>
+                            <select name="fuel" id="fuel" class="filter-select-control">
+                                <option value="">All Fuels</option>
+                                {% for f in fuels %}
+                                <option value="{{ f }}" {% if active_filters.fuel == f %}selected{% endif %}>{{ f }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Transmission Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="transmission">Transmission</label>
+                            <select name="transmission" id="transmission" class="filter-select-control">
+                                <option value="">All Transmissions</option>
+                                {% for t in transmissions %}
+                                <option value="{{ t }}" {% if active_filters.transmission == t %}selected{% endif %}>{{ t }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Price Range Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="price_range">Price Range</label>
+                            <select name="price_range" id="price_range" class="filter-select-control">
+                                <option value="">Any Price</option>
+                                <option value="below-5" {% if active_filters.price_range == 'below-5' %}selected{% endif %}>Below ₹5 Lakh</option>
+                                <option value="5-10" {% if active_filters.price_range == '5-10' %}selected{% endif %}>₹5 – ₹10 Lakh</option>
+                                <option value="10-20" {% if active_filters.price_range == '10-20' %}selected{% endif %}>₹10 – ₹20 Lakh</option>
+                                <option value="20-50" {% if active_filters.price_range == '20-50' %}selected{% endif %}>₹20 – ₹50 Lakh</option>
+                                <option value="above-50" {% if active_filters.price_range == 'above-50' %}selected{% endif %}>Above ₹50 Lakh</option>
+                            </select>
+                        </div>
+
+                        <!-- Seating Capacity Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="seats">Seats</label>
+                            <select name="seats" id="seats" class="filter-select-control">
+                                <option value="">Any Seating</option>
+                                <option value="2" {% if active_filters.seats == '2' %}selected{% endif %}>2 Seater</option>
+                                <option value="4" {% if active_filters.seats == '4' %}selected{% endif %}>4 Seater</option>
+                                <option value="5" {% if active_filters.seats == '5' %}selected{% endif %}>5 Seater</option>
+                                <option value="7" {% if active_filters.seats == '7' %}selected{% endif %}>7 Seater</option>
+                                <option value="8" {% if active_filters.seats == '8' %}selected{% endif %}>8 Seater</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Safety stars Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="safety">Safety Stars</label>
+                            <select name="safety" id="safety" class="filter-select-control">
+                                <option value="">Any Safety</option>
+                                <option value="3" {% if active_filters.safety == '3' %}selected{% endif %}>3 Stars & Above</option>
+                                <option value="4" {% if active_filters.safety == '4' %}selected{% endif %}>4 Stars & Above</option>
+                                <option value="5" {% if active_filters.safety == '5' %}selected{% endif %}>5 Stars (Top Grade)</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Availability Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="availability">Availability</label>
+                            <select name="availability" id="availability" class="filter-select-control">
+                                <option value="">All Statuses</option>
+                                <option value="active" {% if active_filters.availability == 'active' %}selected{% endif %}>Currently Active</option>
+                                <option value="discontinued" {% if active_filters.availability == 'discontinued' %}selected{% endif %}>Discontinued Models</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Sorting Group -->
+                        <div class="filter-group-widget">
+                            <label class="filter-group-label" for="sort_by">Sort by</label>
+                            <select name="sort_by" id="sort_by" class="filter-select-control">
+                                <option value="popular" {% if active_filters.sort_by == 'popular' %}selected{% endif %}>Most Popular</option>
+                                <option value="newest" {% if active_filters.sort_by == 'newest' %}selected{% endif %}>Newest Launched</option>
+                                <option value="oldest" {% if active_filters.sort_by == 'oldest' %}selected{% endif %}>Oldest Models</option>
+                                <option value="price-low" {% if active_filters.sort_by == 'price-low' %}selected{% endif %}>Lowest Price</option>
+                                <option value="price-high" {% if active_filters.sort_by == 'price-high' %}selected{% endif %}>Highest Price</option>
+                                <option value="mileage" {% if active_filters.sort_by == 'mileage' %}selected{% endif %}>Highest Mileage</option>
+                                <option value="resale" {% if active_filters.sort_by == 'resale' %}selected{% endif %}>Best Resale</option>
+                                <option value="ai-score" {% if active_filters.sort_by == 'ai-score' %}selected{% endif %}>Highest AI Score</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn-filter-apply">Apply Filters</button>
+                    </form>
+                </div>
+            </aside>
+            
+            <!-- Models and Variants Listing -->
+            <div class="cars-results-wrapper">
+                <div class="catalog-results-header">
+                    <span>Found {{ cars|length }} vehicle configurations matching parameters</span>
+                    <a href="/brands" style="text-decoration:none; color:var(--primary); font-size:0.85rem;"><i class="fa-solid fa-chevron-left"></i> Back to Brands Catalog</a>
+                </div>
+                
+                {% if cars %}
+                    {% for c in cars %}
+                    <div class="car-catalog-card">
+                        <!-- Car Image (Placeholder) -->
+                        <div class="car-image-container">
+                            <i class="fa-solid fa-car car-placeholder-icon"></i>
+                            <div class="car-safety-badge-overlay">
+                                <i class="fa-solid fa-star"></i> {{ c.safety_rating }}/5 Safety
+                            </div>
+                        </div>
+                        
+                        <!-- Car Specs & Actions -->
+                        <div class="car-info-container">
+                            <div>
+                                <!-- Card Header -->
+                                <div class="car-name-row">
+                                    <div>
+                                        <h3 class="car-name-title">{{ c.model_name }} <span style="font-weight: 500; font-size: 1.15rem; color: var(--text-gray);">{{ c.variant_name }}</span></h3>
+                                        <div style="display:flex; align-items:center; gap:0.5rem; margin-top:0.35rem;">
+                                            <span class="car-type-badge">{{ c.body_type }}</span>
+                                            <span style="font-size:0.8rem; color:var(--text-gray); font-weight:600;">{{ c.generation_name }}</span>
+                                            <span style="font-size:0.8rem; color:var(--text-gray); font-weight:600;">Launched: {{ c.launch_year }}</span>
+                                            {% if c.is_active == 0 %}
+                                            <span class="share-badge" style="background:rgba(255, 51, 102, 0.08); border-color:rgba(255, 51, 102, 0.2); color:#FF3366;">Discontinued</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="car-pricing-block">
+                                        {% if c.is_active == 1 %}
+                                            <span class="showroom-price-lbl">Ex-Showroom Price</span>
+                                            <span class="showroom-price-val">₹ {{ (c.base_showroom_price * 4.5) | indian_currency }}</span>
+                                            <div class="on-road-price-lbl">Estimated On-Road: <strong>₹ {{ (c.on_road_price * 4.5) | indian_currency }}</strong></div>
+                                        {% else %}
+                                            <span class="showroom-price-lbl">Original Launch Price</span>
+                                            <span class="showroom-price-val" style="color:var(--text-gray);">₹ {{ (c.base_showroom_price * 4.5) | indian_currency }}</span>
+                                            <div class="on-road-price-lbl">Discontinued: <strong>{{ c.discontinued_year }}</strong></div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Core Specifications Grid -->
+                                <div class="car-details-grid">
+                                    <div class="car-spec-item">
+                                        <span>Fuel Specification</span>
+                                        <span class="car-spec-val">{{ c.fuel_type }}</span>
+                                    </div>
+                                    <div class="car-spec-item">
+                                        <span>Transmission</span>
+                                        <span class="car-spec-val">{{ c.transmission }}</span>
+                                    </div>
+                                    <div class="car-spec-item">
+                                        <span>Engine Capacity</span>
+                                        <span class="car-spec-val">{{ c.engine }}</span>
+                                    </div>
+                                    <div class="car-spec-item">
+                                        <span>Fuel Economy</span>
+                                        <span class="car-spec-val">{{ c.mileage }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- AI Performance metrics tags -->
+                                <div class="ai-scores-container">
+                                    <div class="ai-score-tag"><i class="fa-solid fa-fire" style="color:#FF9800;"></i> Popularity Index: <span>{{ c.popularity_score }}%</span></div>
+                                    <div class="ai-score-tag"><i class="fa-solid fa-chart-line" style="color:#E91E63;"></i> Resale Value Retention: <span>{{ c.resale_score }}%</span></div>
+                                    <div class="ai-score-tag"><i class="fa-solid fa-screwdriver-wrench" style="color:#4CAF50;"></i> Maintenance: <span>{{ c.maintenance_score }}/100</span></div>
+                                    <div class="ai-score-tag"><i class="fa-solid fa-shield-halved" style="color:#00BCD4;"></i> Reliability: <span>{{ c.reliability_score }}/100</span></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="car-actions-wrapper">
+                                <a href="/car/{{ c.variant_id }}" class="btn-car-details">
+                                    View Details <i class="fa-solid fa-chevron-right"></i>
+                                </a>
+                                <a href="/brands/compare/{{ c.variant_id }}" class="btn-car-action">
+                                    <i class="fa-solid fa-code-compare" style="color:var(--primary);"></i> Compare
+                                </a>
+                                <a href="/valuation?brand={{ c.model_name | urlencode }}&model={{ c.model_name | urlencode }}&variant={{ c.variant_name | urlencode }}&fuel={{ c.fuel_type | urlencode }}&transmission={{ c.transmission | urlencode }}" class="btn-car-action">
+                                    <i class="fa-solid fa-microchip" style="color:var(--primary);"></i> AI Valuation
+                                </a>
+                                <a href="/brands/add-garage/{{ c.variant_id }}" class="btn-car-action">
+                                    <i class="fa-solid fa-warehouse" style="color:var(--primary);"></i> Save to Garage
+                                </a>
+                                <a href="/brands/add-favorite/{{ c.variant_id }}" class="btn-car-action fav">
+                                    <i class="fa-regular fa-star" style="color:#FF3366;"></i> Favorite
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="padding: 6rem 2rem; background:#FFFFFF; border: 1px solid var(--card-border); border-radius: 16px; text-align:center; color:var(--text-gray);">
+                        <i class="fa-solid fa-car-rear" style="font-size:3.5rem; opacity:0.3; margin-bottom:1.5rem;"></i>
+                        <h3 style="font-size:1.25rem; font-weight:700; color:var(--text-dark); margin-bottom:0.5rem;">No Model Variant Configs Found</h3>
+                        <p style="font-size:0.9rem; margin:0;">Reset filters or refine search text to find other vehicles.</p>
+                    </div>
+                {% endif %}
+                
+                <!-- Pagination Control Panel -->
+                {% if total_pages > 1 %}
+                <div class="pagination-container" style="display:flex; justify-content:center; align-items:center; gap:1.5rem; margin-top:3rem; padding-top:1.5rem; border-top:1px solid rgba(0, 0, 0, 0.05); width: 100%;">
+                    {% if page > 1 %}
+                    <a href="?page={{ page - 1 }}&search={{ active_filters.search }}&fuel={{ active_filters.fuel }}&transmission={{ active_filters.transmission }}&body_type={{ active_filters.body_type }}&price_range={{ active_filters.price_range }}&seats={{ active_filters.seats }}&safety={{ active_filters.safety }}&availability={{ active_filters.availability }}&sort_by={{ active_filters.sort_by }}" class="btn-car-action" style="padding: 0.65rem 1.25rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-arrow-left"></i> Previous
+                    </a>
+                    {% endif %}
+                    
+                    <span style="font-size:0.95rem; font-weight:700; color:var(--text-dark);">Page {{ page }} of {{ total_pages }} ({{ total_count }} configurations)</span>
+                    
+                    {% if page < total_pages %}
+                    <a href="?page={{ page + 1 }}&search={{ active_filters.search }}&fuel={{ active_filters.fuel }}&transmission={{ active_filters.transmission }}&body_type={{ active_filters.body_type }}&price_range={{ active_filters.price_range }}&seats={{ active_filters.seats }}&safety={{ active_filters.safety }}&availability={{ active_filters.availability }}&sort_by={{ active_filters.sort_by }}" class="btn-car-action" style="padding: 0.65rem 1.25rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        Next <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    {% include 'footer.html' %}
+</body>
+</html>

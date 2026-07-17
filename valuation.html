@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMANI AI CAR VALUATORS - Get AI Vehicle Appraisals</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tom Select CSS & JS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .custom-select-wrapper {
+            position: relative;
+            text-align: left;
+        }
+        .custom-dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(10, 15, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+            margin-top: 4px;
+        }
+        .custom-dropdown-item {
+            padding: 0.75rem 1rem;
+            color: #FFF;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+        }
+        .custom-dropdown-item:hover {
+            background: rgba(0, 240, 255, 0.15);
+            color: var(--accent);
+        }
+        .spec-badge {
+            background: #FFFFFF !important;
+            border: 1px solid #E6EEF7 !important;
+            padding: 0.85rem 1rem !important;
+            border-radius: 8px !important;
+            font-size: 0.85rem !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            box-shadow: 0 4px 10px rgba(0, 85, 255, 0.01) !important;
+        }
+        .spec-badge span {
+            color: #4B5563 !important;
+            font-weight: 600 !important;
+        }
+        .spec-badge strong {
+            color: #111827 !important;
+            font-weight: 700 !important;
+        }
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: left;
+        }
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+        .slider-header strong {
+            color: var(--accent);
+        }
+        .glass-range {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .glass-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent);
+        .custom-checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1.25rem;
+            background: #f0f9ff; /* Light blue row background */
+            border: 1px solid #bae6fd; /* Light blue border */
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            user-select: none;
+            font-weight: 500;
+            color: #0369a1; /* Dark blue readable text */
+            box-shadow: 0 4px 6px rgba(3, 105, 161, 0.05);
+            flex: 1;
+            min-width: 230px;
+        }
+        .custom-checkbox-row:hover {
+            background: #e0f2fe; /* Hover background highlight */
+            border-color: #7dd3fc;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(3, 105, 161, 0.08);
+        }
+        .custom-checkbox-row input[type="checkbox"] {
+            display: none; /* Hide default native checkbox */
+        }
+        .custom-checkbox-row .checkbox-box {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #0284c7;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            transition: all 0.2s ease;
+            color: transparent;
+            font-size: 0.8rem;
+        }
+        .custom-checkbox-row input[type="checkbox"]:checked + .checkbox-box {
+            background: linear-gradient(135deg, #00C8FF, #0055FF);
+            border-color: transparent;
+            color: #FFF; /* White tick icon */
+            box-shadow: 0 0 8px rgba(0, 200, 255, 0.4);
+        }
+        .custom-checkbox-row .checkbox-label-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #0369a1; /* Dark readable text */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navbar -->
+    {% include 'navbar.html' %}
+
+    <!-- Wizard Section -->
+    <section class="valuation-section" style="padding-top: 8.5rem; padding-bottom: 5rem;">
+        <div class="glow-node glow-node-1" style="top: 10%; left: -10%;"></div>
+        <div class="glow-node glow-node-2" style="bottom: 10%; right: -10%;"></div>
+        
+        <div class="container" id="valuation-main-container" style="max-width: 1350px;">
+            <div class="section-header" style="margin-bottom: 2.5rem;">
+                <span class="section-badge">Appraisal Portal</span>
+                <h2>Vehicle Appraisal & Inspection Form</h2>
+                <p>Complete the vehicle parameters sheet below to run our dynamic AI valuation calculations.</p>
+            </div>
+
+            <!-- Stepper indicators -->
+            <div class="wizard-stepper" style="max-width: 850px; margin: 0 auto 3rem auto;">
+                <div class="step-indicator active" data-step="1">
+                    <span class="step-badge-num">1</span>
+                    <span class="step-badge-label">Basic Specifications</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-indicator" data-step="2">
+                    <span class="step-badge-num">2</span>
+                    <span class="step-badge-label">Documentation</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-indicator" data-step="3">
+                    <span class="step-badge-num">3</span>
+                    <span class="step-badge-label">Maintenance</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-indicator" data-step="4">
+                    <span class="step-badge-num">4</span>
+                    <span class="step-badge-label">Inspection & Condition</span>
+                </div>
+            </div>
+
+            <!-- Glass card envelope -->
+            <div class="glass-form-card" style="max-width: 850px; margin-left: auto; margin-right: auto; padding: 3rem;">
+                <form id="valuation-wizard-form" autocomplete="off">
+                    
+                    <!-- STEP 1: Basic Specifications & Auto-Specs -->
+                    <div class="wizard-step-panel active" data-step="1">
+                        <h3 class="step-section-title"><i class="fa-solid fa-car-side" style="color: var(--accent);"></i> Basic Specifications</h3>
+                        <div class="form-grid">
+                            
+                            <!-- 1. Brand Select -->
+                            <div class="form-group">
+                                <label for="car-brand">Brand</label>
+                                <select id="car-brand" name="brand" class="glass-select" required>
+                                    <option value="" disabled selected>Select Brand</option>
+                                </select>
+                            </div>
+
+                            <!-- 2. Model Select -->
+                            <div class="form-group">
+                                <label for="car-model">Model</label>
+                                <select id="car-model" name="model" class="glass-select" required disabled>
+                                    <option value="" disabled selected>Select Model</option>
+                                </select>
+                            </div>
+
+                            <!-- 3. Variant Select -->
+                            <div class="form-group">
+                                <label for="car-variant">Variant</label>
+                                <select id="car-variant" name="variant" class="glass-select" required disabled>
+                                    <option value="" disabled selected>Select Variant</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-year">Manufacturing Year</label>
+                                <select id="car-year" name="manufacturing_year" class="glass-select" required>
+                                    <option value="" disabled selected>Select Year</option>
+                                    {% for y in range(2026, 1994, -1) %}
+                                    <option value="{{ y }}">{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-kms">Kilometers Driven</label>
+                                <input type="number" id="car-kms" name="kilometers_driven" class="glass-input" placeholder="e.g. 35000" min="0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-owners">Number of Owners</label>
+                                <select id="car-owners" name="owner_number" class="glass-select" required>
+                                    <option value="" disabled selected>Select Option</option>
+                                    <option value="1">1st Owner</option>
+                                    <option value="2">2nd Owner</option>
+                                    <option value="3">3rd Owner</option>
+                                    <option value="4">4th Owner</option>
+                                    <option value="5">5+ Owners</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <!-- Technical specifications card grid -->
+                        <div id="technical-specs-panel" style="display: none; margin-top: 2.5rem; border-top: 1px solid #E6EEF7; padding-top: 2rem;">
+                            <h4 style="font-size: 1.25rem; color: #111827; margin: 0 0 1.25rem 0; text-align: left; font-weight: 700;"><i class="fa-solid fa-microchip" style="color: #0EA5FF;"></i> Auto-populated Specifications</h4>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+                                <div class="spec-badge"><span>Fuel Type</span><strong id="spec-fuel">N/A</strong></div>
+                                <div class="spec-badge"><span>Transmission</span><strong id="spec-trans">N/A</strong></div>
+                                <div class="spec-badge"><span>Engine Capacity</span><strong id="spec-cc">N/A</strong></div>
+                                <div class="spec-badge"><span>Power</span><strong id="spec-power">N/A</strong></div>
+                                <div class="spec-badge"><span>Torque</span><strong id="spec-torque">N/A</strong></div>
+                                <div class="spec-badge"><span>Mileage</span><strong id="spec-mileage">N/A</strong></div>
+                                <div class="spec-badge"><span>Body Type</span><strong id="spec-body">N/A</strong></div>
+                                <div class="spec-badge"><span>Wheelbase</span><strong id="spec-wheelbase">N/A</strong></div>
+                                <div class="spec-badge"><span>Ground Clearance</span><strong id="spec-gc">N/A</strong></div>
+                                <div class="spec-badge"><span>Boot Space</span><strong id="spec-boot">N/A</strong></div>
+                                
+                                <!-- 16 Comfort & Safety Specs -->
+                                <div class="spec-badge"><span>ABS Safety</span><strong id="spec-abs">N/A</strong></div>
+                                <div class="spec-badge"><span>Airbags Count</span><strong id="spec-airbags">N/A</strong></div>
+                                <div class="spec-badge"><span>Sunroof Config</span><strong id="spec-sunroof">N/A</strong></div>
+                                <div class="spec-badge"><span>Cruise Control</span><strong id="spec-cruise">N/A</strong></div>
+                                <div class="spec-badge"><span>Reverse Camera</span><strong id="spec-rev-camera">N/A</strong></div>
+                                <div class="spec-badge"><span>Android Auto</span><strong id="spec-android-auto">N/A</strong></div>
+                                <div class="spec-badge"><span>Apple CarPlay</span><strong id="spec-apple-carplay">N/A</strong></div>
+                                <div class="spec-badge"><span>ESP Stability</span><strong id="spec-esp">N/A</strong></div>
+                                <div class="spec-badge"><span>TPMS Monitor</span><strong id="spec-tpms">N/A</strong></div>
+                                <div class="spec-badge"><span>Hill Assist</span><strong id="spec-hill-assist">N/A</strong></div>
+                                <div class="spec-badge"><span>Fog Lamps</span><strong id="spec-fog-lamps">N/A</strong></div>
+                                <div class="spec-badge"><span>ADAS Feature</span><strong id="spec-adas">N/A</strong></div>
+                                <div class="spec-badge"><span>Power Steering</span><strong id="spec-power-steering">N/A</strong></div>
+                                <div class="spec-badge"><span>ACC Climate</span><strong id="spec-climate-control">N/A</strong></div>
+                                <div class="spec-badge"><span>Traction Control</span><strong id="spec-traction-control">N/A</strong></div>
+                                <div class="spec-badge"><span>Parking Sensors</span><strong id="spec-parking-sensors">N/A</strong></div>
+                            </div>
+                            
+                            <!-- Hidden technical spec properties loaded to forms -->
+                            <input type="hidden" id="car-fuel" name="fuel_type">
+                            <input type="hidden" id="car-transmission" name="transmission">
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Registration & Documentation details -->
+                    <div class="wizard-step-panel" data-step="2">
+                        <h3 class="step-section-title"><i class="fa-solid fa-address-card" style="color: var(--accent);"></i> Registration & Documentation</h3>
+                        <div class="form-grid">
+                            
+                            <div class="form-group">
+                                <label for="car-purchase-year">Purchase Year</label>
+                                <select id="car-purchase-year" name="purchase_year" class="glass-select" required>
+                                    <option value="" disabled selected>Select Year</option>
+                                    {% for y in range(2026, 1994, -1) %}
+                                    <option value="{{ y }}">{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-reg-year">Registration Year</label>
+                                <select id="car-reg-year" name="registration_year" class="glass-select" required>
+                                    <option value="" disabled selected>Select Year</option>
+                                    {% for y in range(2026, 1994, -1) %}
+                                    <option value="{{ y }}">{{ y }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-state">Registration State</label>
+                                <select id="car-state" name="registration_state" class="glass-select" required>
+                                    <option value="" disabled selected>Select State</option>
+                                    <option value="AN">Andaman & Nicobar Islands</option>
+                                    <option value="AP">Andhra Pradesh</option>
+                                    <option value="AR">Arunachal Pradesh</option>
+                                    <option value="AS">Assam</option>
+                                    <option value="BR">Bihar</option>
+                                    <option value="CH">Chandigarh</option>
+                                    <option value="CG">Chhattisgarh</option>
+                                    <option value="DD">Dadra & Nagar Haveli and Daman & Diu</option>
+                                    <option value="DL">Delhi (NCT)</option>
+                                    <option value="GA">Goa</option>
+                                    <option value="GJ">Gujarat</option>
+                                    <option value="HR">Haryana</option>
+                                    <option value="HP">Himachal Pradesh</option>
+                                    <option value="JK">Jammu & Kashmir</option>
+                                    <option value="JH">Jharkhand</option>
+                                    <option value="KA">Karnataka</option>
+                                    <option value="KL">Kerala</option>
+                                    <option value="LA">Ladakh</option>
+                                    <option value="LD">Lakshadweep</option>
+                                    <option value="MP">Madhya Pradesh</option>
+                                    <option value="MH">Maharashtra</option>
+                                    <option value="MN">Manipur</option>
+                                    <option value="ML">Meghalaya</option>
+                                    <option value="MZ">Mizoram</option>
+                                    <option value="NL">Nagaland</option>
+                                    <option value="OD">Odisha</option>
+                                    <option value="PY">Puducherry</option>
+                                    <option value="PB">Punjab</option>
+                                    <option value="RJ">Rajasthan</option>
+                                    <option value="SK">Sikkim</option>
+                                    <option value="TN">Tamil Nadu</option>
+                                    <option value="TS">Telangana</option>
+                                    <option value="TR">Tripura</option>
+                                    <option value="UP">Uttar Pradesh</option>
+                                    <option value="UK">Uttarakhand</option>
+                                    <option value="WB">West Bengal</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-reg-no">Registration Number</label>
+                                <input type="text" id="car-reg-no" name="registration_number" class="glass-input" placeholder="e.g. MH02AB1234" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-plate-type">Number Plate Type</label>
+                                <select id="car-plate-type" name="number_plate_type" class="glass-select" required>
+                                    <option value="" disabled selected>Select Plate Type</option>
+                                    <option value="Normal">Normal Number</option>
+                                    <option value="VIP">VIP Number</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-colour">Vehicle Colour</label>
+                                <input type="text" id="car-colour" name="colour" class="glass-input" placeholder="e.g. Arctic White" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-engine-no">Engine Serial Number</label>
+                                <input type="text" id="car-engine-no" name="engine_serial_no" class="glass-input" placeholder="e.g. ENG987654" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-chassis-no">Chassis Number (VIN)</label>
+                                <input type="text" id="car-chassis-no" name="chassis_no" class="glass-input" placeholder="e.g. CHA123456" required>
+                            </div>
+
+                        </div>
+
+                        <!-- Documentation checklist -->
+                        <div style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; text-align: left;">
+                            <h4 style="font-size: 1.05rem; color: #FFF; margin-bottom: 1.25rem;"><i class="fa-solid fa-file-invoice" style="color: var(--accent);"></i> Documentation Validation</h4>
+                            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                                <label class="custom-checkbox-row">
+                                    <input type="checkbox" name="rc_available" value="Yes" checked>
+                                    <span class="checkbox-box"><i class="fa-solid fa-check"></i></span>
+                                    <span class="checkbox-label-text">RC Available</span>
+                                </label>
+                                <label class="custom-checkbox-row">
+                                    <input type="checkbox" name="puc_available" value="Yes" checked>
+                                    <span class="checkbox-box"><i class="fa-solid fa-check"></i></span>
+                                    <span class="checkbox-label-text">Insurance Available</span>
+                                </label>
+                                <label class="custom-checkbox-row">
+                                    <input type="checkbox" name="service_records_available" value="Yes" checked>
+                                    <span class="checkbox-box"><i class="fa-solid fa-check"></i></span>
+                                    <span class="checkbox-label-text">Service History Available</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Maintenance & Insurance -->
+                    <div class="wizard-step-panel" data-step="3">
+                        <h3 class="step-section-title"><i class="fa-solid fa-wrench" style="color: var(--accent);"></i> Maintenance & Insurance</h3>
+                        <div class="form-grid">
+                            
+                            <div class="form-group">
+                                <label for="car-insurance">Insured status</label>
+                                <select id="car-insurance" name="insurance" class="glass-select" required>
+                                    <option value="" disabled selected>Select Insurance</option>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-insurance-type">Insurance Type</label>
+                                <select id="car-insurance-type" name="insurance_type" class="glass-select">
+                                    <option value="None">None</option>
+                                    <option value="Third Party">Third Party</option>
+                                    <option value="Comprehensive">Comprehensive</option>
+                                    <option value="Zero Dep">Zero Depreciation</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-insurance-expiry">Insurance Validity Expiry</label>
+                                <input type="date" id="car-insurance-expiry" name="insurance_expiry" class="glass-input">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-service-history">Service Records History</label>
+                                <select id="car-service-history" name="service_history" class="glass-select" required>
+                                    <option value="" disabled selected>Select Service Log Type</option>
+                                    <option value="Authorized">Authorized Service Center</option>
+                                    <option value="Local Garage">Local Garage</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-services-count">Number of Services Logs</label>
+                                <input type="number" id="car-services-count" name="number_of_services" class="glass-input" placeholder="e.g. 8" min="0" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-last-service">Last Service Date</label>
+                                <input type="date" id="car-last-service" name="last_service_date" class="glass-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-alloy">Alloy Wheels Equipped?</label>
+                                <select id="car-alloy" name="alloy_wheels" class="glass-select" required>
+                                    <option value="No">No (Steel Rims)</option>
+                                    <option value="Yes">Yes (OEM/Aftermarket Alloys)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-modifications">Vehicle State Modifications</label>
+                                <select id="car-modifications" name="modifications" class="glass-select" required>
+                                    <option value="Stock Vehicle">Stock Vehicle (OEM standard)</option>
+                                    <option value="Modified">Modified (Cosmetic/Performance updates)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label for="car-accessories">Accessories list</label>
+                                <input type="text" id="car-accessories" name="accessories" class="glass-input" placeholder="e.g. Seat covers, Dashboard camera, Floor mats">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Inspection & Condition checklist -->
+                    <div class="wizard-step-panel" data-step="4">
+                        <h3 class="step-section-title"><i class="fa-solid fa-list-check" style="color: var(--accent);"></i> Inspection Checklist</h3>
+                        
+                        <!-- Damage reports -->
+                        <div class="form-grid" style="margin-bottom: 2rem;">
+                            <div class="form-group">
+                                <label for="car-accidents">Accident History</label>
+                                <select id="car-accidents" name="accident_history" class="glass-select" required>
+                                    <option value="No">No Accidents (Clean record)</option>
+                                    <option value="Yes">Yes (Minor dent/panel repair)</option>
+                                    <option value="Flood Damage">Yes (Flood Damage / Submerged)</option>
+                                    <option value="Fire Damage">Yes (Fire Damage / Structural repair)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-accident-severity">Accident Severity</label>
+                                <select id="car-accident-severity" name="accident_severity" class="glass-select">
+                                    <option value="None">None</option>
+                                    <option value="Minor">Minor (Scratches/Bumper scrape)</option>
+                                    <option value="Moderate">Moderate (Panel replaced)</option>
+                                    <option value="Major">Major (Airbags deployed/Chassis bend)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Mechanical Condition selects -->
+                        <h4 style="font-size: 1.05rem; color: #FFF; margin: 1.5rem 0 1rem 0; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.4rem;">Mechanical Conditions</h4>
+                        <div class="form-grid" style="margin-bottom: 2rem;">
+                            <div class="form-group">
+                                <label for="car-engine-cond">Engine condition</label>
+                                <select id="car-engine-cond" name="engine_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Quiet/Healthy)</option>
+                                    <option value="Good" selected>Good (Normal compress)</option>
+                                    <option value="Average">Average (Minor smoke/leak)</option>
+                                    <option value="Needs Repair">Needs Repair (Overhaul needed)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-gearbox-cond">Gearbox Condition</label>
+                                <select id="car-gearbox-cond" name="gearbox_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Smooth shifts)</option>
+                                    <option value="Good" selected>Good (Standard sync)</option>
+                                    <option value="Needs Repair">Needs Repair (Grinding/Slip)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-clutch-cond">Clutch Condition</label>
+                                <select id="car-clutch-cond" name="clutch_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Light peddle)</option>
+                                    <option value="Good" selected>Good (Standard bite)</option>
+                                    <option value="Needs Repair">Needs Repair (Slipping)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-brake-cond">Brake condition</label>
+                                <select id="car-brake-cond" name="brake_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Strong bite)</option>
+                                    <option value="Good" selected>Good (Normal pad wear)</option>
+                                    <option value="Needs Repair">Needs Repair (Judder/Squeal)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-tyre-cond">Tyre Condition</label>
+                                <select id="car-tyre-cond" name="tyre_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Above 80% tread)</option>
+                                    <option value="Good" selected>Good (40% - 70% tread)</option>
+                                    <option value="Needs Repair">Needs Repair (Bald / Replaced)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-suspension-cond">Suspension condition</label>
+                                <select id="car-suspension-cond" name="suspension_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Quiet/Firm)</option>
+                                    <option value="Good" selected>Good (Normal damping)</option>
+                                    <option value="Needs Repair">Needs Repair (Leaking/Clunking)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-battery-cond">Battery condition</label>
+                                <select id="car-battery-cond" name="battery_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Green status)</option>
+                                    <option value="Good" selected>Good (Holds charge)</option>
+                                    <option value="Needs Repair">Needs Repair (Needs replacement)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-ac-cond">AC / Heating condition</label>
+                                <select id="car-ac-cond" name="ac_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Instant chill)</option>
+                                    <option value="Good" selected>Good (Standard cooling)</option>
+                                    <option value="Needs Repair">Needs Repair (Compressor failure)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-electrical-cond">Electrical condition</label>
+                                <select id="car-electrical-cond" name="electrical_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (All working)</option>
+                                    <option value="Good" selected>Good (Normal operation)</option>
+                                    <option value="Needs Repair">Needs Repair (Fault code active)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Cosmetic Condition Selects -->
+                        <h4 style="font-size: 1.05rem; color: #FFF; margin: 1.5rem 0 1rem 0; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.4rem;">Cosmetic & Body Condition</h4>
+                        <div class="form-grid" style="margin-bottom: 2.5rem;">
+                            <div class="form-group">
+                                <label for="car-paint-cond">Paint condition</label>
+                                <select id="car-paint-cond" name="paint_condition" class="glass-select" required>
+                                    <option value="Original">Original Gloss Paint</option>
+                                    <option value="Repainted">Repainted Panels</option>
+                                    <option value="Faded">Faded / Scratched</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-rust-cond">Rust condition</label>
+                                <select id="car-rust-cond" name="rust_condition" class="glass-select" required>
+                                    <option value="None">None</option>
+                                    <option value="Surface">Surface Rust</option>
+                                    <option value="Heavy">Heavy Rust (Structural Damage)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-door-cond">Door & Lock condition</label>
+                                <select id="car-door-cond" name="door_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Smooth lock)</option>
+                                    <option value="Good" selected>Good (Standard click)</option>
+                                    <option value="Average">Average (Alignment play)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-mirror-cond">Mirror condition</label>
+                                <select id="car-mirror-cond" name="mirror_condition" class="glass-select" required>
+                                    <option value="Excellent">Excellent (Adjustments OK)</option>
+                                    <option value="Good" selected>Good (No crack)</option>
+                                    <option value="Average">Average (Manual adjust check)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="car-windshield-cond">Windshield glass</label>
+                                <select id="car-windshield-cond" name="windshield_condition" class="glass-select" required>
+                                    <option value="Good">Good (No cracks)</option>
+                                    <option value="Scratched">Scratched (Wiper marks)</option>
+                                    <option value="Cracked">Cracked (Needs Replacement)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Numerical slider scores -->
+                        <h4 style="font-size: 1.05rem; color: #FFF; margin: 1.5rem 0 1rem 0; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.4rem;">Quality Valuation Ratings</h4>
+                        <div class="slider-ratings-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span>Outer Body Condition</span>
+                                    <strong id="outer-body-val">90%</strong>
+                                </div>
+                                <input type="range" name="outer_body_score" min="50" max="100" value="90" class="glass-range" id="outer-body-slider">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span>Inner Cabin Structure</span>
+                                    <strong id="inner-body-val">90%</strong>
+                                </div>
+                                <input type="range" name="inner_body_score" min="50" max="100" value="90" class="glass-range" id="inner-body-slider">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span>Seat & Upholstery Condition</span>
+                                    <strong id="seat-quality-val">90%</strong>
+                                </div>
+                                <input type="range" name="seat_quality_score" min="50" max="100" value="90" class="glass-range" id="seat-quality-slider">
+                            </div>
+
+                            <div class="slider-group">
+                                <div class="slider-header">
+                                    <span>Infotainment Electronics</span>
+                                    <strong id="infotainment-val">90%</strong>
+                                </div>
+                                <input type="range" name="infotainment_score" min="50" max="100" value="90" class="glass-range" id="infotainment-slider">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Stepper Buttons Row -->
+                    <div class="form-action-row" style="justify-content: space-between; margin-top: 3rem;">
+                        <button type="button" class="btn-result-reset" id="wizard-prev-btn" style="display: none; padding: 0.85rem 1.85rem;"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                        <button type="button" class="btn-submit-valuation" id="wizard-next-btn" style="padding: 0.85rem 2.25rem;">Next <i class="fa-solid fa-arrow-right"></i></button>
+                        <button type="submit" class="btn-submit-valuation" id="wizard-submit-btn" style="padding: 0.85rem 2.5rem; display: none;">Get AI Valuation <i class="fa-solid fa-microchip"></i></button>
+                    </div>
+                </form>
+
+                <!-- Premium Processing Timeline & AI Thinking Animation -->
+                <div id="ai-loading-screen" style="display: none; text-align: center; padding: 4rem 2rem;">
+                    <div style="position: relative; width: 80px; height: 80px; margin: 0 auto 2rem auto;">
+                        <div style="position: absolute; inset: 0; border: 4px solid rgba(0, 157, 255, 0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <i class="fa-solid fa-microchip" style="color: var(--primary); font-size: 2.2rem; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); animation: pulse 1.5s infinite;"></i>
+                    </div>
+                    <h3 style="color: var(--text-white); font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Running KARMANI AI Regressor...</h3>
+                    <p id="ai-loading-status" style="color: var(--text-gray); font-size: 0.95rem; font-weight: 500; margin-bottom: 2rem;">Analyzing vehicle datasets...</p>
+                    
+                    <div style="max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem; text-align: left;">
+                        <div id="load-step-1" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); font-size: 0.85rem; font-weight: 600; transition: color 0.3s;"><i class="fa-regular fa-circle" id="icon-step-1"></i> Parsing 24 input features</div>
+                        <div id="load-step-2" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); font-size: 0.85rem; font-weight: 600; transition: color 0.3s;"><i class="fa-regular fa-circle" id="icon-step-2"></i> Scaling features with encoders.pkl</div>
+                        <div id="load-step-3" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); font-size: 0.85rem; font-weight: 600; transition: color 0.3s;"><i class="fa-regular fa-circle" id="icon-step-3"></i> Running Random Forest Regressor</div>
+                        <div id="load-step-4" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); font-size: 0.85rem; font-weight: 600; transition: color 0.3s;"><i class="fa-regular fa-circle" id="icon-step-4"></i> Generating Report Certificate</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic AI Valuation Output Dashboard (Upgraded results page layout) -->
+                <div class="valuation-result-card" id="valuation-result-box" style="display: none; margin-top: 3.5rem; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(6, 9, 19, 0.8); border-radius: 16px; padding: 2.5rem;">
+                    
+                    <div class="result-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.06); padding-bottom: 1.5rem; margin-bottom: 2.5rem; text-align: left; display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="result-title-group">
+                            <span class="result-badge"><i class="fa-solid fa-circle-check"></i> Enterprise AI Appraisal Completed</span>
+                            <h3 id="result-car-name" style="font-size: 2.2rem; font-weight: 800; color: #FFF; margin: 0.5rem 0 0.15rem 0;">Vehicle Specifications</h3>
+                            <p id="result-meta" style="font-size: 1rem; color: var(--text-gray); margin: 0;">Model Details</p>
+                        </div>
+                        <button type="button" id="result-fav-btn" class="btn-result-pdf" style="padding: 0.75rem 1.25rem; font-size: 1rem; border-radius: 8px; border-color: rgba(255, 193, 7, 0.25); display: inline-flex; align-items: center; gap: 0.45rem;" title="Bookmark Vehicle" onclick="toggleResultFavorite()">
+                            <i class="fa-regular fa-star" id="result-fav-icon" style="color: #FFC107;"></i> <span id="result-fav-text">Favorite</span>
+                        </button>
+                    </div>
+
+                    <!-- Side-by-side statistics panel -->
+                    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; margin-bottom: 2.5rem;">
+                        
+                        <!-- Metric summaries -->
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
+                            <div class="stat-card" style="padding: 1.5rem; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px;">
+                                <span style="font-size: 0.8rem; color: var(--text-gray); display: block; text-transform: uppercase;">Estimated Market Value</span>
+                                <h2 id="result-price" style="font-size: 2.5rem; font-weight: 800; color: var(--accent); margin: 0.35rem 0;">₹ 0</h2>
+                                <p style="font-size: 0.85rem; color: var(--text-gray); margin: 0;">Expected Selling: <strong id="result-expected" style="color: #FFF;">₹ 0</strong></p>
+                                <p style="font-size: 0.85rem; color: var(--text-gray); margin: 0.25rem 0 0 0;">Fair Price Range: <strong id="result-range" style="color: #FFF;">₹ 0 - ₹ 0</strong></p>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="stat-card" style="padding: 1rem; text-align: center; background: rgba(255,255,255,0.015); border-radius: 10px;">
+                                    <span style="font-size: 0.725rem; color: var(--text-gray); display: block;">AI SCORE</span>
+                                    <strong id="result-score" style="font-size: 1.35rem; color: #FFF;">90</strong>
+                                </div>
+                                <div class="stat-card" style="padding: 1rem; text-align: center; background: rgba(255,255,255,0.015); border-radius: 10px;">
+                                    <span style="font-size: 0.725rem; color: var(--text-gray); display: block;">CONFIDENCE</span>
+                                    <strong id="result-confidence" style="font-size: 1.35rem; color: #FFF;">95%</strong>
+                                </div>
+                                <div class="stat-card" style="padding: 1rem; text-align: center; background: rgba(255,255,255,0.015); border-radius: 10px;">
+                                    <span style="font-size: 0.725rem; color: var(--text-gray); display: block;">DEPRECIATION</span>
+                                    <strong id="result-depreciation" style="font-size: 1.35rem; color: #FF3366;">40%</strong>
+                                </div>
+                                <div class="stat-card" style="padding: 1rem; text-align: center; background: rgba(255,255,255,0.015); border-radius: 10px;">
+                                    <span style="font-size: 0.725rem; color: var(--text-gray); display: block;">DEMAND</span>
+                                    <strong id="result-demand" style="font-size: 1.35rem; color: #4CAF50;">High</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphical Chart canvas -->
+                        <div class="stat-card" style="padding: 1.5rem; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <span style="font-size: 0.85rem; color: #FFF; font-weight: 600; display: block; margin-bottom: 0.75rem; text-align: left;"><i class="fa-solid fa-chart-line" style="color: var(--accent);"></i> 5-Year Pricing Depreciation Trend</span>
+                            <div style="height: 190px; position: relative;">
+                                <canvas id="resultTrendChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Predictions and recommendations lists -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; text-align: left; margin-bottom: 2rem;">
+                        
+                        <div class="stat-card" style="padding: 1.5rem; background: rgba(255,255,255,0.015); border-radius: 12px;">
+                            <h4 style="font-size: 1rem; color: #FFF; margin: 0 0 1rem 0;"><i class="fa-solid fa-hourglass-half" style="color: var(--accent);"></i> Future Value Forecast</h4>
+                            <div style="display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.9rem;">
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.35rem;">
+                                    <span style="color: var(--text-gray);">In 1 Year (Forecast)</span>
+                                    <strong id="future-1-price" style="color: #FFF;">₹ 0</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.35rem;">
+                                    <span style="color: var(--text-gray);">In 2 Years (Forecast)</span>
+                                    <strong id="future-2-price" style="color: #FFF;">₹ 0</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 0.35rem;">
+                                    <span style="color: var(--text-gray);">In 3 Years (Forecast)</span>
+                                    <strong id="future-3-price" style="color: #FFF;">₹ 0</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; padding-bottom: 0.35rem;">
+                                    <span style="color: var(--text-gray);">Selling Speed</span>
+                                    <strong id="result-selling-speed" style="color: #4CAF50;">Fast</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card" style="padding: 1.5rem; background: rgba(255,255,255,0.015); border-radius: 12px;">
+                            <h4 style="font-size: 1rem; color: #FFF; margin: 0 0 1rem 0;"><i class="fa-solid fa-list-check" style="color: var(--accent);"></i> AI Strategy Guides</h4>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem;">
+                                <p style="margin: 0; color: var(--text-gray);">Buyer: <span id="strategy-buyer" style="color: #FFF; font-weight: 500;">Details</span></p>
+                                <p style="margin: 0; color: var(--text-gray);">Seller: <span id="strategy-seller" style="color: #FFF; font-weight: 500;">Details</span></p>
+                                <p style="margin: 0; color: var(--text-gray);">Maint: <span id="strategy-maint" style="color: #FFF; font-weight: 500;">Details</span></p>
+                                <p style="margin: 0; color: var(--text-gray);">Repairs: <span id="strategy-repairs" style="color: #FFF; font-weight: 500;">Details</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- AI Recommendation reason text -->
+                    <div class="stat-card" style="padding: 1.5rem; background: rgba(255,255,255,0.015); border-radius: 12px; text-align: left; margin-bottom: 2.5rem;">
+                        <h4 style="font-size: 1rem; color: #FFF; margin: 0 0 0.5rem 0;"><i class="fa-solid fa-brain" style="color: var(--accent);"></i> AI Analysis Summary</h4>
+                        <p id="result-recom" style="font-size: 0.95rem; line-height: 1.6; color: var(--text-gray); margin: 0;">Reasoning details</p>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <button class="btn-result-reset" onclick="location.reload()"><i class="fa-solid fa-rotate-left"></i> Start New Valuation</button>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                            {% if session.get('user_id') %}
+                            <button id="btn-add-to-garage" class="btn-submit-valuation" style="background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%) !important; padding: 0.85rem 1.75rem; border-radius: 6px; border: none; display: inline-flex; align-items: center; gap: 0.5rem; color: #FFF; font-weight: 600; cursor: pointer; transition: all 0.25s;">
+                                <i class="fa-solid fa-warehouse"></i> Add to Digital Garage
+                            </button>
+                            {% endif %}
+                            <a id="result-view-report-link" class="btn-submit-valuation" style="padding: 0.85rem 1.75rem; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-file-invoice"></i> View Report Certificate</a>
+                            <button class="btn-result-pdf" onclick="alert('Downloading PDF Valuation Certificate...')"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- Shared Frontend script controller -->
+    <script src="/static/js/script.js"></script>
+
+</body>
+</html>

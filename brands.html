@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automotive Brands Catalog | KARMANI AI CAR VALUATORS</title>
+    <meta name="description" content="Explore India's largest automotive brand directory. Detailed model analysis, specifications, resale indicators, and AI appraisals.">
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .brand-hero-banner {
+            background: linear-gradient(135deg, #0055FF 0%, #00C8FF 100%);
+            padding: 3.5rem 2.5rem;
+            border-radius: 20px;
+            color: #FFFFFF;
+            text-align: left;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 85, 255, 0.15);
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        .brand-selector-strip {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding: 0.75rem 0.5rem;
+            margin-bottom: 1rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .brand-selector-strip::-webkit-scrollbar {
+            display: none;
+        }
+        .horizontal-brand-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.65rem 1.35rem;
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: 50px;
+            color: var(--text-dark);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            text-decoration: none;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+        .horizontal-brand-item:hover {
+            border-color: #0055FF;
+            transform: translateY(-2px);
+        }
+        .horizontal-brand-item img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        .horizontal-brand-item.active {
+            background: #0055FF;
+            color: #FFFFFF !important;
+            box-shadow: 0 8px 20px rgba(0, 85, 255, 0.35);
+            transform: scale(1.06);
+            border-color: #0055FF;
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 8px 20px rgba(0, 85, 255, 0.35); }
+            50% { box-shadow: 0 8px 28px rgba(0, 85, 255, 0.6); }
+            100% { box-shadow: 0 8px 20px rgba(0, 85, 255, 0.35); }
+        }
+        .brands-hero {
+            padding: 9rem 0 3rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(0, 157, 255, 0.05) 0%, rgba(0, 217, 255, 0.02) 100%);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .brands-title {
+            font-size: 2.75rem;
+            font-weight: 900;
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.02em;
+        }
+        .brands-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            max-width: 600px;
+            margin: 0 auto 2.5rem auto;
+            font-weight: 500;
+        }
+        .search-filter-row {
+            max-width: 850px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 0.75rem;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(15px);
+        }
+        .search-input-group {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-left: 0.75rem;
+        }
+        .search-icon {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+        .search-box-field {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        .hierarchical-container-box {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            margin-top: 10px;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .hierarchical-grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            height: 380px;
+            background: rgba(255, 255, 255, 0.98);
+        }
+        .hierarchical-col {
+            border-right: 1px solid rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .hierarchical-col:last-child {
+            border-right: none;
+        }
+        .col-search-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: rgba(0,0,0,0.01);
+        }
+        .col-search-header input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 0.85rem;
+            font-weight: 600;
+            width: 100%;
+            color: var(--text-dark);
+        }
+        .col-list-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+        .col-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.65rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .col-list-item:hover, .col-list-item.selected {
+            background: rgba(0, 157, 255, 0.05);
+            color: var(--primary);
+        }
+        .select-prompt-txt {
+            text-align: center;
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            padding: 3rem 1.5rem;
+            font-weight: 600;
+        }
+        .loading-spinner-placeholder {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .filter-badges-container {
+            max-width: 1000px;
+            margin: 2rem auto 0 auto;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.65rem;
+        }
+        .origin-badge {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--text-gray);
+            padding: 0.5rem 1.15rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .origin-badge:hover, .origin-badge.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(0, 157, 255, 0.2);
+        }
+        .catalog-container {
+            padding: 4rem 0 7rem 0;
+            background: var(--bg-main);
+            min-height: 50vh;
+        }
+        .brands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 2rem;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .brand-catalog-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .brand-catalog-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .brand-catalog-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(0, 157, 255, 0.2);
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(0, 157, 255, 0.03);
+        }
+        .brand-catalog-card:hover::before {
+            opacity: 1;
+        }
+        .card-header-brand {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+        .brand-logo-img {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid var(--card-border);
+            padding: 2px;
+            background: #FFFFFF;
+        }
+        .share-badge {
+            background: rgba(0, 228, 167, 0.08);
+            border: 1px solid rgba(0, 228, 167, 0.2);
+            color: #00B887;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+        }
+        .brand-identity-group {
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+        .brand-card-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin: 0 0 0.25rem 0;
+        }
+        .brand-origin-founded {
+            font-size: 0.825rem;
+            color: var(--text-gray);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .brand-card-desc {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            flex-grow: 1;
+        }
+        .brand-metrics-section {
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+            padding-top: 1rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            text-align: left;
+        }
+        .metric-row-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .metric-label-txt {
+            color: var(--text-gray);
+        }
+        .metric-val-txt {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+        .resale-progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+        .resale-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+        .brand-card-action-btn {
+            background: rgba(0, 157, 255, 0.05);
+            border: 1px solid rgba(0, 157, 255, 0.12);
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .brand-catalog-card:hover .brand-card-action-btn {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(0, 157, 255, 0.25);
+        }
+        .no-results-panel {
+            grid-column: 1 / -1;
+            padding: 5rem 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            text-align: center;
+            color: var(--text-gray);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    {% include 'navbar.html' %}
+
+    {% if selected_m %}
+    <!-- 1. Deep-linked Brand View (Hyundai, Tata, Mahindra, BMW, Audi, etc.) -->
+    <main style="background: #FAFBFD; min-height: 100vh;">
+        <!-- Breadcrumbs & Slogan Header -->
+        <div class="container" style="max-width: 1200px; padding: 9.5rem 1.5rem 1.5rem 1.5rem; text-align: left;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-gray); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                <a href="/" style="color: var(--text-gray); text-decoration: none;"><i class="fa-solid fa-house"></i> Home</a>
+                <i class="fa-solid fa-angle-right" style="font-size: 0.8rem;"></i>
+                <a href="/brands" style="color: var(--text-gray); text-decoration: none;">Brands</a>
+                <i class="fa-solid fa-angle-right" style="font-size: 0.8rem;"></i>
+                <span style="color: var(--primary);">{{ selected_m.name }}</span>
+            </div>
+            <h2 id="brand-enlarged-title" style="font-size: 2.25rem; font-weight: 900; color: var(--text-dark); margin: 0; transition: all 0.3s ease;">Showing {{ selected_m.name }} Vehicles</h2>
+        </div>
+
+        <!-- Horizontal Scrollable Selector Strip -->
+        <div class="container" style="max-width: 1200px; padding: 0 1.5rem 1.5rem 1.5rem;">
+            <div class="brand-selector-strip" id="horizontalBrandStrip">
+                {% for m in manufacturers %}
+                <a href="/brands?brand={{ m.name }}" class="horizontal-brand-item {% if m.name.lower() == selected_m.name.lower() %}active{% endif %}" id="brand-item-{{ m.slug }}">
+                    <img src="{{ m.logo_path }}" alt="{{ m.name }} logo" onerror="this.src='/static/images/logo_favicon.svg'">
+                    <span>{{ m.name }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Catalog Filter Container -->
+        <section class="catalog-container" style="padding-top: 0;">
+            <div class="container" style="max-width: 1200px; padding: 0 1.5rem;">
+                <!-- Brand Hero Slogan Banner -->
+                <div class="brand-hero-banner" id="brand-hero-section">
+                    <div class="glow-node" style="top: -20%; right: -10%; background: rgba(255,255,255,0.15); width: 300px; height: 300px; border-radius: 50%;"></div>
+                    <div style="position: relative; z-index: 2; display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+                        <img src="{{ selected_m.logo_path }}" alt="{{ selected_m.name }} Logo" style="width: 80px; height: 80px; border-radius: 12px; background: #FFFFFF; padding: 5px; object-fit: contain;" onerror="this.src='/static/images/logo_favicon.svg'">
+                        <div>
+                            <span style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(255,255,255,0.18); padding: 0.35rem 0.75rem; border-radius: 50px; display: inline-block; margin-bottom: 0.5rem;">Automotive Partner</span>
+                            <h2 style="font-size: 2.25rem; font-weight: 900; margin: 0 0 0.5rem 0; color:#FFFFFF;">
+                                {% if selected_m.name.lower() == 'hyundai' %}
+                                    Explore Hyundai Cars
+                                {% elif selected_m.name.lower() == 'bmw' %}
+                                    The Ultimate Driving Machine
+                                {% elif selected_m.name.lower() == 'audi' %}
+                                    Future is an Attitude
+                                {% elif selected_m.name.lower() == 'mercedes-benz' %}
+                                    Luxury Beyond Expectations
+                                {% elif 'tata' in selected_m.name.lower() %}
+                                    Proudly Built for India
+                                {% elif 'mahindra' in selected_m.name.lower() %}
+                                    Rise Above Every Road
+                                {% elif selected_m.name.lower() == 'honda' %}
+                                    The Power of Dreams
+                                {% elif selected_m.name.lower() == 'toyota' %}
+                                    Lead the Way with Bulletproof Reliability
+                                {% elif selected_m.name.lower() == 'kia' %}
+                                    Movement that Inspires
+                                {% elif 'mg' in selected_m.name.lower() %}
+                                    British Heritage, Smart Future
+                                {% elif selected_m.name.lower() == 'skoda' %}
+                                    Simply Clever
+                                {% elif selected_m.name.lower() == 'volkswagen' %}
+                                    German Engineered Performance
+                                {% elif selected_m.name.lower() == 'nissan' %}
+                                    Innovation that Excites
+                                {% elif selected_m.name.lower() == 'renault' %}
+                                    Passion for Life
+                                {% elif selected_m.name.lower() == 'jeep' %}
+                                    Go Anywhere, Do Anything
+                                {% elif selected_m.name.lower() == 'volvo' %}
+                                    Safety, Luxury, and Innovation
+                                {% elif selected_m.name.lower() == 'lexus' %}
+                                    Experience Amazing
+                                {% elif selected_m.name.lower() == 'byd' %}
+                                    Build Your Dreams with Electrified Luxury
+                                {% else %}
+                                    The Pinnacle of {{ selected_m.name }} Engineering
+                                {% endif %}
+                            </h2>
+                            <p style="margin: 0; font-size: 1.05rem; opacity: 0.9; max-width: 700px; font-weight: 500;">{{ selected_m.description }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Statistics Row -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+                    <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.25rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600;">Total Models</span>
+                        <strong style="font-size: 1.6rem; color: var(--text-dark);">{{ selected_m.model_count }} Vehicles</strong>
+                    </div>
+                    <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.25rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600;">Price Range</span>
+                        <strong style="font-size: 1.35rem; color: var(--text-dark);">
+                            {% if selected_m.min_price > 0 %}
+                                ₹{{ (selected_m.min_price * 4.5 / 100000) | round(1) }}L - ₹{{ (selected_m.max_price * 4.5 / 100000) | round(1) }}L
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </strong>
+                    </div>
+                    <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.25rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600;">AI Prediction Accuracy</span>
+                        <strong style="font-size: 1.6rem; color: var(--primary);">98.4% Accuracy</strong>
+                    </div>
+                    <div class="stat-card" style="padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 0.25rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600;">Last Updated</span>
+                        <strong style="font-size: 1.35rem; color: var(--text-dark);"><i class="fa-solid fa-clock-rotate-left"></i> Today</strong>
+                    </div>
+                </div>
+
+                <!-- Instant Search Box -->
+                <div style="background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 12px; padding: 0.85rem 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+                    <i class="fa-solid fa-magnifying-glass" style="color: var(--text-gray); font-size: 1.2rem;"></i>
+                    <input type="text" id="vehicle-grid-search" placeholder="Search {{ selected_m.name }} Cars (e.g. typing model name instantly filters)..." style="border: none; background: transparent; width: 100%; outline: none; color: var(--text-dark); font-size: 1.05rem; font-weight: 500;" oninput="filterVehicleGrid(this.value)">
+                </div>
+
+                <!-- Vehicle Variant Grid -->
+                <div class="vehicles-grid" id="vehiclesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
+                    {% for v in vehicles %}
+                    <div class="vehicle-card-item" data-name="{{ v.model_name }} {{ v.variant_name }}" style="background: var(--bg-card); border: 1px solid var(--card-border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: space-between; text-align: left; animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: {{ loop.index0 * 0.04 }}s;">
+                        <div>
+                            <!-- Image -->
+                            <div style="position: relative; width: 100%; height: 200px; background: #F1F5F9; overflow: hidden;">
+                                <img src="{{ v.image_path }}" alt="{{ v.model_name }}" style="width: 100%; height: 100%; object-fit: cover;" onload="console.log('Loaded vehicle image:', this.src)" onerror="console.error('Failed to load image:', this.src); this.onerror=null; this.src='/static/images/cars/placeholder.svg';">
+                                <span style="position: absolute; top: 1rem; right: 1rem; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); color: #FFF; padding: 0.35rem 0.75rem; border-radius: 50px; font-size: 0.75rem; font-weight: 700;">{{ v.body_type }}</span>
+                            </div>
+                            <!-- Details -->
+                            <div style="padding: 1.5rem;">
+                                <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em;">{{ selected_m.name }}</span>
+                                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 0.25rem 0 0.5rem 0;">{{ v.model_name }} <span style="font-weight: 500; font-size: 0.95rem; color: var(--text-gray);">{{ v.variant_name }}</span></h3>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1.25rem 0; font-size: 0.85rem; color: var(--text-gray); font-weight: 500;">
+                                    <div><i class="fa-solid fa-gas-pump" style="color:var(--primary); margin-right: 0.35rem;"></i> {{ v.fuel_type }}</div>
+                                    <div><i class="fa-solid fa-gears" style="color:var(--primary); margin-right: 0.35rem;"></i> {{ v.transmission }}</div>
+                                    <div><i class="fa-solid fa-users" style="color:var(--primary); margin-right: 0.35rem;"></i> {{ v.seating_capacity }} Seater</div>
+                                    <div><i class="fa-solid fa-gauge" style="color:var(--primary); margin-right: 0.35rem;"></i> {{ v.mileage }} km/l</div>
+                                </div>
+                                
+                                <div style="border-top: 1px solid rgba(0, 0, 0, 0.05); padding-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem;">
+                                    <div>
+                                        <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 0.15rem;">Official Ex-Showroom Price</span>
+                                        <span style="font-size: 1.25rem; font-weight: 900; color: var(--primary);">₹{{ ((v.base_price * 4.5) / 100000) | round(1) }}L</span>
+                                        <div style="font-size: 0.8rem; color: var(--text-gray); font-weight: 600; margin-top: 0.25rem;">Estimated On-Road: <strong>₹{{ ((v.on_road_price * 4.5) / 100000) | round(1) }}L</strong></div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <span style="font-size: 0.7rem; color: #00B887; background: rgba(0, 184, 135, 0.08); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem;"><i class="fa-solid fa-circle-check"></i> ML Verified</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 0 1.5rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 0.65rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                                <a href="/brands/compare/{{ v.variant_id }}" class="brand-card-action-btn" style="padding: 0.65rem; font-size: 0.8rem; border-radius: 8px;"><i class="fa-solid fa-code-compare"></i> Compare</a>
+                                <a href="/car/{{ v.variant_id }}" class="brand-card-action-btn" style="padding: 0.65rem; font-size: 0.8rem; border-radius: 8px; background: var(--primary); color: #FFF; border-color: var(--primary);"><i class="fa-solid fa-circle-info"></i> Details</a>
+                            </div>
+                            <a href="/brands/add-garage/{{ v.variant_id }}" class="brand-card-action-btn" style="padding: 0.65rem; font-size: 0.8rem; border-radius: 8px; background: transparent; border-color: rgba(0, 85, 255, 0.15); color: var(--primary);"><i class="fa-solid fa-warehouse"></i> Add to Dashboard</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-results-panel" style="grid-column: 1 / -1; display: block;">
+                        <i class="fa-solid fa-car-tunnel" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1.5rem; display: block;"></i>
+                        <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem;">No Models Found</h3>
+                        <p style="font-size: 0.9rem; margin: 0;">No active configurations found for {{ selected_m.name }} in our database.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    {% else %}
+    <!-- 2. Original Catalog Listing -->
+    <!-- Page Header and Interactive Filter -->
+    <section class="brands-hero">
+        <div class="container">
+            <span class="badge" style="background: rgba(0, 157, 255, 0.08); color: var(--primary); padding: 0.45rem 1rem; border-radius: 50px; font-weight: 700; font-size: 0.8rem; margin-bottom: 1rem; display: inline-block;">
+                <i class="fa-solid fa-database"></i> Automotive Index
+            </span>
+            <h1 class="brands-title">Interactive Brand Explorer</h1>
+            <p class="brands-subtitle">Browse models, search detailed configurations, compare parameters, and run AI evaluations for India's largest automotive catalog.</p>
+            
+            <div class="search-filter-row" style="position:relative;">
+                <div class="search-input-group" style="position:relative; width: 100%;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="brandSearchBox" class="search-box-field" placeholder="Type to search Swift, Nexon, Creta... or click to browse by Brand → Model → Variant" onfocus="open3ColumnSelector()" oninput="handleSearchInputChange(this.value)">
+                    
+                    <!-- 3-Column Hierarchical Selector Dropdown -->
+                    <div id="hierarchical-selector-container" class="hierarchical-container-box">
+                        <div class="hierarchical-grid-row">
+                            <!-- Column 1: Brands -->
+                            <div class="hierarchical-col">
+                                <div class="col-search-header">
+                                    <i class="fa-solid fa-magnifying-glass" style="color:var(--text-gray); font-size:0.8rem;"></i>
+                                    <input type="text" id="brand-col-search" placeholder="Search Brand..." oninput="filterColumnList('brand-list-group', this.value)">
+                                </div>
+                                <div class="col-list-scrollable" id="brand-list-group">
+                                    <div class="loading-spinner-placeholder"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Column 2: Models -->
+                            <div class="hierarchical-col">
+                                <div class="col-search-header">
+                                    <i class="fa-solid fa-magnifying-glass" style="color:var(--text-gray); font-size:0.8rem;"></i>
+                                    <input type="text" id="model-col-search" placeholder="Search Model..." disabled oninput="filterColumnList('model-list-group', this.value)">
+                                </div>
+                                <div class="col-list-scrollable" id="model-list-group">
+                                    <div class="select-prompt-txt">Select a brand first</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Column 3: Variants -->
+                            <div class="hierarchical-col">
+                                <div class="col-search-header">
+                                    <i class="fa-solid fa-magnifying-glass" style="color:var(--text-gray); font-size:0.8rem;"></i>
+                                    <input type="text" id="variant-col-search" placeholder="Search Variant..." disabled oninput="filterColumnList('variant-list-group', this.value)">
+                                </div>
+                                <div class="col-list-scrollable" id="variant-list-group">
+                                    <div class="select-prompt-txt">Select a model first</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- General Autocomplete Fallback -->
+                    <div id="autocomplete-dropdown" style="display:none; position:absolute; top:100%; left:0; right:0; background:#FFF; border:1px solid var(--card-border); border-radius:12px; margin-top:8px; z-index:999; max-height:300px; overflow-y:auto; box-shadow:var(--shadow-lg); text-align:left;"></div>
+                </div>
+            </div>
+            
+            <div class="filter-badges-container">
+                <button class="origin-badge active" data-origin="all" onclick="filterOrigin(this, 'all')">All Origins</button>
+                <button class="origin-badge" data-origin="india" onclick="filterOrigin(this, 'India')">India</button>
+                <button class="origin-badge" data-origin="germany" onclick="filterOrigin(this, 'Germany')">Germany</button>
+                <button class="origin-badge" data-origin="japan" onclick="filterOrigin(this, 'Japan')">Japan</button>
+                <button class="origin-badge" data-origin="south-korea" onclick="filterOrigin(this, 'South Korea')">South Korea</button>
+                <button class="origin-badge" data-origin="uk" onclick="filterOrigin(this, 'UK')">United Kingdom</button>
+                <button class="origin-badge" data-origin="usa" onclick="filterOrigin(this, 'USA')">United States</button>
+                <button class="origin-badge" data-origin="italy" onclick="filterOrigin(this, 'Italy')">Italy</button>
+                <button class="origin-badge" data-origin="france" onclick="filterOrigin(this, 'France')">France</button>
+                <button class="origin-badge" data-origin="sweden" onclick="filterOrigin(this, 'Sweden')">Sweden</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brands Grid Catalog -->
+    <section class="catalog-container">
+        <div class="brands-grid" id="brandsGrid">
+            {% for b in manufacturers %}
+            <div class="brand-catalog-card" data-name="{{ b.name }}" data-country="{{ b.country }}" onclick="location.href='/brands?brand={{ b.name }}'" style="cursor: pointer;">
+                <div>
+                    <!-- Card Top Header -->
+                    <div class="card-header-brand">
+                        <img src="{{ b.logo_path }}" alt="{{ b.name }} Logo" class="brand-logo-img" onerror="this.src='/static/images/logo_favicon.svg'">
+                        {% if b.market_share > 0 %}
+                        <span class="share-badge">{{ b.market_share }}% Market Share</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Brand Title -->
+                    <div class="brand-identity-group">
+                        <h3 class="brand-card-name">{{ b.name }}</h3>
+                        <div class="brand-origin-founded">
+                            <span><i class="fa-solid fa-earth-asia"></i> {{ b.country }}</span>
+                            <span>•</span>
+                            <span><i class="fa-solid fa-calendar-days"></i> Est. {{ b.founded }}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Short Description -->
+                    <p class="brand-card-desc">{{ b.description }}</p>
+                </div>
+                
+                <div>
+                    <!-- Stats / Progress Metrics -->
+                    <div class="brand-metrics-section">
+                        <div class="metric-row-item">
+                            <span class="metric-label-txt">Available Models</span>
+                            <span class="metric-val-txt">{{ b.model_count }} Cars</span>
+                        </div>
+                        <div class="metric-row-item">
+                            <span class="metric-label-txt">Price Range</span>
+                            <span class="metric-val-txt" style="font-size:0.8rem; font-weight:700; color:var(--primary);">
+                                {% if b.min_price > 0 %}
+                                    ₹{{ (b.min_price * 4.5) | indian_currency }} - ₹{{ (b.max_price * 4.5) | indian_currency }}
+                                {% else %}
+                                    Contact Dealer
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="metric-row-item">
+                            <span class="metric-label-txt">Popular Models</span>
+                            <span class="metric-val-txt" style="font-size: 0.8rem; color: var(--primary);">{{ b.popular_models }}</span>
+                        </div>
+                        <div style="margin-top: 0.25rem;">
+                            <div class="metric-row-item">
+                                <span class="metric-label-txt">Average Resale Retention</span>
+                                <span class="metric-val-txt">{{ b.average_resale }}%</span>
+                            </div>
+                            <div class="resale-progress-bar">
+                                <div class="resale-progress-fill" style="width: {{ b.average_resale }}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Link -->
+                    <a href="/brands?brand={{ b.name }}" class="brand-card-action-btn">
+                        Explore Catalog <i class="fa-solid fa-arrow-right-long"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Default No Results State -->
+            <div class="no-results-panel" id="noResultsPanel" style="display: none;">
+                <i class="fa-solid fa-car-tunnel" style="font-size: 3rem; color: var(--text-gray); margin-bottom: 1.5rem; display: block;"></i>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.5rem;">No Brands Found</h3>
+                <p style="font-size: 0.9rem; margin: 0;">Try matching country of origin or checking your query details.</p>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Footer Section -->
+    {% include 'footer.html' %}
+
+    <!-- Filter JS Script -->
+    <script>
+        // Deep linked Brand navigation logic
+        document.addEventListener('DOMContentLoaded', () => {
+            // Scroll to the brand banner section if it exists
+            const banner = document.getElementById('brand-hero-section');
+            if (banner) {
+                setTimeout(() => {
+                    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    
+                    // Enlarged title scaling visual effect
+                    const title = document.getElementById('brand-enlarged-title');
+                    if (title) {
+                        title.style.transform = 'scale(1.03)';
+                        setTimeout(() => {
+                            title.style.transform = 'scale(1)';
+                        }, 400);
+                    }
+                }, 300);
+            }
+            
+            // Center the active horizontal brand selector item in the scrollable view
+            const activeBrandItem = document.querySelector('.horizontal-brand-item.active');
+            if (activeBrandItem) {
+                setTimeout(() => {
+                    activeBrandItem.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                }, 400);
+            }
+        });
+
+        // Instant Vehicle Grid Filter (e.g. typing "Creta" instantly filters cards with fade/slide-up)
+        function filterVehicleGrid(val) {
+            const query = val.toLowerCase().trim();
+            const cards = document.querySelectorAll('.vehicle-card-item');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                if (name.includes(query)) {
+                    card.style.display = 'flex';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(15px)';
+                }
+            });
+
+            // Toggle grid search empty state panel
+            const noResults = document.querySelector('.no-results-panel');
+            if (noResults) {
+                if (visibleCount === 0) {
+                    noResults.style.display = 'block';
+                } else {
+                    noResults.style.display = 'none';
+                }
+            }
+        }
+
+        let currentOriginFilter = 'all';
+
+        function filterOrigin(button, origin) {
+            // Toggle active class on badges
+            document.querySelectorAll('.origin-badge').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+            
+            currentOriginFilter = origin;
+            filterBrandCards();
+        }
+
+        function filterBrandCards() {
+            const query = document.getElementById('brandSearchBox').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.brand-catalog-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                const country = card.getAttribute('data-country');
+                
+                // Matches Search query
+                const matchesSearch = name.includes(query) || country.toLowerCase().includes(query);
+                
+                // Matches Country Origin Filter
+                let matchesOrigin = false;
+                if (currentOriginFilter === 'all') {
+                    matchesOrigin = true;
+                } else if (currentOriginFilter.includes('/')) {
+                    // Split India/Japan scenarios
+                    const parts = currentOriginFilter.split('/');
+                    matchesOrigin = parts.some(p => country.includes(p));
+                } else {
+                    matchesOrigin = country.includes(currentOriginFilter);
+                }
+
+                if (matchesSearch && matchesOrigin) {
+                    card.style.display = 'flex';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Toggle No Results View
+            const noResults = document.getElementById('noResultsPanel');
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+
+        let debounceTimer;
+        let allBrands = [];
+        let highlightedIndex = -1;
+
+        function open3ColumnSelector() {
+            const val = document.getElementById('brandSearchBox').value;
+            if (val.trim()) {
+                return; // Let autocomplete handle it if there's text
+            }
+            document.getElementById('autocomplete-dropdown').style.display = 'none';
+            const selector = document.getElementById('hierarchical-selector-container');
+            selector.style.display = 'block';
+            
+            // Load brands if not loaded
+            if (allBrands.length === 0) {
+                fetchBrands();
+            }
+        }
+
+        function handleSearchInputChange(val) {
+            filterBrandCards();
+            const selector = document.getElementById('hierarchical-selector-container');
+            const dropdown = document.getElementById('autocomplete-dropdown');
+            
+            if (!val.trim()) {
+                dropdown.style.display = 'none';
+                selector.style.display = 'block';
+                return;
+            }
+            
+            selector.style.display = 'none';
+            fetchAutocompleteSuggestions(val);
+        }
+
+        function fetchBrands() {
+            const group = document.getElementById('brand-list-group');
+            fetch('/api/brands-list')
+                .then(res => res.json())
+                .then(data => {
+                    allBrands = data;
+                    renderBrands(data);
+                })
+                .catch(err => {
+                    group.innerHTML = `<div class="select-prompt-txt" style="color:red;">Error loading brands</div>`;
+                });
+        }
+
+        function renderBrands(brands) {
+            const group = document.getElementById('brand-list-group');
+            group.innerHTML = '';
+            brands.forEach(b => {
+                const div = document.createElement('div');
+                div.className = 'col-list-item brand-item';
+                div.setAttribute('data-id', b.id);
+                div.setAttribute('data-slug', b.slug);
+                div.innerHTML = `<span>${b.name}</span><i class="fa-solid fa-chevron-right" style="font-size:0.7rem; opacity:0.4;"></i>`;
+                div.onclick = (e) => {
+                    e.stopPropagation();
+                    selectBrand(b.id, div);
+                };
+                group.appendChild(div);
+            });
+        }
+
+        function selectBrand(brandId, element) {
+            // Highlight selected brand
+            document.querySelectorAll('.brand-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            // Clear model and variant lists
+            const modelColSearch = document.getElementById('model-col-search');
+            modelColSearch.disabled = false;
+            modelColSearch.value = '';
+            
+            const variantColSearch = document.getElementById('variant-col-search');
+            variantColSearch.disabled = true;
+            variantColSearch.value = '';
+            
+            const modelGroup = document.getElementById('model-list-group');
+            modelGroup.innerHTML = `<div class="loading-spinner-placeholder"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>`;
+            
+            const variantGroup = document.getElementById('variant-list-group');
+            variantGroup.innerHTML = `<div class="select-prompt-txt">Select a model first</div>`;
+            
+            fetch(`/api/models-list?brand_id=${brandId}`)
+                .then(res => res.json())
+                .then(data => {
+                    modelGroup.innerHTML = '';
+                    if (data.length === 0) {
+                        modelGroup.innerHTML = `<div class="select-prompt-txt">No models available</div>`;
+                        return;
+                    }
+                    data.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = 'col-list-item model-item';
+                        div.setAttribute('data-id', m.id);
+                        div.innerHTML = `<span>${m.name}</span><i class="fa-solid fa-chevron-right" style="font-size:0.7rem; opacity:0.4;"></i>`;
+                        div.onclick = (e) => {
+                            e.stopPropagation();
+                            selectModel(m.id, div);
+                        };
+                        modelGroup.appendChild(div);
+                    });
+                    modelColSearch.focus();
+                })
+                .catch(err => {
+                    modelGroup.innerHTML = `<div class="select-prompt-txt" style="color:red;">Error loading models</div>`;
+                });
+        }
+
+        function selectModel(modelId, element) {
+            // Highlight selected model
+            document.querySelectorAll('.model-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            const variantColSearch = document.getElementById('variant-col-search');
+            variantColSearch.disabled = false;
+            variantColSearch.value = '';
+            
+            const variantGroup = document.getElementById('variant-list-group');
+            variantGroup.innerHTML = `<div class="loading-spinner-placeholder"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading...</div>`;
+            
+            fetch(`/api/variants-list?model_id=${modelId}`)
+                .then(res => res.json())
+                .then(data => {
+                    variantGroup.innerHTML = '';
+                    if (data.length === 0) {
+                        variantGroup.innerHTML = `<div class="select-prompt-txt">No variants available</div>`;
+                        return;
+                    }
+                    data.forEach(v => {
+                        const div = document.createElement('div');
+                        div.className = 'col-list-item variant-item';
+                        div.setAttribute('data-id', v.id);
+                        const rawPrice = v.price ? parseFloat(v.price) * 4.5 : 0;
+                        const formattedPrice = rawPrice ? (rawPrice >= 10000000 ? (rawPrice/10000000).toFixed(2) + ' Cr' : (rawPrice/100000).toFixed(2) + ' Lakh') : 'N/A';
+                        div.innerHTML = `
+                            <div style="display:flex; flex-direction:column; text-align:left;">
+                                <span style="font-weight:700;">${v.name}</span>
+                                <span style="font-size:0.75rem; color:var(--text-gray); font-weight:600;">${v.fuel} • ${v.transmission}</span>
+                            </div>
+                            <span style="font-size:0.8rem; font-weight:800; color:var(--primary); padding-left:10px; white-space:nowrap;">₹${formattedPrice}</span>
+                        `;
+                        div.onclick = (e) => {
+                            e.stopPropagation();
+                            window.location.href = `/car/${v.id}`;
+                        };
+                        variantGroup.appendChild(div);
+                    });
+                    variantColSearch.focus();
+                })
+                .catch(err => {
+                    variantGroup.innerHTML = `<div class="select-prompt-txt" style="color:red;">Error loading variants</div>`;
+                });
+        }
+
+        function filterColumnList(containerId, query) {
+            const list = document.getElementById(containerId);
+            const items = list.querySelectorAll('.col-list-item');
+            const q = query.toLowerCase().trim();
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                if (text.includes(q)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function fetchAutocompleteSuggestions(val) {
+            clearTimeout(debounceTimer);
+            const dropdown = document.getElementById('autocomplete-dropdown');
+            
+            if (!val.trim()) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            
+            debounceTimer = setTimeout(() => {
+                fetch(`/api/search?q=${encodeURIComponent(val)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        dropdown.innerHTML = '';
+                        highlightedIndex = -1;
+                        if (data.length === 0) {
+                            dropdown.style.display = 'none';
+                            return;
+                        }
+                        
+                        data.forEach((item, index) => {
+                            const option = document.createElement('div');
+                            option.className = 'autocomplete-option';
+                            option.setAttribute('data-index', index);
+                            option.style.padding = '12px 16px';
+                            option.style.cursor = 'pointer';
+                            option.style.borderBottom = '1px solid rgba(0,0,0,0.03)';
+                            option.style.fontWeight = '600';
+                            option.style.fontSize = '0.9rem';
+                            option.style.color = 'var(--text-dark)';
+                            option.style.transition = 'background 0.2s';
+                            
+                            const formattedPrice = item.price ? (item.price >= 10000000 ? (item.price/10000000).toFixed(2) + ' Cr' : (item.price/100000).toFixed(2) + ' Lakh') : '';
+                            option.innerHTML = `
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span><i class="fa-solid fa-car" style="color:var(--primary); margin-right:8px;"></i> ${item.label}</span>
+                                    <div style="display:flex; gap:0.5rem; align-items:center;">
+                                        ${formattedPrice ? `<span style="font-size:0.8rem; font-weight:800; color:var(--primary); margin-right:10px;">₹${formattedPrice}</span>` : ''}
+                                        <span style="font-size:0.75rem; color:var(--text-gray); text-transform:uppercase; background:rgba(0,157,255,0.06); padding:2px 6px; border-radius:4px;">${item.fuel_type || 'Fuel'} | ${item.transmission || 'Trans'}</span>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            option.onmouseenter = () => { 
+                                removeHighlight();
+                                option.style.background = 'rgba(0,157,255,0.04)'; 
+                                highlightedIndex = index;
+                            };
+                            option.onmouseleave = () => { option.style.background = 'none'; };
+                            option.onclick = () => {
+                                window.location.href = `/car/${item.id}`;
+                            };
+                            dropdown.appendChild(option);
+                        });
+                        dropdown.style.display = 'block';
+                    })
+                    .catch(err => console.error("Error fetching autocompletes: ", err));
+            }, 250);
+        }
+
+        function removeHighlight() {
+            document.querySelectorAll('.autocomplete-option').forEach(el => {
+                el.style.background = 'none';
+            });
+        }
+
+        function highlightOption(options) {
+            removeHighlight();
+            if (highlightedIndex >= 0 && highlightedIndex < options.length) {
+                const activeOpt = options[highlightedIndex];
+                activeOpt.style.background = 'rgba(0, 157, 255, 0.08)';
+                activeOpt.scrollIntoView({ block: 'nearest' });
+            }
+        }
+
+        // Add keyboard navigation to autocomplete options
+        document.getElementById('brandSearchBox').addEventListener('keydown', function(e) {
+            const dropdown = document.getElementById('autocomplete-dropdown');
+            if (dropdown && dropdown.style.display === 'block') {
+                const options = dropdown.querySelectorAll('.autocomplete-option');
+                if (options.length > 0) {
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        highlightedIndex = (highlightedIndex + 1) % options.length;
+                        highlightOption(options);
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        highlightedIndex = (highlightedIndex - 1 + options.length) % options.length;
+                        highlightOption(options);
+                    } else if (e.key === 'Enter') {
+                        if (highlightedIndex >= 0 && highlightedIndex < options.length) {
+                            e.preventDefault();
+                            options[highlightedIndex].click();
+                        }
+                    }
+                }
+            }
+        });
+
+        // Close selectors when clicking outside
+        document.addEventListener('click', (e) => {
+            const selector = document.getElementById('hierarchical-selector-container');
+            const dropdown = document.getElementById('autocomplete-dropdown');
+            const searchBox = document.getElementById('brandSearchBox');
+            
+            if (selector && !selector.contains(e.target) && !searchBox.contains(e.target)) {
+                selector.style.display = 'none';
+            }
+            if (dropdown && !dropdown.contains(e.target) && !searchBox.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMANI CONSOLE | Admin Settings</title>
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .admin-hero {
+            padding: 8.5rem 0 3rem 0;
+            background: linear-gradient(135deg, rgba(0, 157, 255, 0.05) 0%, rgba(0, 217, 255, 0.02) 100%);
+            border-bottom: 1px solid var(--card-border);
+            text-align: left;
+        }
+        .admin-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 7rem 1.5rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2.5rem;
+        }
+        .admin-sidebar-menu {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: var(--shadow-sm);
+        }
+        .admin-sidebar-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+        .admin-sidebar-btn.active, .admin-sidebar-btn:hover {
+            background: rgba(0, 157, 255, 0.06);
+            color: var(--primary);
+        }
+        .admin-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .admin-metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .metric-details h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-gray);
+            margin: 0 0 0.35rem 0;
+        }
+        .metric-details span {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: var(--text-dark);
+        }
+        .metric-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: rgba(0, 157, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            color: var(--primary);
+        }
+        .admin-block {
+            background: var(--bg-card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2.25rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2.5rem;
+        }
+        .admin-section-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .control-btns-flex {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn-admin-action {
+            padding: 0.85rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .btn-admin-action.primary {
+            background: var(--primary);
+            color: #FFFFFF;
+            box-shadow: 0 4px 10px rgba(0, 157, 255, 0.2);
+        }
+        .btn-admin-action.primary:hover {
+            box-shadow: 0 6px 15px rgba(0, 157, 255, 0.25);
+        }
+        .btn-admin-action.danger {
+            background: rgba(255, 51, 102, 0.06);
+            border: 1px solid rgba(255, 51, 102, 0.15);
+            color: #FF3366;
+        }
+        .btn-admin-action.danger:hover {
+            background: #FF3366;
+            color: #FFFFFF;
+        }
+        .config-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .config-status-pill.configured {
+            background: rgba(0, 228, 167, 0.08);
+            border: 1px solid rgba(0, 228, 167, 0.2);
+            color: var(--accent-emerald);
+        }
+        .config-status-pill.missing {
+            background: rgba(255, 193, 7, 0.08);
+            border: 1px solid rgba(255, 193, 7, 0.2);
+            color: #FF9800;
+        }
+        .admin-data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        .admin-data-table th {
+            font-weight: 700;
+            color: var(--text-gray);
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+        .admin-data-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            color: var(--text-dark);
+            font-weight: 600;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    {% include 'navbar.html' %}
+
+    <!-- Page Header Hero block -->
+    <section class="admin-hero">
+        <div class="container" style="max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;">
+            <span class="badge" style="background: rgba(0, 157, 255, 0.08); color: var(--primary); padding: 0.45rem 1rem; border-radius: 50px; font-weight: 700; font-size: 0.8rem; margin-bottom: 1rem; display: inline-block;">
+                <i class="fa-solid fa-sliders"></i> System Dashboard
+            </span>
+            <h1 class="hero-brand-name" style="font-size:2.5rem; font-weight:900; color:var(--text-dark); letter-spacing:-0.02em; margin:0;">KARMANI CONSOLE</h1>
+            <p style="font-size:1.05rem; color:var(--text-gray); margin-top:0.35rem;">Manage active live pricing manager integration, sync specifications data, and audit api caches.</p>
+        </div>
+    </section>
+
+    <!-- Admin main layout -->
+    <section style="background: var(--bg-main);">
+        <div class="admin-layout">
+            
+            <!-- Sidebar Menu -->
+            <aside>
+                <div class="admin-sidebar-menu">
+                    <a href="/admin/dashboard" class="admin-sidebar-btn"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                    <a href="/admin/panel" class="admin-sidebar-btn active"><i class="fa-solid fa-gears"></i> Pricing Settings</a>
+                    <a href="/admin/logs" class="admin-sidebar-btn"><i class="fa-solid fa-receipt"></i> System Logs</a>
+                </div>
+            </aside>
+            
+            <!-- Main configuration panel -->
+            <div>
+                <!-- Alert flashes -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" style="padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600; font-size: 0.9rem; text-align: left;
+                                {% if category == 'success' %}background: rgba(0, 228, 167, 0.08); border: 1px solid rgba(0, 228, 167, 0.2); color: var(--accent-emerald);{% else %}background: rgba(255, 51, 102, 0.08); border: 1px solid rgba(255, 51, 102, 0.2); color: #FF3366;{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Metrics Dashboard row -->
+                <div class="admin-metrics-grid">
+                    <div class="admin-metric-card">
+                        <div class="metric-details">
+                            <h4>Cache Database</h4>
+                            <span>{{ cache_count }} Entries</span>
+                        </div>
+                        <div class="metric-icon-box"><i class="fa-solid fa-database"></i></div>
+                    </div>
+                    <div class="admin-metric-card">
+                        <div class="metric-details">
+                            <h4>API Manager</h4>
+                            <span>Active</span>
+                        </div>
+                        <div class="metric-icon-box" style="color:var(--accent-emerald); background:rgba(0, 228, 167, 0.06);"><i class="fa-solid fa-heartbeat"></i></div>
+                    </div>
+                    <div class="admin-metric-card">
+                        <div class="metric-details">
+                            <h4>RTO Coverage</h4>
+                            <span>All States</span>
+                        </div>
+                        <div class="metric-icon-box"><i class="fa-solid fa-earth-india"></i></div>
+                    </div>
+                </div>
+
+                <!-- API Key Configurations health checks -->
+                <div class="admin-block">
+                    <h3 class="admin-section-title"><i class="fa-solid fa-key" style="color:var(--primary);"></i> External API Configurations</h3>
+                    <div style="display:flex; flex-direction:column; gap:1.25rem; text-align:left;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.03); padding-bottom:0.75rem;">
+                            <div>
+                                <strong style="color:var(--text-dark); display:block; font-size:0.95rem;">MarketCheck API v2</strong>
+                                <span style="font-size:0.8rem; color:var(--text-gray);">Used for real-time ex-showroom and live catalog dealer listings.</span>
+                            </div>
+                            <span class="config-status-pill {% if marketcheck_key %}configured{% else %}missing{% endif %}">
+                                {% if marketcheck_key %}<i class="fa-solid fa-circle-check"></i> Configured{% else %}<i class="fa-solid fa-circle-xmark"></i> Using Fallback{% endif %}
+                            </span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(0,0,0,0.03); padding-bottom:0.75rem;">
+                            <div>
+                                <strong style="color:var(--text-dark); display:block; font-size:0.95rem;">Edmunds / RapidAPI Automobile Gateway</strong>
+                                <span style="font-size:0.8rem; color:var(--text-gray);">Provides international and local spec validations.</span>
+                            </div>
+                            <span class="config-status-pill {% if rapidapi_key or edmunds_key %}configured{% else %}missing{% endif %}">
+                                {% if rapidapi_key or edmunds_key %}<i class="fa-solid fa-circle-check"></i> Configured{% else %}<i class="fa-solid fa-circle-xmark"></i> Using Fallback{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Cache management tools -->
+                <div class="admin-block">
+                    <h3 class="admin-section-title"><i class="fa-solid fa-screwdriver-wrench" style="color:var(--primary);"></i> Cache Sync & Maintenance</h3>
+                    <div class="control-btns-flex">
+                        <form action="/admin/sync-prices" method="POST">
+                            <button type="submit" class="btn-admin-action primary"><i class="fa-solid fa-rotate"></i> Sync Live Prices</button>
+                        </form>
+                        <form action="/admin/clear-cache" method="POST">
+                            <button type="submit" class="btn-admin-action danger" onclick="return confirm('Are you sure you want to clear all cached prices?');"><i class="fa-solid fa-trash-can"></i> Clear Cache Database</button>
+                        </form>
+                        <a href="/admin/export-catalogue" class="btn-admin-action primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem;" target="_blank">
+                            <i class="fa-solid fa-file-export"></i> Export Catalogue (JSON)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Edit Manufacturer Settings -->
+                <div class="admin-block">
+                    <h3 class="admin-section-title"><i class="fa-solid fa-building" style="color:var(--primary);"></i> Edit Manufacturer Brand Metadata</h3>
+                    <form action="/admin/manufacturer/edit" method="POST">
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="edit_m_id">Select Brand</label>
+                                <select name="manufacturer_id" id="edit_m_id" class="filter-select-control" required>
+                                    <option value="">-- Choose Brand --</option>
+                                    {% for m in manufacturers %}
+                                    <option value="{{ m.id }}">{{ m.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="edit_m_country">Origin Country</label>
+                                <input type="text" name="country" id="edit_m_country" class="filter-search-field" placeholder="e.g. India" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="edit_m_founded">Founded Year</label>
+                                <input type="number" name="founded" id="edit_m_founded" class="filter-search-field" placeholder="e.g. 1945" required>
+                            </div>
+                        </div>
+                        
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="edit_m_website">Official Website URL</label>
+                                <input type="url" name="website" id="edit_m_website" class="filter-search-field" placeholder="https://..." required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="edit_m_market_share">Market Share (%)</label>
+                                <input type="number" step="0.01" name="market_share" id="edit_m_market_share" class="filter-search-field" placeholder="e.g. 12.5" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="edit_m_resale">Average Resale Retention (%)</label>
+                                <input type="number" step="0.1" name="average_resale" id="edit_m_resale" class="filter-search-field" placeholder="e.g. 75.0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-group-widget" style="margin-bottom:1.5rem;">
+                            <label class="filter-group-label" for="edit_m_desc">Brand Profile Description</label>
+                            <textarea name="description" id="edit_m_desc" class="filter-search-field" style="width:100%; height:80px; resize:vertical; font-family:inherit; padding:0.75rem;" placeholder="Detailed overview of manufacturer..." required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-admin-action primary"><i class="fa-solid fa-floppy-disk"></i> Save Manufacturer Metadata</button>
+                    </form>
+                </div>
+
+                <!-- Import New Vehicle Variant Form -->
+                <div class="admin-block">
+                    <h3 class="admin-section-title"><i class="fa-solid fa-cloud-arrow-up" style="color:var(--primary);"></i> Import New Vehicle Variant</h3>
+                    <form action="/admin/cars/add" method="POST">
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_brand">Manufacturer Brand Name</label>
+                                <input type="text" name="brand" id="add_brand" class="filter-search-field" placeholder="e.g. Maruti Suzuki" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_model">Model Name</label>
+                                <input type="text" name="model" id="add_model" class="filter-search-field" placeholder="e.g. Swift" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_variant">Variant Name</label>
+                                <input type="text" name="variant" id="add_variant" class="filter-search-field" placeholder="e.g. ZXi+" required>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_year">Manufacturing / Launch Year</label>
+                                <input type="number" name="year" id="add_year" class="filter-search-field" value="2026" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_price">Showroom Price (INR Ex-Showroom)</label>
+                                <input type="number" name="showroom_price" id="add_price" class="filter-search-field" placeholder="e.g. 750000" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_body">Body Type Style</label>
+                                <select name="body_type" id="add_body" class="filter-select-control" required>
+                                    <option value="Hatchback">Hatchback</option>
+                                    <option value="Sedan">Sedan</option>
+                                    <option value="SUV">SUV</option>
+                                    <option value="MUV">MUV</option>
+                                    <option value="Coupe">Coupe</option>
+                                    <option value="Sports">Sports</option>
+                                    <option value="Van">Van</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_fuel">Fuel Type Option</label>
+                                <select name="fuel_type" id="add_fuel" class="filter-select-control" required>
+                                    <option value="Petrol">Petrol</option>
+                                    <option value="Diesel">Diesel</option>
+                                    <option value="CNG">CNG</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    <option value="EV">Electric (EV)</option>
+                                </select>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_trans">Transmission Mode</label>
+                                <select name="transmission" id="add_trans" class="filter-select-control" required>
+                                    <option value="Manual">Manual</option>
+                                    <option value="Automatic">Automatic</option>
+                                    <option value="AMT">AMT</option>
+                                    <option value="CVT">CVT</option>
+                                    <option value="DCT">DCT</option>
+                                    <option value="e-CVT">e-CVT</option>
+                                </select>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_engine">Engine Capacity (cc)</label>
+                                <input type="number" name="engine_capacity" id="add_engine" class="filter-search-field" placeholder="e.g. 1197" required>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_power">Max Power output (bhp)</label>
+                                <input type="number" name="power" id="add_power" class="filter-search-field" placeholder="e.g. 89" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_torque">Max Torque output (Nm)</label>
+                                <input type="number" name="torque" id="add_torque" class="filter-search-field" placeholder="e.g. 113" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_mileage">ARA Mileage (kmpl or km/charge)</label>
+                                <input type="number" step="0.01" name="mileage" id="add_mileage" class="filter-search-field" placeholder="e.g. 22.4" required>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.5rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_seats">Seating Capacity</label>
+                                <input type="number" name="seating_capacity" id="add_seats" class="filter-search-field" value="5" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_airbags">Airbags count</label>
+                                <input type="number" name="airbags" id="add_airbags" class="filter-search-field" value="2" required>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_sunroof">Sunroof Grade</label>
+                                <select name="sunroof" id="add_sunroof" class="filter-select-control" required>
+                                    <option value="No">No</option>
+                                    <option value="Single Pane">Single Pane</option>
+                                    <option value="Panoramic">Panoramic</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.5rem;">
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_abs">ABS Brake Support</label>
+                                <select name="abs" id="add_abs" class="filter-select-control" required>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_esp">Electronic Stability (ESP)</label>
+                                <select name="esp" id="add_esp" class="filter-select-control" required>
+                                    <option value="Yes">Yes</option>
+                                    <option value="No">No</option>
+                                </select>
+                            </div>
+                            <div class="filter-group-widget">
+                                <label class="filter-group-label" for="add_adas">ADAS Level 2 System</label>
+                                <select name="adas" id="add_adas" class="filter-select-control" required>
+                                    <option value="No">No</option>
+                                    <option value="Yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-admin-action primary"><i class="fa-solid fa-square-plus"></i> Import Variant Specifications</button>
+                    </form>
+                </div>
+
+                <!-- Recent Cached Requests -->
+                <div class="admin-block">
+                    <h3 class="admin-section-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--primary);"></i> Recent Cached Pricing Queries</h3>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Car Configuration</th>
+                                    <th>RTO State</th>
+                                    <th>Ex-Showroom</th>
+                                    <th>Data Source</th>
+                                    <th>Last Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_entries %}
+                                    {% for entry in recent_entries %}
+                                    <tr>
+                                        <td>{{ entry.brand }} {{ entry.model }} {{ entry.variant }}</td>
+                                        <td>{{ entry.state }}</td>
+                                        <td style="color:var(--primary);">₹ {{ entry.price | indian_currency }}</td>
+                                        <td style="font-size: 0.8rem; font-weight:700; color:var(--text-gray);">{{ entry.source }}</td>
+                                        <td style="font-size:0.8rem;">{{ entry.time }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" style="text-align:center; padding:2rem; color:var(--text-gray);">No pricing queries currently cached. All requests load live.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    {% include 'footer.html' %}
+    <script>
+        document.getElementById('edit_m_id').addEventListener('change', function(e) {
+            const mId = e.target.value;
+            if (!mId) {
+                document.getElementById('edit_m_country').value = '';
+                document.getElementById('edit_m_founded').value = '';
+                document.getElementById('edit_m_website').value = '';
+                document.getElementById('edit_m_market_share').value = '';
+                document.getElementById('edit_m_resale').value = '';
+                document.getElementById('edit_m_desc').value = '';
+                return;
+            }
+            
+            fetch(`/api/brand-meta?brand_id=${mId}`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('edit_m_country').value = data.country || '';
+                    document.getElementById('edit_m_founded').value = data.founded || '';
+                    document.getElementById('edit_m_website').value = data.website || '';
+                    document.getElementById('edit_m_market_share').value = data.market_share || 0;
+                    document.getElementById('edit_m_resale').value = data.average_resale || 70;
+                    document.getElementById('edit_m_desc').value = data.description || '';
+                })
+                .catch(err => console.error("Error loading brand metadata: ", err));
+        });
+    </script>
+</body>
+</html>

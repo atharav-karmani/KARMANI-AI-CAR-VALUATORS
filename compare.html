@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMANI AI CAR VALUATORS - Side-by-Side Vehicle Comparison</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .custom-select-wrapper {
+            position: relative;
+            text-align: left;
+        }
+        .custom-dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 157, 255, 0.15);
+            border-radius: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            backdrop-filter: blur(15px);
+            margin-top: 4px;
+        }
+        .custom-dropdown-item {
+            padding: 0.75rem 1rem;
+            color: #111827;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            border-bottom: 1px solid rgba(0, 157, 255, 0.05);
+        }
+        .custom-dropdown-item:hover {
+            background: rgba(0, 157, 255, 0.08);
+            color: var(--accent);
+        }
+        .comparison-badge {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            color: var(--accent);
+            padding: 0.25rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.775rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+        .winner-tag {
+            background: #4CAF50;
+            color: #FFFFFF;
+            padding: 0.45rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Navigation Header -->
+    {% include 'navbar.html' %}
+
+    <!-- Compare Layout Section -->
+    <section class="valuation-section" style="padding-top: 8.5rem; padding-bottom: 5rem; min-height: 100vh;">
+        <div class="glow-node glow-node-1" style="top: 15%; left: -10%;"></div>
+        <div class="glow-node glow-node-2" style="bottom: 15%; right: -10%;"></div>
+
+        <div class="container" style="max-width: 1350px;">
+            <div class="section-header" style="margin-bottom: 3rem; text-align: center;">
+                <span class="section-badge">Side-by-Side</span>
+                <h2>Compare Vehicles</h2>
+                <p>Select any two vehicles from the complete Indian automotive database to evaluate specifications side-by-side.</p>
+            </div>
+
+            <!-- Selection search parameters form panel -->
+            <div class="glass-form-card" style="padding: 2.5rem; margin-bottom: 3rem; border-radius: 16px;">
+                <form action="/compare" method="GET" style="display: flex; flex-direction: column; gap: 2rem;">
+                    
+                    <div class="compare-selector-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;">
+                        
+                        <!-- Select Car A column -->
+                        <div style="display: flex; flex-direction: column; gap: 1.25rem; text-align: left;">
+                            <h4 style="font-size: 1.1rem; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.5rem; font-weight: 700; margin: 0;"><i class="fa-solid fa-car"></i> Select Car A</h4>
+                            
+                            <div class="form-group custom-select-wrapper">
+                                <label>Brand</label>
+                                <input type="text" id="brand-a-search" class="glass-input" placeholder="Type to search Brand..." required>
+                                <div id="brand-a-dropdown" class="custom-dropdown-list"></div>
+                            </div>
+                            <div class="form-group custom-select-wrapper">
+                                <label>Model</label>
+                                <input type="text" id="model-a-search" class="glass-input" placeholder="Select Brand first..." required disabled>
+                                <div id="model-a-dropdown" class="custom-dropdown-list"></div>
+                            </div>
+                            <div class="form-group custom-select-wrapper">
+                                <label>Variant</label>
+                                <input type="text" id="variant-a-search" class="glass-input" placeholder="Select Model first..." required disabled>
+                                <div id="variant-a-dropdown" class="custom-dropdown-list"></div>
+                            </div>
+                            <input type="hidden" id="car-a-id" name="car_a" value="{{ car_a_id }}">
+                        </div>
+
+                        <!-- Select Car B column -->
+                        <div style="display: flex; flex-direction: column; gap: 1.25rem; text-align: left;">
+                            <h4 style="font-size: 1.1rem; color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 0.5rem; font-weight: 700; margin: 0;"><i class="fa-solid fa-car"></i> Select Car B</h4>
+                            
+                            <div class="form-group custom-select-wrapper">
+                                <label>Brand</label>
+                                <input type="text" id="brand-b-search" class="glass-input" placeholder="Type to search Brand..." required>
+                                <div id="brand-b-dropdown" class="custom-dropdown-list"></div>
+                            </div>
+                            <div class="form-group custom-select-wrapper">
+                                <label>Model</label>
+                                <input type="text" id="model-b-search" class="glass-input" placeholder="Select Brand first..." required disabled>
+                                <div id="model-b-dropdown" class="custom-dropdown-list"></div>
+                            </div>
+                            <div class="form-group custom-select-wrapper">
+                                <label>Variant</label>
+                                <input type="text" id="variant-b-search" class="glass-input" placeholder="Select Model first..." required disabled>
+                                <div id="variant-b-dropdown" class="custom-dropdown-list"></div>
+                            </div>
+                            <input type="hidden" id="car-b-id" name="car_b" value="{{ car_b_id }}">
+                        </div>
+
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <span style="color: var(--text-gray); font-size: 0.9rem;"><i class="fa-solid fa-circle-info"></i> Direct database specs assume standard baseline wear parameters.</span>
+                        <button type="submit" class="btn-submit-valuation" style="padding: 0.85rem 2.5rem; font-weight: 700; border-radius: 8px;"><i class="fa-solid fa-code-compare"></i> Compare side-by-side</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 3. Comparison tables and metrics -->
+            {% if car_a and car_b %}
+            <div style="display: flex; flex-direction: column; gap: 3rem;">
+                
+                <!-- Side-by-side Specs Matrix Table -->
+                <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 16px;">
+                    <h4 style="font-size: 1.25rem; color: #111827; margin: 0 0 2rem 0; text-align: left; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-table-list" style="color: var(--accent);"></i> Side-by-Side Comparison Matrix</h4>
+                    
+                    <div style="overflow-x: auto; width: 100%;">
+                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid rgba(0, 157, 255, 0.15); color: var(--text-white); font-weight: 700;">
+                                    <th style="padding: 1.25rem; width: 34%;">Comparison Parameter</th>
+                                    <th style="padding: 1.25rem; width: 33%; color: var(--accent);">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                            <span>Car A: {{ car_a.brand }} {{ car_a.model }}</span>
+                                            {% if car_a.score > car_b.score %}
+                                            <span class="winner-tag"><i class="fa-solid fa-crown"></i> Winner</span>
+                                            {% endif %}
+                                        </div>
+                                    </th>
+                                    <th style="padding: 1.25rem; width: 33%; color: var(--primary);">
+                                        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                            <span>Car B: {{ car_b.brand }} {{ car_b.model }}</span>
+                                            {% if car_b.score > car_a.score %}
+                                            <span class="winner-tag"><i class="fa-solid fa-crown"></i> Winner</span>
+                                            {% endif %}
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="3" style="padding: 0.75rem 1.25rem; font-weight: 700; color: var(--accent); background: rgba(0, 240, 255, 0.03); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">AI Appraisal Metrics</td></tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Current AI Market Value</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: var(--accent); font-weight: 800; font-size: 1.15rem;">₹ {{ car_a.price | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: var(--primary); font-weight: 800; font-size: 1.15rem;">₹ {{ car_b.price | indian_currency }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Expected Selling Price</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827; font-weight: 600;">₹ {{ car_a.price_expected | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827; font-weight: 600;">₹ {{ car_b.price_expected | indian_currency }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Fair Price Range</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_a.price_low | indian_currency }} - ₹ {{ car_a.price_high | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_b.price_low | indian_currency }} - ₹ {{ car_b.price_high | indian_currency }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">AI Score</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827; font-weight: 600;">{{ car_a.score }}/100</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827; font-weight: 600;">{{ car_b.score }}/100</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Confidence Score</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.confidence }}%</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.confidence }}%</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Depreciation</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #FF3366; font-weight: 600;">{{ car_a.depreciation }}%</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #FF3366; font-weight: 600;">{{ car_b.depreciation }}%</td>
+                                </tr>
+
+                                <tr><td colspan="3" style="padding: 0.75rem 1.25rem; font-weight: 700; color: var(--accent); background: rgba(0, 240, 255, 0.03); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">Technical Specifications</td></tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Engine Displacement</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827;">{{ car_a.engine }}</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827;">{{ car_b.engine }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Max Power</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.power }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.power }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Max Torque</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.torque }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.torque }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Transmission</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.transmission }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.transmission }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Fuel Specification</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.fuel }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.fuel }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Fuel Economy (Mileage)</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.mileage }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.mileage }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Ground Clearance</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.gc }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.gc }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Boot Space Capacity</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_a.boot }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">{{ car_b.boot }}</td>
+                                </tr>
+
+                                <tr><td colspan="3" style="padding: 0.75rem 1.25rem; font-weight: 700; color: var(--accent); background: rgba(0, 240, 255, 0.03); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">Estimated Running Costs (Annual)</td></tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Maintenance Costs</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827;">₹ {{ car_a.maintenance_cost | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #111827;">₹ {{ car_b.maintenance_cost | indian_currency }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Service Center Costs</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_a.service_cost | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_b.service_cost | indian_currency }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Insurance Premium Cost</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_a.insurance_cost | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_b.insurance_cost | indian_currency }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Annual Running Fuel Cost</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_a.running_cost | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_b.running_cost | indian_currency }}</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Road Tax estimation</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_a.road_tax | indian_currency }}</td>
+                                    <td style="padding: 1.1rem 1.25rem;">₹ {{ car_b.road_tax | indian_currency }}</td>
+                                </tr>
+
+                                <tr><td colspan="3" style="padding: 0.75rem 1.25rem; font-weight: 700; color: var(--accent); background: rgba(0, 240, 255, 0.03); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;">Pros & Cons</td></tr>
+                                <tr style="border-bottom: 1px solid rgba(0, 157, 255, 0.08); color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Key Advantages (Pros)</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #4CAF50;">{{ car_a.pros }}</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #4CAF50;">{{ car_b.pros }}</td>
+                                </tr>
+                                <tr style="border-bottom: none; color: var(--text-gray);">
+                                    <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: #111827;">Cons & Tradeoffs</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #FF3366;">{{ car_a.cons }}</td>
+                                    <td style="padding: 1.1rem 1.25rem; color: #FF3366;">{{ car_b.cons }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Dual comparison visualizer graphs -->
+                <div class="dashboard-columns-grid">
+                    
+                    <!-- Radar chart comparison -->
+                    <div class="stat-card" style="padding: 2.25rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px;">
+                        <h4 style="font-size: 1.15rem; color: #111827; margin: 0 0 1.5rem 0; text-align: left; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-circle-nodes" style="color: var(--accent);"></i> Dimension Comparison (Radar Index)</h4>
+                        <div style="height: 320px; position: relative;">
+                            <canvas id="compareRadarChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Bar chart comparison -->
+                    <div class="stat-card" style="padding: 2.25rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px;">
+                        <h4 style="font-size: 1.15rem; color: #111827; margin: 0 0 1.5rem 0; text-align: left; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-chart-simple" style="color: var(--accent);"></i> Resale Price Value vs Expected Price</h4>
+                        <div style="height: 320px; position: relative;">
+                            <canvas id="compareBarChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- AI comparative recommendation text -->
+                <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 16px; text-align: left;">
+                    <h4 style="font-size: 1.25rem; color: #111827; margin: 0 0 1.25rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-brain" style="color: var(--accent);"></i> AI Appraisal Recommendation Analysis</h4>
+                    <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-gray); margin: 0;">{{ recom_text | safe }}</p>
+                </div>
+
+                <!-- Bottom action buttons -->
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button class="btn-result-pdf" onclick="alert('Downloading comparative sheet report...')"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+                    <button class="btn-result-pdf" onclick="window.print()" style="background: rgba(0, 240, 255, 0.08); border-color: rgba(0, 240, 255, 0.35); color: var(--accent);"><i class="fa-solid fa-print"></i> Print Comparison</button>
+                </div>
+
+            </div>
+
+            <!-- Chart trigger script configuration -->
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const radarCtx = document.getElementById('compareRadarChart').getContext('2d');
+                    
+                    const scoreA = {{ car_a.score }};
+                    const scoreB = {{ car_b.score }};
+                    const confA = {{ car_a.confidence }};
+                    const confB = {{ car_b.confidence }};
+                    const depA = 100 - {{ car_a.depreciation }};
+                    const depB = 100 - {{ car_b.depreciation }};
+                    const kmsA = Math.max(20, Math.min(99, 100 - ({{ car_a.kms }} * 0.0004)));
+                    const kmsB = Math.max(20, Math.min(99, 100 - ({{ car_b.kms }} * 0.0004)));
+                    const ownerA = Math.max(40, 100 - ({{ car_a.owners }} * 15));
+                    const ownerB = Math.max(40, 100 - ({{ car_b.owners }} * 15));
+
+                    new Chart(radarCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['General Health', 'Confidence Score', 'Value Retention', 'Odometer Life', 'Ownership Level'],
+                            datasets: [
+                                {
+                                    label: 'Car A ({{ car_a.brand }} {{ car_a.model }})',
+                                    data: [scoreA, confA, depA, kmsA, ownerA],
+                                    backgroundColor: 'rgba(0, 240, 255, 0.12)',
+                                    borderColor: '#00F0FF',
+                                    borderWidth: 2,
+                                    pointBackgroundColor: '#00F0FF'
+                                },
+                                {
+                                    label: 'Car B ({{ car_b.brand }} {{ car_b.model }})',
+                                    data: [scoreB, confB, depB, kmsB, ownerB],
+                                    backgroundColor: 'rgba(13, 110, 253, 0.12)',
+                                    borderColor: '#0d6efd',
+                                    borderWidth: 2,
+                                    pointBackgroundColor: '#0d6efd'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'Outfit', size: 9 } } }
+                            },
+                            scales: {
+                                r: {
+                                    angleLines: { color: 'rgba(255,255,255,0.06)' },
+                                    grid: { color: 'rgba(255,255,255,0.06)' },
+                                    pointLabels: { color: 'rgba(255,255,255,0.5)', font: { family: 'Outfit', size: 9 } },
+                                    ticks: { display: false }
+                                }
+                            }
+                        }
+                    });
+
+                    // Bar Chart comparing Market Value vs Expected Price
+                    const barCtx = document.getElementById('compareBarChart').getContext('2d');
+                    new Chart(barCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Estimated Value', 'Expected Selling Price'],
+                            datasets: [
+                                {
+                                    label: 'Car A ({{ car_a.brand }} {{ car_a.model }})',
+                                    data: [{{ car_a.price }}, {{ car_a.price_expected }}],
+                                    backgroundColor: 'rgba(0, 240, 255, 0.75)',
+                                    borderColor: '#00F0FF',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Car B ({{ car_b.brand }} {{ car_b.model }})',
+                                    data: [{{ car_b.price }}, {{ car_b.price_expected }}],
+                                    backgroundColor: 'rgba(13, 110, 253, 0.75)',
+                                    borderColor: '#0d6efd',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'Outfit', size: 10 } } }
+                            },
+                            scales: {
+                                x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: 'Outfit' } } },
+                                y: {
+                                    grid: { color: 'rgba(255,255,255,0.04)' },
+                                    ticks: {
+                                        color: 'rgba(255,255,255,0.5)',
+                                        font: { family: 'Outfit' },
+                                        callback: function(val) {
+                                            if (val >= 100000) return '₹' + (val / 100000).toFixed(1) + 'L';
+                                            return '₹' + val.toLocaleString('en-IN');
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+            {% else %}
+            <!-- Selecting prompt when nothing comparison triggers -->
+            <div class="stat-card" style="padding: 4rem 2rem; text-align: center; color: var(--text-gray); border-radius: 16px; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);">
+                <i class="fa-solid fa-code-compare" style="font-size: 4rem; color: rgba(255,255,255,0.06); margin-bottom: 1.5rem;"></i>
+                <h3 style="color: #111827; font-size: 1.35rem; margin-bottom: 0.5rem; font-weight: 700;">No Vehicles Selected for Comparison</h3>
+                <p style="max-width: 550px; margin: 0 auto; line-height: 1.6;">Use the searchable dropdown filters above to locate any two models from the database, then click <strong>Compare side-by-side</strong> to analyze health indexes and specifications.</p>
+            </div>
+            {% endif %}
+
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- Dropdowns query controllers script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            function initSearchDropdown(inputId, dropdownId, hiddenId, apiPath, getParamsCallback, onSelectedCallback) {
+                const searchInput = document.getElementById(inputId);
+                const dropdown = document.getElementById(dropdownId);
+                const hiddenInput = document.getElementById(hiddenId);
+
+                let allOptions = [];
+
+                function fetchOptions() {
+                    const params = getParamsCallback();
+                    const url = apiPath + (params ? '?' + params : '');
+                    
+                    fetch(url)
+                        .then(r => r.json())
+                        .then(data => {
+                            allOptions = data;
+                            renderDropdown(allOptions);
+                        })
+                        .catch(err => console.error("Error loading options: ", err));
+                }
+
+                function renderDropdown(list) {
+                    dropdown.innerHTML = '';
+                    if (list.length === 0) {
+                        dropdown.style.display = 'none';
+                        return;
+                    }
+                    
+                    list.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'custom-dropdown-item';
+                        div.textContent = item;
+                        div.addEventListener('click', () => {
+                            searchInput.value = item;
+                            dropdown.style.display = 'none';
+                            if (onSelectedCallback) onSelectedCallback(item);
+                        });
+                        dropdown.appendChild(div);
+                    });
+                    dropdown.style.display = 'block';
+                }
+
+                searchInput.addEventListener('focus', () => {
+                    fetchOptions();
+                });
+
+                searchInput.addEventListener('input', () => {
+                    const term = searchInput.value.toLowerCase();
+                    const filtered = allOptions.filter(x => x.toLowerCase().includes(term));
+                    renderDropdown(filtered);
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            }
+
+            // CAR A SELECTORS INITIALIZATION
+            initSearchDropdown('brand-a-search', 'brand-a-dropdown', '', '/api/brands', 
+                () => '', 
+                (brand) => {
+                    const modelSearch = document.getElementById('model-a-search');
+                    modelSearch.value = '';
+                    modelSearch.disabled = false;
+                    modelSearch.placeholder = 'Search Model...';
+                    
+                    const varSearch = document.getElementById('variant-a-search');
+                    varSearch.value = '';
+                    varSearch.disabled = true;
+                    varSearch.placeholder = 'Select Model first...';
+                    
+                    document.getElementById('car-a-id').value = '';
+                }
+            );
+
+            initSearchDropdown('model-a-search', 'model-a-dropdown', '', '/api/models',
+                () => {
+                    const b = document.getElementById('brand-a-search').value;
+                    return `brand=${encodeURIComponent(b)}`;
+                },
+                (model) => {
+                    const varSearch = document.getElementById('variant-a-search');
+                    varSearch.value = '';
+                    varSearch.disabled = false;
+                    varSearch.placeholder = 'Search Variant...';
+                    
+                    document.getElementById('car-a-id').value = '';
+                }
+            );
+
+            initSearchDropdown('variant-a-search', 'variant-a-dropdown', '', '/api/variants',
+                () => {
+                    const b = document.getElementById('brand-a-search').value;
+                    const m = document.getElementById('model-a-search').value;
+                    return `brand=${encodeURIComponent(b)}&model=${encodeURIComponent(m)}`;
+                },
+                (variant) => {
+                    const b = document.getElementById('brand-a-search').value;
+                    const m = document.getElementById('model-a-search').value;
+                    const v = variant;
+                    
+                    fetch(`/api/spec?brand=${encodeURIComponent(b)}&model=${encodeURIComponent(m)}&variant=${encodeURIComponent(v)}`)
+                        .then(r => r.json())
+                        .then(res => {
+                            if (res.status === 'success') {
+                                document.getElementById('car-a-id').value = `db_${res.spec.id}`;
+                            }
+                        });
+                }
+            );
+
+            // CAR B SELECTORS INITIALIZATION
+            initSearchDropdown('brand-b-search', 'brand-b-dropdown', '', '/api/brands', 
+                () => '', 
+                (brand) => {
+                    const modelSearch = document.getElementById('model-b-search');
+                    modelSearch.value = '';
+                    modelSearch.disabled = false;
+                    modelSearch.placeholder = 'Search Model...';
+                    
+                    const varSearch = document.getElementById('variant-b-search');
+                    varSearch.value = '';
+                    varSearch.disabled = true;
+                    varSearch.placeholder = 'Select Model first...';
+                    
+                    document.getElementById('car-b-id').value = '';
+                }
+            );
+
+            initSearchDropdown('model-b-search', 'model-b-dropdown', '', '/api/models',
+                () => {
+                    const b = document.getElementById('brand-b-search').value;
+                    return `brand=${encodeURIComponent(b)}`;
+                },
+                (model) => {
+                    const varSearch = document.getElementById('variant-b-search');
+                    varSearch.value = '';
+                    varSearch.disabled = false;
+                    varSearch.placeholder = 'Search Variant...';
+                    
+                    document.getElementById('car-b-id').value = '';
+                }
+            );
+
+            initSearchDropdown('variant-b-search', 'variant-b-dropdown', '', '/api/variants',
+                () => {
+                    const b = document.getElementById('brand-b-search').value;
+                    const m = document.getElementById('model-b-search').value;
+                    return `brand=${encodeURIComponent(b)}&model=${encodeURIComponent(m)}`;
+                },
+                (variant) => {
+                    const b = document.getElementById('brand-b-search').value;
+                    const m = document.getElementById('model-b-search').value;
+                    const v = variant;
+                    
+                    fetch(`/api/spec?brand=${encodeURIComponent(b)}&model=${encodeURIComponent(m)}&variant=${encodeURIComponent(v)}`)
+                        .then(r => r.json())
+                        .then(res => {
+                            if (res.status === 'success') {
+                                document.getElementById('car-b-id').value = `db_${res.spec.id}`;
+                            }
+                        });
+                }
+            );
+
+        });
+    </script>
+</body>
+</html>

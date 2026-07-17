@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | KARMANI AI CAR VALUATORS</title>
+    <meta name="description" content="Learn about KARMANI AI CAR VALUATORS, India's AI-powered vehicle valuation platform built for transparency, trust and intelligent pricing.">
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .about-hero {
+            padding: 9rem 0 5rem 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(0, 200, 255, 0.03) 100%);
+            border-bottom: 1px solid var(--card-border);
+            text-align: center;
+        }
+        .about-hero-content {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .about-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.02em;
+            margin-bottom: 1.25rem;
+        }
+        .about-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .about-section {
+            padding: 5rem 0;
+        }
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .section-header-block {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        .section-tag {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: #E0F2FE;
+            color: #0369A1;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+        /* Mission and Vision Grid */
+        .mv-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+            margin-bottom: 5rem;
+        }
+        @media (max-width: 768px) {
+            .mv-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .mv-card {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        .mv-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+        .mv-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: #F0F9FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0284C7;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #E0F2FE;
+        }
+        .mv-heading {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+        .mv-text {
+            color: var(--text-gray);
+            line-height: 1.7;
+            font-size: 1rem;
+            margin: 0;
+        }
+        /* Grid Layouts */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-bottom: 5rem;
+        }
+        .feature-card {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.015);
+            display: flex;
+            align-items: center;
+            gap: 1.15rem;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        .feature-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: #0ea5e9;
+            box-shadow: 0 15px 30px rgba(14, 165, 233, 0.08);
+        }
+        .feature-check {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #F0FDF4;
+            color: #15803D;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            border: 1px solid #DCFCE7;
+        }
+        .feature-label {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+        .tech-card {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 1.75rem;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.01);
+            transition: all 0.25s ease;
+        }
+        .tech-card:hover {
+            transform: translateY(-3px);
+            border-color: #38BDF8;
+            box-shadow: 0 12px 25px rgba(56, 189, 248, 0.1);
+        }
+        .tech-icon-container {
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #0EA5E9 0%, #2563EB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .tech-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        /* Why Choose Us Grid */
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+        .why-card {
+            background: #FFFFFF;
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.25rem 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.015);
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .why-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.04);
+        }
+        .why-highlight {
+            font-size: 2.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        .why-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+        .why-desc {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            line-height: 1.5;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Component -->
+    {% include 'navbar.html' %}
+
+    <!-- Hero Section -->
+    <header class="about-hero">
+        <div class="about-hero-content">
+            <h1 class="about-title">About KARMANI AI CAR VALUATORS</h1>
+            <p class="about-subtitle">India's AI-powered vehicle valuation platform built for transparency, trust and intelligent pricing.</p>
+        </div>
+    </header>
+
+    <!-- Main Content Section -->
+    <main class="about-section" style="background:#F8FCFF;">
+        <div class="about-container">
+            
+            <!-- Section 1 & 2: Mission & Vision -->
+            <div class="mv-grid">
+                <div class="mv-card">
+                    <div class="mv-icon"><i class="fa-solid fa-bullseye"></i></div>
+                    <h2 class="mv-heading">Our Mission</h2>
+                    <p class="mv-text">We aim to eliminate uncertainty from the used car market by combining Artificial Intelligence, real market data and predictive analytics to provide accurate vehicle valuations.</p>
+                </div>
+                <div class="mv-card">
+                    <div class="mv-icon"><i class="fa-solid fa-eye"></i></div>
+                    <h2 class="mv-heading">Our Vision</h2>
+                    <p class="mv-text">To become India's most trusted AI-powered automobile intelligence platform, enabling transparent deals for buyers and sellers nationwide.</p>
+                </div>
+            </div>
+
+            <!-- Section 3: What We Offer -->
+            <section style="margin-bottom: 6rem;">
+                <div class="section-header-block">
+                    <span class="section-tag">Core Features</span>
+                    <h2 class="section-title">What We Offer</h2>
+                </div>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">AI Vehicle Valuation</h3>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">Market Intelligence</h3>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">Compare Cars</h3>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">Digital Garage</h3>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">AI Reports</h3>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">Predictive Pricing</h3>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">Ownership Analysis</h3>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-check"><i class="fa-solid fa-check"></i></div>
+                        <h3 class="feature-label">Smart Recommendations</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Technology Stack -->
+            <section style="margin-bottom: 6rem;">
+                <div class="section-header-block">
+                    <span class="section-tag">Development Stack</span>
+                    <h2 class="section-title">Technology Stack</h2>
+                </div>
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-brands fa-python"></i></div>
+                        <h4 class="tech-name">Python</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-solid fa-server"></i></div>
+                        <h4 class="tech-name">Flask</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-solid fa-brain"></i></div>
+                        <h4 class="tech-name">Machine Learning</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-solid fa-tree"></i></div>
+                        <h4 class="tech-name">Random Forest</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-solid fa-gears"></i></div>
+                        <h4 class="tech-name">Scikit-Learn</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-solid fa-database"></i></div>
+                        <h4 class="tech-name">SQLite</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-brands fa-bootstrap"></i></div>
+                        <h4 class="tech-name">Bootstrap</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-brands fa-square-js"></i></div>
+                        <h4 class="tech-name">JavaScript</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-solid fa-chart-line"></i></div>
+                        <h4 class="tech-name">Chart.js</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-brands fa-html5"></i></div>
+                        <h4 class="tech-name">HTML5</h4>
+                    </div>
+                    <div class="tech-card">
+                        <div class="tech-icon-container"><i class="fa-brands fa-css3-alt"></i></div>
+                        <h4 class="tech-name">CSS3</h4>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Why Choose Us -->
+            <section>
+                <div class="section-header-block">
+                    <span class="section-tag">Value Proposition</span>
+                    <h2 class="section-title">Why Choose Us</h2>
+                </div>
+                <div class="why-grid">
+                    <div class="why-card">
+                        <span class="why-highlight">98%</span>
+                        <h4 class="why-title">Prediction Accuracy</h4>
+                        <p class="why-desc">Our machine learning regression models represent state-of-the-art pricing accuracies.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-highlight">60,000+</span>
+                        <h4 class="why-title">Indian Cars Analysed</h4>
+                        <p class="why-desc">Trained on over 60,000 localized Indian pre-owned transaction records.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-highlight">28+</span>
+                        <h4 class="why-title">Brands</h4>
+                        <p class="why-desc">Spans models from hatchbacks to luxury sports utility vehicles.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-highlight">1200+</span>
+                        <h4 class="why-title">Variants</h4>
+                        <p class="why-desc">Matches base specs, mileage differences, and options packages side-by-side.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-highlight">AI</span>
+                        <h4 class="why-title">AI Powered</h4>
+                        <p class="why-desc">Replaces human bias with dynamic ML Random Forest calculations.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-highlight">Instant</span>
+                        <h4 class="why-title">Instant Reports</h4>
+                        <p class="why-desc">Get complete valuation documents compiled in under five seconds.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-highlight">100%</span>
+                        <h4 class="why-title">Fully Responsive</h4>
+                        <p class="why-desc">Seamless mobile, tablet, and desktop interfaces anywhere you go.</p>
+                    </div>
+                    <div class="why-card">
+                        <span class="why-highlight">Local</span>
+                        <h4 class="why-title">Indian Market Focused</h4>
+                        <p class="why-desc">Built especially to match pricing coefficients across India's states.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    {% include 'footer.html' %}
+</body>
+</html>

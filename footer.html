@@ -1,0 +1,453 @@
+<!-- Premium Global Footer Component -->
+<footer class="global-footer">
+    <div class="footer-container">
+        <!-- 4-Column Grid -->
+        <div class="footer-grid">
+            <!-- Column 1: Brand & Logo -->
+            <div class="footer-column">
+                <a href="/" class="footer-logo-group">
+                    <img src="/static/images/logo_horizontal.svg" alt="KARMANI AI CAR VALUATORS" class="footer-logo">
+                </a>
+                <h3 class="footer-logo-title">KARMANI AI CAR VALUATORS</h3>
+                <p class="footer-desc">
+                    India's AI-Powered Vehicle Intelligence Platform helping buyers, sellers, dealers and financial institutions make smarter vehicle decisions using Machine Learning and Artificial Intelligence.
+                </p>
+                <div class="footer-social-links">
+                    <a href="https://github.com/AtharavKarmani" target="_blank" title="GitHub" class="social-icon"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/atharav-karmani" target="_blank" title="LinkedIn" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="mailto:karmaniatharv9@gmail.com" title="Email" class="social-icon"><i class="fa-solid fa-envelope"></i></a>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="footer-column">
+                <h4 class="footer-heading">Quick Links</h4>
+                <ul class="footer-links-list">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/valuation">Car Valuation</a></li>
+                    <li><a href="/compare">Compare Cars</a></li>
+                    <li><a href="/market-intelligence">Market Intelligence</a></li>
+                    <li><a href="/brands">Brands</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Platform Features -->
+            <div class="footer-column">
+                <h4 class="footer-heading">Platform Features</h4>
+                <ul class="footer-links-list">
+                    <li><a href="/valuation">AI Vehicle Valuation</a></li>
+                    <li><a href="/compare">Compare Cars</a></li>
+                    <li><a href="/market-intelligence">Market Intelligence</a></li>
+                    <li><a href="/garage">Digital Garage</a></li>
+                    <li><a href="/favorites">AI Reports</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/dashboard">Smart Analytics</a></li>
+                    <li><a href="/market-intelligence">Indian Market Intelligence</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Contact Developer & Newsletter -->
+            <div class="footer-column">
+                <h4 class="footer-heading">Contact Developer</h4>
+                <div class="developer-info">
+                    <p class="dev-name">Atharav Karmani</p>
+                    <p class="dev-detail"><i class="fa-solid fa-graduation-cap"></i> B.Tech Computer Science Engineering</p>
+                    <p class="dev-detail"><i class="fa-solid fa-university"></i> SRM Institute of Science and Technology</p>
+                    <p class="dev-detail"><i class="fa-solid fa-envelope"></i> <a href="mailto:karmaniatharv9@gmail.com">karmaniatharv9@gmail.com</a></p>
+                    <p class="dev-detail"><i class="fa-brands fa-linkedin"></i> <a href="https://www.linkedin.com/in/atharav-karmani" target="_blank">linkedin.com/in/atharav-karmani</a></p>
+                    <p class="dev-detail"><i class="fa-solid fa-location-dot"></i> Chennai, Tamil Nadu, India</p>
+                </div>
+                
+                <!-- Newsletter Subscription -->
+                <div class="newsletter-section">
+                    <h5 class="newsletter-title">Newsletter Subscription</h5>
+                    
+                    <div id="newsletter-success" class="newsletter-success-msg" style="display: none;">
+                        <i class="fa-solid fa-circle-check"></i> Thank you for subscribing.
+                    </div>
+                    
+                    <form id="newsletter-form" class="newsletter-form">
+                        <input type="email" id="newsletter-email" class="newsletter-input" placeholder="Your Email Address" required>
+                        <button type="submit" class="newsletter-btn">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="footer-bottom-bar">
+            <div class="footer-bottom-left">
+                <span>© 2026 KARMANI AI CAR VALUATORS</span>
+                <span class="footer-bullet">•</span>
+                <span>Built with ❤️ by Atharav Karmani</span>
+            </div>
+            
+            <div class="footer-bottom-center">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Disclaimer</a>
+            </div>
+            
+            <div class="footer-bottom-right">
+                <span>Version 2.0</span>
+                <span class="footer-bullet">•</span>
+                <span>Made in India 🇮🇳</span>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    /* CSS Styles for Premium Global Footer */
+    .global-footer {
+        background-color: #111827 !important; /* Dark Navy Background */
+        border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        padding: 80px 0 60px 0 !important;
+        color: #9CA3AF !important;
+        font-family: 'Outfit', sans-serif !important;
+        position: relative !important;
+        z-index: 100 !important;
+    }
+
+    .footer-container {
+        max-width: 1400px !important;
+        margin: 0 auto !important;
+        padding: 0 2rem !important;
+    }
+
+    .footer-grid {
+        display: grid !important;
+        grid-template-columns: 1.3fr 0.8fr 1fr 1.2fr !important;
+        gap: 4rem !important;
+        margin-bottom: 5rem !important;
+    }
+
+    @media (max-width: 1024px) {
+        .footer-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 3rem !important;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2.5rem !important;
+        }
+    }
+
+    .footer-column {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        text-align: left !important;
+    }
+
+    .footer-logo-group {
+        display: inline-block !important;
+        margin-bottom: 1rem !important;
+        transition: transform 0.3s ease !important;
+    }
+
+    .footer-logo-group:hover {
+        transform: scale(1.03);
+    }
+
+    .footer-logo {
+        height: 38px !important;
+        display: block !important;
+        filter: brightness(0) invert(1) opacity(0.9) !important; /* Forces vertical svg rendering in premium white */
+    }
+
+    .footer-logo-title {
+        font-size: 1.15rem !important;
+        font-weight: 800 !important;
+        color: #FFFFFF !important;
+        letter-spacing: -0.01em !important;
+        margin: 0 0 1rem 0 !important;
+    }
+
+    .footer-desc {
+        font-size: 0.9rem !important;
+        line-height: 1.65 !important;
+        color: #9CA3AF !important;
+        margin: 0 0 1.75rem 0 !important;
+    }
+
+    /* Social Links & Icons */
+    .footer-social-links {
+        display: flex !important;
+        gap: 12px !important;
+    }
+
+    .social-icon {
+        width: 40px !important;
+        height: 40px !important;
+        border-radius: 12px !important;
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #9CA3AF !important;
+        font-size: 1.1rem !important;
+        text-decoration: none !important;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+
+    .social-icon:hover {
+        background: rgba(0, 85, 255, 0.1) !important;
+        border-color: #0055FF !important;
+        color: #38BDF8 !important;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 85, 255, 0.15);
+    }
+
+    /* Headings */
+    .footer-heading {
+        font-size: 1.05rem !important;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+        margin: 0 0 1.75rem 0 !important;
+        position: relative !important;
+        letter-spacing: 0.02em !important;
+    }
+
+    .footer-heading::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 30px;
+        height: 2px;
+        background: #0055FF;
+        border-radius: 1px;
+    }
+
+    /* Lists & Links */
+    .footer-links-list {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.85rem !important;
+        width: 100% !important;
+    }
+
+    .footer-links-list li a {
+        color: #9CA3AF !important;
+        text-decoration: none !important;
+        font-size: 0.95rem !important;
+        font-weight: 500 !important;
+        transition: all 0.25s ease !important;
+        display: inline-block !important;
+    }
+
+    .footer-links-list li a:hover {
+        color: #38BDF8 !important;
+        transform: translateX(4px);
+    }
+
+    /* Developer Profile Card Column */
+    .developer-info {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        margin-bottom: 2rem !important;
+        width: 100% !important;
+    }
+
+    .dev-name {
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+        margin: 0 !important;
+    }
+
+    .dev-detail {
+        font-size: 0.9rem !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        color: #9CA3AF !important;
+        line-height: 1.4 !important;
+    }
+
+    .dev-detail i {
+        color: #0055FF !important;
+        width: 16px !important;
+        text-align: center !important;
+    }
+
+    .dev-detail a {
+        color: #9CA3AF !important;
+        text-decoration: none !important;
+        transition: color 0.25s !important;
+    }
+
+    .dev-detail a:hover {
+        color: #38BDF8 !important;
+    }
+
+    /* Newsletter Segment */
+    .newsletter-section {
+        width: 100% !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+        padding-top: 1.75rem !important;
+    }
+
+    .newsletter-title {
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+        margin: 0 0 1rem 0 !important;
+    }
+
+    .newsletter-form {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        width: 100% !important;
+    }
+
+    .newsletter-input {
+        width: 100% !important;
+        background: rgba(255, 255, 255, 0.02) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
+        padding: 0.8rem 1rem !important;
+        color: #FFFFFF !important;
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 0.9rem !important;
+        outline: none !important;
+        transition: all 0.25s ease !important;
+    }
+
+    .newsletter-input:focus {
+        border-color: #0055FF !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+        box-shadow: 0 0 0 4px rgba(0, 85, 255, 0.15) !important;
+    }
+
+    .newsletter-btn {
+        width: 100% !important;
+        background: linear-gradient(135deg, #0ea5e9 0%, #0055FF 100%) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.8rem !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        font-family: 'Outfit', sans-serif !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease !important;
+        box-shadow: 0 4px 10px rgba(0, 85, 255, 0.1) !important;
+    }
+
+    .newsletter-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(0, 85, 255, 0.2) !important;
+    }
+
+    .newsletter-success-msg {
+        background: rgba(16, 185, 129, 0.08) !important;
+        border: 1px solid rgba(16, 185, 129, 0.2) !important;
+        color: #10B981 !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 10px !important;
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        margin-bottom: 1rem !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom copyright metadata strip */
+    .footer-bottom-bar {
+        border-top: 1px solid rgba(255, 255, 255, 0.06) !important;
+        padding-top: 2rem !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 1.5rem !important;
+        font-size: 0.85rem !important;
+        color: #6B7280 !important;
+    }
+
+    @media (max-width: 768px) {
+        .footer-bottom-bar {
+            flex-direction: column !important;
+            text-align: center !important;
+        }
+    }
+
+    .footer-bottom-left, .footer-bottom-right {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    @media (max-width: 768px) {
+        .footer-bottom-left, .footer-bottom-right {
+            justify-content: center !important;
+        }
+    }
+
+    .footer-bottom-center {
+        display: flex !important;
+        gap: 1.5rem !important;
+    }
+
+    @media (max-width: 768px) {
+        .footer-bottom-center {
+            justify-content: center !important;
+        }
+    }
+
+    .footer-bottom-center a {
+        color: #6B7280 !important;
+        text-decoration: none !important;
+        transition: color 0.25s !important;
+    }
+
+    .footer-bottom-center a:hover {
+        color: #FFFFFF !important;
+    }
+
+    .footer-bullet {
+        color: rgba(255, 255, 255, 0.1) !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const newsletterForm = document.getElementById('newsletter-form');
+        const successMsg = document.getElementById('newsletter-success');
+
+        if (newsletterForm && successMsg) {
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const emailInput = document.getElementById('newsletter-email');
+                if (emailInput && emailInput.value.trim()) {
+                    // Hide form and show success text
+                    newsletterForm.style.display = 'none';
+                    successMsg.style.display = 'flex';
+                }
+            });
+        }
+    });
+</script>

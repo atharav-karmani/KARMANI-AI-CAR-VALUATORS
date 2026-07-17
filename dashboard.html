@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMANI AI CAR VALUATORS - Personal Workspace Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Premium Sticky Navigation Bar -->
+    {% include 'navbar.html' %}
+
+    <!-- Dashboard Panel Layout -->
+    <section class="valuation-section" style="padding: 7rem 0 0 0; min-height: 100vh; background: var(--bg-main);">
+        <div class="glow-node glow-node-1" style="top: 15%; left: -10%;"></div>
+        <div class="glow-node glow-node-2" style="bottom: 15%; right: -10%;"></div>
+
+        <!-- Sidebar Layout Wrap -->
+        <div class="dashboard-container" style="display: flex; min-height: 90vh;">
+            
+            <!-- 1. LEFT SIDEBAR -->
+            <aside class="dashboard-sidebar" style="width: 260px; background: var(--bg-card); border-right: 1px solid var(--card-border); padding: 2.5rem 1.5rem; display: flex; flex-direction: column; gap: 2.5rem; backdrop-filter: blur(20px);">
+                
+                <!-- Avatar Welcome Box -->
+                <div style="display: flex; align-items: center; gap: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 1.5rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(0, 157, 255, 0.08); border: 1.5px solid rgba(0, 157, 255, 0.2); display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-user-ninja" style="font-size: 1.35rem; color: var(--accent);"></i>
+                    </div>
+                    <div style="text-align: left;">
+                        <span style="font-size: 0.75rem; color: var(--text-gray); text-transform: uppercase;">Welcome</span>
+                        <h4 style="font-size: 0.95rem; font-weight: 700; color: #111827; margin: 2px 0 0 0; width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ session.get('full_name') }}</h4>
+                    </div>
+                </div>
+
+                <!-- Sidebar Link Items -->
+                <nav style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <a href="#overview" class="sidebar-link active" data-tab="tab-overview" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); text-decoration: none; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-gauge" style="width: 18px;"></i> Dashboard
+                    </a>
+                    <a href="#my-cars" class="sidebar-link" data-tab="tab-my-cars" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); text-decoration: none; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-car" style="width: 18px;"></i> My Cars
+                    </a>
+                    <a href="/garage" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); text-decoration: none; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-warehouse" style="width: 18px;"></i> My Garage
+                    </a>
+                    <a href="#saved-reports" class="sidebar-link" data-tab="tab-saved-reports" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); text-decoration: none; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-file-invoice" style="width: 18px;"></i> Saved Reports
+                    </a>
+                    <a href="/favorites" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); text-decoration: none; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-star" style="width: 18px;"></i> Favourites
+                    </a>
+                    <a href="/profile" style="display: flex; align-items: center; gap: 0.75rem; color: var(--text-gray); text-decoration: none; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-gear" style="width: 18px;"></i> Settings
+                    </a>
+                    <a href="/logout" style="display: flex; align-items: center; gap: 0.75rem; color: #FF3366; text-decoration: none; padding: 0.85rem 1.25rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem; margin-top: 1.5rem; border: 1px solid rgba(255, 51, 102, 0.08);">
+                        <i class="fa-solid fa-right-from-bracket" style="width: 18px;"></i> Logout
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- 2. RIGHT WORKSPACE CONTENT -->
+            <main class="dashboard-main" style="flex: 1; padding: 3rem; overflow-y: auto;">
+                <!-- Mobile Sidebar Toggler Button -->
+                <button type="button" class="dashboard-sidebar-toggle" onclick="document.querySelector('.dashboard-sidebar').classList.toggle('active')" style="display: none; align-items: center; gap: 0.5rem; background: var(--primary); color: #FFF; border: none; padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; margin-bottom: 2rem;">
+                    <i class="fa-solid fa-bars"></i> Workspace Menu
+                </button>
+                
+                <!-- Flash Notification Banner -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert" style="background: rgba(0, 240, 255, 0.04); border: 1px solid rgba(0, 240, 255, 0.2); color: var(--accent); border-radius: 8px; padding: 0.85rem 1.25rem; margin-bottom: 2rem; font-size: 0.9rem; text-align: left;">
+                        <i class="fa-solid fa-circle-info" style="margin-right: 0.45rem;"></i> {{ message }}
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <!-- A. TAB: OVERVIEW -->
+                <div class="dashboard-tab-panel active" id="tab-overview">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem; text-align: left;">
+                        <div>
+                            <span class="section-badge">Overview Workspace</span>
+                            <h2 style="font-size: 2.2rem; font-weight: 800; color: #111827; margin: 0.5rem 0 0.25rem 0;">Dashboard</h2>
+                            <p style="color: var(--text-gray);">Summary stats showing pre-owned market analytics.</p>
+                        </div>
+                        <a href="/valuation" class="btn-submit-valuation" style="padding: 0.95rem 2rem; border-radius: 8px; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-calculator" style="margin-right: 0.5rem;"></i> New Appraisal</a>
+                    </div>
+
+                    <!-- Stats Indicator Cards Grid -->
+                    <div class="dashboard-stats-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin-bottom: 3.5rem;">
+                        <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                            <span style="font-size: 0.725rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Valued Cars</span>
+                            <h3 style="font-size: 2rem; font-weight: 800; color: #111827; margin: 0.35rem 0 0 0;">{{ total_valued }}</h3>
+                        </div>
+                        <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                            <span style="font-size: 0.725rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Saved Reports</span>
+                            <h3 style="font-size: 2rem; font-weight: 800; color: #111827; margin: 0.35rem 0 0 0;">{{ saved_count }}</h3>
+                        </div>
+                        <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                            <span style="font-size: 0.725rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Favourites</span>
+                            <h3 style="font-size: 20px; font-size: 2rem; font-weight: 800; color: #111827; margin: 0.35rem 0 0 0;">{{ fav_count }}</h3>
+                        </div>
+                        <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                            <span style="font-size: 0.725rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Avg AI Score</span>
+                            <h3 style="font-size: 2rem; font-weight: 800; color: var(--primary); margin: 0.35rem 0 0 0;">{{ avg_score }} <span style="font-size: 0.95rem; color: var(--text-gray);">/100</span></h3>
+                        </div>
+                        <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px;">
+                            <span style="font-size: 0.725rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Total Net Worth</span>
+                            <h3 style="font-size: 1.45rem; font-weight: 800; color: var(--accent); margin: 0.65rem 0 0 0; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">₹ {{ total_worth | indian_currency }}</h3>
+                        </div>
+                    </div>
+
+                    <!-- Welcome details wrapper card -->
+                    <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); border: 1px solid rgba(255,255,255,0.03); border-radius: 16px; text-align: left;">
+                        <h3 style="font-size: 1.35rem; color: #111827; font-weight: 700; margin: 0 0 1rem 0;">AI Pricing Dashboard Activity</h3>
+                        <p style="color: var(--text-gray); line-height: 1.65; margin: 0 0 1.5rem 0; font-size: 0.95rem;">You have valued a total of <strong>{{ total_valued }} vehicles</strong> using our Neural Regression model. Saving reports logs them directly inside the saved files tab to lock depreciation calculations and access print options.</p>
+                        
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="/valuation" class="btn-submit-valuation" style="padding: 0.9rem 2.25rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem;">Appraise Vehicle</a>
+                            <a href="#my-cars" class="btn-result-reset" onclick="switchSidebarTab('my-cars')" style="padding: 0.9rem 2.25rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem;">View Valued Cars</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- B. TAB: MY CARS (Valuation History) -->
+                <div class="dashboard-tab-panel" id="tab-my-cars">
+                    <div style="text-align: left; margin-bottom: 2.5rem;">
+                        <span class="section-badge">Appraisal History</span>
+                        <h2 style="font-size: 2.2rem; font-weight: 800; color: #111827; margin: 0.5rem 0 0.25rem 0;">My Cars</h2>
+                        <p style="color: var(--text-gray);">List of all vehicle records valued under your profile session.</p>
+                    </div>                    <!-- History Cards wrapper -->
+                    {% if history %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                        {% for r in history %}
+                        <div class="stat-card" style="padding: 1.75rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; position: relative;">
+                            
+                            <!-- Delete button (top right) -->
+                            <form action="/delete-car/{{ r.id }}" method="POST" style="position: absolute; right: 1.25rem; top: 1.25rem; margin: 0;" onsubmit="return confirm('Are you sure you want to delete this valuation?');">
+                                <button type="submit" style="background: none; border: none; cursor: pointer; color: rgba(255, 51, 102, 0.4); transition: color 0.2s;" onmouseover="this.style.color='#FF3366'" onmouseout="this.style.color='rgba(255, 51, 102, 0.4)'" title="Delete Valuation">
+                                    <i class="fa-solid fa-trash-can" style="font-size: 1.1rem;"></i>
+                                </button>
+                            </form>
+
+                            <div>
+                                <span style="font-size: 0.775rem; color: var(--text-gray); font-weight: 500;">{{ r.date }}</span>
+                                <h3 style="font-size: 1.35rem; color: #111827; font-weight: 700; margin: 0.25rem 0 0.15rem 0; width: 85%;">{{ r.brand }} {{ r.model }}</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-gray); margin: 0 0 1rem 0;">{{ r.year }} Model • {{ r.variant }}</p>
+                            </div>
+                            
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem; margin-top: 0.5rem; margin-bottom: 1.25rem;">
+                                    <div>
+                                        <span style="font-size: 0.725rem; color: var(--text-gray); display: block; text-transform: uppercase;">Valuation</span>
+                                        <span style="font-size: 1.15rem; color: var(--accent); font-weight: 800;">₹ {{ r.price | indian_currency }}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 0.35rem;">
+                                        <button type="button" class="btn-result-pdf" style="padding: 0.35rem 0.65rem; border-radius: 6px; border-color: rgba(255, 193, 7, 0.25);" title="Toggle Favorite" onclick="toggleGlobalFavorite(this.querySelector('i'), {{ r.id }})">
+                                            <i class="{% if r.is_favorite == 1 %}fa-solid{% else %}fa-regular{% endif %} fa-star" style="color: #FFC107;"></i>
+                                        </button>
+                                        <form action="/toggle-save/{{ r.id }}" method="POST" style="margin: 0;">
+                                            <button type="submit" class="btn-result-pdf" style="padding: 0.35rem 0.65rem; border-radius: 6px; border-color: rgba(0, 240, 255, 0.25);" title="Toggle Save">
+                                                <i class="{% if r.is_saved == 1 %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark" style="color: var(--accent);"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="/report/{{ r.id }}" class="btn-submit-valuation" style="flex: 1; text-align: center; justify-content: center; font-size: 0.8rem; padding: 0.55rem; border-radius: 6px; text-decoration: none;">View Report</a>
+                                    <button class="btn-result-pdf" style="flex: 1; font-size: 0.8rem; padding: 0.55rem; border-radius: 6px; justify-content: center;" onclick="alert('Downloading PDF Report for {{ r.brand }} {{ r.model }}...')"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="stat-card" style="padding: 3rem; text-align: center; color: var(--text-gray); border-radius: 16px; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);">
+                        <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: rgba(255,255,255,0.08); margin-bottom: 1rem;"></i>
+                        <p style="margin: 0;">No car valuation records found. Start an appraisal to log them here.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- C. TAB: SAVED REPORTS -->
+                <div class="dashboard-tab-panel" id="tab-saved-reports">
+                    <div style="text-align: left; margin-bottom: 2.5rem;">
+                        <span class="section-badge">Locked Reports</span>
+                        <h2 style="font-size: 2.2rem; font-weight: 800; color: #111827; margin: 0.5rem 0 0.25rem 0;">Saved Reports</h2>
+                        <p style="color: var(--text-gray);">Access and download previously locked vehicle appraisal sheets.</p>
+                    </div>
+
+                    <!-- Reports list cards wrapper -->
+                    {% if saved_reports %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                        {% for r in saved_reports %}
+                        <div class="stat-card" style="padding: 1.75rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; position: relative;">
+                            
+                            <!-- Delete button (top right) -->
+                            <form action="/delete-car/{{ r.id }}" method="POST" style="position: absolute; right: 1.25rem; top: 1.25rem; margin: 0;" onsubmit="return confirm('Are you sure you want to delete this saved report?');">
+                                <button type="submit" style="background: none; border: none; cursor: pointer; color: rgba(255, 51, 102, 0.4); transition: color 0.2s;" onmouseover="this.style.color='#FF3366'" onmouseout="this.style.color='rgba(255, 51, 102, 0.4)'" title="Delete Report">
+                                    <i class="fa-solid fa-trash-can" style="font-size: 1.1rem;"></i>
+                                </button>
+                            </form>
+
+                            <div>
+                                <span style="font-size: 0.775rem; color: var(--text-gray); font-weight: 500;">{{ r.date }}</span>
+                                <h3 style="font-size: 1.35rem; color: #111827; font-weight: 700; margin: 0.25rem 0 0.15rem 0; width: 85%;">{{ r.brand }} {{ r.model }}</h3>
+                                <p style="font-size: 0.85rem; color: var(--text-gray); margin: 0 0 1rem 0;">{{ r.year }} Model • {{ r.variant }}</p>
+                            </div>
+                            
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem; margin-top: 0.5rem; margin-bottom: 1.25rem;">
+                                    <div>
+                                        <span style="font-size: 0.725rem; color: var(--text-gray); display: block; text-transform: uppercase;">Valuation</span>
+                                        <span style="font-size: 1.15rem; color: var(--accent); font-weight: 800;">₹ {{ r.price | indian_currency }}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 0.35rem;">
+                                        <button class="btn-result-pdf" style="padding: 0.35rem 0.65rem; border-radius: 6px;" onclick="alert('Copying appraisal shareable link to clipboard!')" title="Share Report"><i class="fa-solid fa-share-nodes"></i></button>
+                                        <form action="/toggle-save/{{ r.id }}" method="POST" style="margin: 0;">
+                                            <button type="submit" class="btn-result-pdf" style="padding: 0.35rem 0.65rem; border-radius: 6px; border-color: rgba(0, 240, 255, 0.25);" title="Remove Bookmark">
+                                                <i class="fa-solid fa-bookmark" style="color: var(--accent);"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <a href="/report/{{ r.id }}" class="btn-submit-valuation" style="flex: 1; text-align: center; justify-content: center; font-size: 0.8rem; padding: 0.55rem; border-radius: 6px; text-decoration: none;"><i class="fa-solid fa-folder-open"></i> Open</a>
+                                    <button class="btn-result-pdf" style="flex: 1; font-size: 0.8rem; padding: 0.55rem; border-radius: 6px; justify-content: center;" onclick="alert('Downloading PDF for {{ r.brand }} {{ r.model }} report...')"><i class="fa-solid fa-file-pdf"></i> Download PDF</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="stat-card" style="padding: 3rem; text-align: center; color: var(--text-gray); border-radius: 16px; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm);">
+                        <i class="fa-solid fa-bookmark" style="font-size: 3rem; color: rgba(255,255,255,0.08); margin-bottom: 1rem;"></i>
+                        <p style="margin: 0;">No saved reports found. Click the bookmark icon on your cars history to save them here.</p>
+                    </div>
+                    {% endif %}</div>
+                </div>
+
+                <!-- D. TAB: FAVOURITES -->
+                <div class="dashboard-tab-panel" id="tab-favourites">
+                    <div style="text-align: left; margin-bottom: 2.5rem;">
+                        <span class="section-badge">Car Bookmarks</span>
+                        <h2 style="font-size: 2.2rem; font-weight: 800; color: #111827; margin: 0.5rem 0 0.25rem 0;">Favourites</h2>
+                        <p style="color: var(--text-gray);">Bookmarked vehicles for ongoing price track checks.</p>
+                    </div>
+
+                    <!-- Favourites Grid -->
+                    {% if favourites %}
+                    <div class="similar-cars-desktop-grid" style="margin-top: 1.5rem;">
+                        {% for r in favourites %}
+                        <div class="stat-card" style="padding: 1.5rem; text-align: left; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 12px; position: relative;">
+                            
+                            <!-- Remove star button -->
+                            <form action="/toggle-favorite/{{ r.id }}" method="POST" style="position: absolute; right: 1rem; top: 1rem; margin: 0;">
+                                <button type="submit" style="background: none; border: none; cursor: pointer; color: #FFC107;" title="Remove Favorite">
+                                    <i class="fa-solid fa-star" style="font-size: 1.2rem;"></i>
+                                </button>
+                            </form>
+
+                            <div style="background: rgba(255,255,255,0.02); height: 80px; border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-car" style="font-size: 2.2rem; color: rgba(0, 240, 255, 0.18); filter: drop-shadow(0 0 10px rgba(0, 240, 255, 0.1));"></i>
+                            </div>
+                            
+                            <h4 style="margin: 0; font-size: 1.05rem; color: #111827; font-weight: 700;">{{ r.brand }} {{ r.model }}</h4>
+                            <p style="margin: 3px 0 10px 0; font-size: 0.8rem; color: var(--text-gray);">{{ r.year }} Model • {{ r.variant }}</p>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 0.85rem; margin-top: 0.5rem;">
+                                <span style="font-size: 1rem; color: var(--accent); font-weight: 700;">₹ {{ r.price | indian_currency }}</span>
+                                <a href="/valuation?brand={{ r.brand.lower() }}&model={{ r.model.lower() }}&year={{ r.year }}" style="font-size: 0.775rem; color: #111827; font-weight: 600; text-decoration: none; border-bottom: 1.5px solid var(--accent); padding-bottom: 2px;">Open</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="stat-card" style="padding: 3rem; text-align: center; color: var(--text-gray); border-radius: 16px; background: var(--bg-card); border: 1px solid var(--card-border);">
+                        <i class="fa-solid fa-star" style="font-size: 3rem; color: rgba(255,255,255,0.08); margin-bottom: 1rem;"></i>
+                        <p style="margin: 0;">No bookmarked vehicles found. Click the star icon on your cars list to save favorites here.</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- E. TAB: SETTINGS (Profile Display & Edit Form) -->
+                <div class="dashboard-tab-panel" id="tab-settings">
+                    <div style="text-align: left; margin-bottom: 2.5rem;">
+                        <span class="section-badge">Account Settings</span>
+                        <h2 style="font-size: 2.2rem; font-weight: 800; color: #111827; margin: 0.5rem 0 0.25rem 0;">Settings</h2>
+                        <p style="color: var(--text-gray);">Manage profile details and change password credentials.</p>
+                    </div>
+
+                    <!-- Side-by-side forms grid -->
+                    <div class="dashboard-columns-grid" style="align-items: start;">
+                        
+                        <!-- Left Side: Profile displays + Edit Form -->
+                        <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px; text-align: left; display: flex; flex-direction: column; gap: 2rem;">
+                            
+                            <!-- Static profile view -->
+                            <div>
+                                <h4 style="font-size: 1.15rem; color: #111827; margin: 0 0 1.25rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-id-card" style="color: var(--accent);"></i> Account Overview</h4>
+                                <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.95rem;">
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                                        <span style="color: var(--text-gray);">Joined Registration Date</span>
+                                        <span style="color: var(--accent); font-weight: 600;">{{ user.joined }}</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">
+                                        <span style="color: var(--text-gray);">Email Address</span>
+                                        <span style="color: #111827; font-weight: 600;">{{ user.email }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Edit profile form -->
+                            <form action="/edit-profile" method="POST">
+                                <h4 style="font-size: 1.15rem; color: #111827; margin: 0 0 1.25rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-user-pen" style="color: var(--accent);"></i> Edit Profile Details</h4>
+                                <div class="form-group" style="margin-bottom: 1.25rem;">
+                                    <label for="set-name">Full Name</label>
+                                    <input type="text" id="set-name" name="full_name" class="glass-input" value="{{ user.name }}" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 1.75rem;">
+                                    <label for="set-phone">Phone Number</label>
+                                    <input type="tel" id="set-phone" name="mobile_number" class="glass-input" value="{{ user.mobile }}" required>
+                                </div>
+                                <button type="submit" class="btn-submit-valuation" style="width: 100%; padding: 0.9rem; justify-content: center; font-weight: 700; border-radius: 8px;">Save Profile Changes <i class="fa-solid fa-circle-check" style="margin-left: 0.5rem;"></i></button>
+                            </form>
+                        </div>
+
+                        <!-- Right Side: Change Password Form -->
+                        <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px; text-align: left;">
+                            <form action="/change-password" method="POST">
+                                <h4 style="font-size: 1.15rem; color: #111827; margin: 0 0 1.25rem 0; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-key" style="color: var(--accent);"></i> Change Account Password</h4>
+                                <div class="form-group" style="margin-bottom: 1.25rem;">
+                                    <label for="set-curr">Current Password</label>
+                                    <input type="password" id="set-curr" name="current_password" class="glass-input" placeholder="Verify current password" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 1.25rem;">
+                                    <label for="set-new">New Password</label>
+                                    <input type="password" id="set-new" name="new_password" class="glass-input" placeholder="Minimum 6 characters" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 1.75rem;">
+                                    <label for="set-confirm">Confirm New Password</label>
+                                    <input type="password" id="set-confirm" name="confirm_password" class="glass-input" placeholder="Confirm new password" required>
+                                </div>
+                                <button type="submit" class="btn-submit-valuation" style="width: 100%; padding: 0.9rem; justify-content: center; font-weight: 700; border-radius: 8px;">Update Password <i class="fa-solid fa-lock" style="margin-left: 0.5rem;"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- Sidebar active tab toggler scripts -->
+    <script>
+        function switchSidebarTab(tabId) {
+            // Hide all tab panels
+            document.querySelectorAll('.dashboard-tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            // Show requested panel
+            const activePanel = document.getElementById('tab-' + tabId);
+            if (activePanel) activePanel.classList.add('active');
+
+            // Deactivate all sidebar links
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            // Activate corresponding sidebar link
+            const activeLink = document.querySelector(`.sidebar-link[data-tab="tab-${tabId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle sidebar clicks
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    // Check if it's an internal tab change
+                    const tabName = link.getAttribute('data-tab');
+                    if (tabName) {
+                        e.preventDefault();
+                        const tabId = tabName.replace('tab-', '');
+                        switchSidebarTab(tabId);
+                        window.location.hash = tabId;
+                    }
+                });
+            });
+
+            // Read hash on load to switch to tab
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash && ['overview', 'my-cars', 'saved-reports', 'favourites', 'settings'].includes(currentHash)) {
+                switchSidebarTab(currentHash);
+            }
+        });
+
+        function toggleGlobalFavorite(icon, carId) {
+            fetch(`/api/toggle-favorite/${carId}`, { method: 'POST' })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'added') {
+                        icon.className = 'fa-solid fa-star';
+                        showToastNotification('✓ Added to Favorites');
+                    } else if (res.status === 'removed') {
+                        icon.className = 'fa-regular fa-star';
+                        showToastNotification('Removed from Favorites');
+                    } else {
+                        alert(res.message || 'Please login to save favorites.');
+                    }
+                });
+        }
+
+        function showToastNotification(message) {
+            const toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '2rem';
+            toast.style.right = '2rem';
+            toast.style.background = 'rgba(10, 15, 30, 0.95)';
+            toast.style.border = '1px solid var(--accent)';
+            toast.style.color = '#FFF';
+            toast.style.padding = '0.85rem 1.5rem';
+            toast.style.borderRadius = '8px';
+            toast.style.boxShadow = '0 10px 25px rgba(0,240,255,0.2)';
+            toast.style.zIndex = '9999';
+            toast.style.fontSize = '0.9rem';
+            toast.style.fontWeight = '600';
+            toast.style.backdropFilter = 'blur(10px)';
+            toast.style.animation = 'fadeInUp 0.3s ease-out';
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+        
+        // Auto-close sidebar menu drawer when link is clicked on mobile
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const sidebar = document.querySelector('.dashboard-sidebar');
+                if (sidebar) sidebar.classList.remove('active');
+            });
+        });
+    </script>
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>

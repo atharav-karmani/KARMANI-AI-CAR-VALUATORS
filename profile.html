@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMANI AI CAR VALUATORS - Settings</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+        @media (max-width: 991px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Premium Sticky Navigation Bar -->
+    {% include 'navbar.html' %}
+
+    <!-- Settings Main Section -->
+    <section class="valuation-section" style="padding: 125px 0 40px 0; min-height: 90vh; background: var(--bg-main);">
+        <div class="glow-node glow-node-1" style="top: 15%; left: -10%;"></div>
+        <div class="glow-node glow-node-2" style="bottom: 15%; right: -10%;"></div>
+        
+        <div class="container" style="max-width: 1400px; margin: 40px auto; padding: 0 32px;">
+            
+            <!-- Page Header immediately below fixed navbar -->
+            <div class="section-header" style="margin-bottom: 32px; text-align: left;">
+                <span class="section-badge">Account Settings</span>
+                <h2 style="font-size: 2.2rem; font-weight: 800; color: #111827; margin: 0.5rem 0 0.25rem 0;">Settings</h2>
+                <p style="color: var(--text-gray);">Manage your account settings and profile information.</p>
+            </div>
+
+            <!-- Two-column responsive layout grid -->
+            <div class="settings-grid">
+                
+                <!-- LEFT COLUMN (65%) -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+                    
+                    <!-- Account Overview Card -->
+                    <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px; text-align: left;">
+                        <h4 style="font-size: 1.25rem; color: #111827; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-address-card" style="color: var(--accent);"></i> Account Overview
+                        </h4>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Full Name</span>
+                                <h3 style="font-size: 1.35rem; color: #111827; margin: 0.25rem 0 0 0; font-weight: 700;">{{ user.name }}</h3>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Email Address</span>
+                                <h3 style="font-size: 1.35rem; color: #111827; margin: 0.25rem 0 0 0; font-weight: 700;">{{ user.email }}</h3>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Mobile Number</span>
+                                <h3 style="font-size: 1.35rem; color: #111827; margin: 0.25rem 0 0 0; font-weight: 700;">{{ user.mobile }}</h3>
+                            </div>
+                            <div>
+                                <span style="font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em;">Joined Date</span>
+                                <h3 style="font-size: 1.25rem; color: var(--accent); margin: 0.25rem 0 0 0; font-weight: 700;">
+                                    <i class="fa-solid fa-calendar-check" style="margin-right: 0.35rem;"></i> {{ user.joined }}
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Profile Information Card -->
+                    <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px; text-align: left;">
+                        <form action="/edit-profile" method="POST">
+                            <h4 style="font-size: 1.25rem; color: #111827; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-user-pen" style="color: var(--accent);"></i> Profile Information
+                            </h4>
+                            <div class="form-group" style="margin-bottom: 1.25rem;">
+                                <label for="set-name">Full Name</label>
+                                <input type="text" id="set-name" name="full_name" class="glass-input" value="{{ user.name }}" required>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1.75rem;">
+                                <label for="set-phone">Phone Number</label>
+                                <input type="tel" id="set-phone" name="mobile_number" class="glass-input" value="{{ user.mobile }}" required>
+                            </div>
+                            <!-- Save Profile Button -->
+                            <button type="submit" class="btn-submit-valuation" style="width: 100%; padding: 0.9rem; justify-content: center; font-weight: 700; border-radius: 8px;">
+                                Save Profile Changes <i class="fa-solid fa-circle-check" style="margin-left: 0.5rem;"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- RIGHT COLUMN (35%) -->
+                <div style="display: flex; flex-direction: column; gap: 32px;">
+                    
+                    <!-- Change Password Card -->
+                    <div class="stat-card" style="padding: 2.5rem; background: var(--bg-card); border: 1px solid var(--card-border); box-shadow: var(--shadow-sm); border-radius: 14px; text-align: left;">
+                        <h4 style="font-size: 1.25rem; color: #111827; margin: 0 0 1.5rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-key" style="color: var(--accent);"></i> Change Password
+                        </h4>
+                        
+                        <!-- Flash Messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                          {% if messages %}
+                            {% for category, message in messages %}
+                              <div class="alert" style="background: {% if category == 'success' %}rgba(76, 175, 80, 0.08){% else %}rgba(255, 51, 102, 0.08){% endif %}; border: 1px solid {% if category == 'success' %}rgba(76, 175, 80, 0.25){% else %}rgba(255, 51, 102, 0.25){% endif %}; color: {% if category == 'success' %}#4CAF50{% else %}#FF3366{% endif %}; border-radius: 8px; padding: 0.85rem 1.1rem; margin-bottom: 1.5rem; font-size: 0.88rem;">
+                                <i class="fa-solid {% if category == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %}" style="margin-right: 0.45rem;"></i> {{ message }}
+                              </div>
+                            {% endfor %}
+                          {% endif %}
+                        {% endwith %}
+
+                        <form action="/change-password" method="POST">
+                            <div class="form-group" style="margin-bottom: 1.25rem;">
+                                <label for="prof-curr">Current Password</label>
+                                <input type="password" id="prof-curr" name="current_password" class="glass-input" placeholder="Verify current credentials" required autocomplete="current-password">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 1.25rem;">
+                                <label for="prof-new">New Password</label>
+                                <input type="password" id="prof-new" name="new_password" class="glass-input" placeholder="Minimum 6 characters" required autocomplete="new-password">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 2rem;">
+                                <label for="prof-confirm">Confirm New Password</label>
+                                <input type="password" id="prof-confirm" name="confirm_password" class="glass-input" placeholder="Verify new password" required autocomplete="new-password">
+                            </div>
+
+                            <button type="submit" class="btn-submit-valuation" style="width: 100%; justify-content: center; padding: 1rem; font-weight: 700; border-radius: 8px;">
+                                Save Password <i class="fa-solid fa-lock" style="margin-left: 0.5rem;"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    {% include 'footer.html' %}
+
+    <!-- Custom JavaScript -->
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
